@@ -1,9 +1,9 @@
 import * as assert from 'assert';
-import * as metrics from '@napajs/metrics';
 import * as config from '../lib/config';
 import * as app from '../lib/app';
 import * as engine from '../lib/engine';
 import * as path from 'path';
+import { metric } from 'napajs';
 
 describe('winery/config', () => {
     describe('ObjectTypeConfig', () => {
@@ -197,7 +197,7 @@ describe('winery/config', () => {
                     sectionName: "DefaultSection",
                     displayName: "My counter1",
                     description: "Counter description",
-                    type: metrics.MetricType.Percentile,
+                    type: metric.MetricType.Percentile,
                     dimensionNames: ["d1", "d2"]
                 },
                 {
@@ -205,7 +205,7 @@ describe('winery/config', () => {
                     sectionName: "DefaultSection",
                     displayName: "My counter2",
                     description: "Counter description",
-                    type: metrics.MetricType.Rate,
+                    type: metric.MetricType.Rate,
                     dimensionNames: []
                 },
                 {
@@ -213,7 +213,7 @@ describe('winery/config', () => {
                     sectionName: "DefaultSection",
                     displayName: "My counter3",
                     description: "Counter description",
-                    type: metrics.MetricType.Number,
+                    type: metric.MetricType.Number,
                     dimensionNames: []
                 }
             ])

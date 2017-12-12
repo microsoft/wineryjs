@@ -1,5 +1,5 @@
 import {Application, RequestContext} from '../lib/app';
-import {LocalEngine} from '../lib/engine';
+import {LeafEngine} from '../lib/engine';
 
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
@@ -12,7 +12,7 @@ import * as assert from 'assert';
 
 
 describe('winery/app', () => {
-     let engine = new LocalEngine(
+     let engine = new LeafEngine(
             config.EngineConfig.fromConfig(
                 require.resolve('../config/engine.json')));
 

@@ -51,9 +51,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as assert from 'assert';
 
-import * as napa from 'napajs';
-import * as logger from '@napajs/logger';
-import * as metrics from '@napajs/metrics';
+import {log, metric} from 'napajs';
 
 // internal dependencies.
 import * as objectContext from './object-context';
@@ -124,7 +122,7 @@ export type EntryPoint = (requestContext?: RequestContext, input?: any) => any;
 export type Interceptor = (context: RequestContext) => Promise<wire.Response>;
 
 /// <summary> Interface for metric collection. </summary>
-export type MetricCollection = { [name: string]: metrics.Metric };
+export type MetricCollection = { [name: string]: metric.Metric };
 
 /// <summary> Class for Metric definition. </summary>
 export interface MetricDefinition {
@@ -141,7 +139,7 @@ export interface MetricDefinition {
     description?: string;
 
     /// <summary> Metric type. </summary>
-    type: metrics.MetricType;
+    type: metric.MetricType;
 
     /// <summary> Dimension definitions. </summary>
     dimensionNames?: string[];
@@ -232,12 +230,12 @@ export class Application {
         // Create metrics.
         this._metrics = {};
         if (settings.metrics != null) {
-            for (let metric of settings.metrics) {
-                this._metrics[metric.name] = metrics.get(
-                    metric.sectionName,
-                    metric.displayName,
-                    metric.type,
-                    metric.dimensionNames);
+            for (let m of settings.metrics) {
+                this._metrics[m.name] = metric.get(
+                    m.sectionName,
+                    m.displayName,
+                    m.type,
+                    m.dimensionNames);
             }
         }
     }
@@ -671,22 +669,22 @@ export class RequestLogger {
 
     /// <summary> Log message with Debug level. </summary>
     public debug(message: string) {
-        logger.debug(this._sectionName, this._traceId, message);
+        log.debug(this._sectionName, this._traceId, message);
     }
 
     /// <summary> Log message with Info level. </summary>
     public info(message: string) {
-        logger.info(this._sectionName, this._traceId, message);
+        log.info(this._sectionName, this._traceId, message);
     }
 
     /// <summary> Log message with Warn level. </summary>
     public warn(message: string) {
-        logger.warn(this._sectionName, this._traceId, message);
+        log.warn(this._sectionName, this._traceId, message);
     }
 
     /// <summary> Log message with Error level. </summary>
     public err(message: string) {
-        logger.err(this._sectionName, this._traceId, message);
+        log.err(this._sectionName, this._traceId, message);
     }
 
     private _traceId: string;

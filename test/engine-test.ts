@@ -2,7 +2,7 @@ import * as app from '../lib/app';
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
 import * as wire from '../lib/wire';
-import { Engine, LocalEngine, RemoteEngine, EngineHub } from '../lib/engine';
+import { Engine, LeafEngine, EngineProxy, EngineHub } from '../lib/engine';
 
 import * as path from 'path';
 import * as napa from 'napajs';
@@ -10,9 +10,9 @@ import * as assert from 'assert';
 
 describe('winery/engine', () => {
     describe('LocalEngine', () => {
-        let engine: LocalEngine = undefined;
+        let engine: LeafEngine = undefined;
         it('#ctor', () => {
-            engine = new LocalEngine(
+            engine = new LeafEngine(
                 config.EngineConfig.fromConfig(
                     require.resolve('../config/engine.json'))
             );
@@ -37,7 +37,7 @@ describe('winery/engine', () => {
                 engine.register(
                     path.resolve(__dirname, './test-app'), 
                     ["testApp"], 
-                    napa.createZone('zone1'));
+                    napa.zone.create('zone1'));
             });
         });
 
@@ -107,11 +107,11 @@ describe('winery/engine', () => {
         });
     });
 
-    describe.skip('RemoteEngine', () => {
-        let engine: RemoteEngine = undefined;
-        let zone: napa.Zone = napa.createZone('zone2');
+    describe.skip('EngineProxy', () => {
+        let engine: EngineProxy = undefined;
+        let zone: napa.zone.Zone = napa.zone.create('zone2');
         it('#ctor', () => {
-            engine = new RemoteEngine(zone);
+            engine = new EngineProxy(zone);
         });
 
         it('#register: success', () => {
@@ -133,7 +133,7 @@ describe('winery/engine', () => {
                 engine.register(
                     path.resolve(__dirname, './test-app'), 
                     ["testApp"], 
-                    napa.createZone('zone3'));
+                    napa.zone.create('zone3'));
             });
         });
 

@@ -4,8 +4,8 @@
     "description": "List all applications in current system.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.listApplications",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "listApplications",
       "displayRank": 900,
       "exampleRequests": [
         {
@@ -20,12 +20,12 @@
     "description": "List all entry points for current application.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.listEntryPoints",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "listEntryPoints",
       "displayRank": 900,
       "exampleRequests": [
         {
-          "application": "bing",
+          "application": "example",
           "entryPoint": "listEntryPoints"
         }
       ]
@@ -36,12 +36,12 @@
     "description": "List all named objects for current application.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.listNamedObjects",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "listNamedObjects",
       "displayRank": 900,
       "exampleRequests": [
         {
-          "application": "bing",
+          "application": "example",
           "entryPoint": "listNamedObjects"
         }
       ]
@@ -52,12 +52,12 @@
     "description": "List all types supported in current application.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.listTypes",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "listTypes",
       "displayRank": 900,
       "exampleRequests": [
         {
-          "application": "bing",
+          "application": "example",
           "entryPoint": "listTypes"
         }
       ]
@@ -68,12 +68,12 @@
     "description": "List URI providers supported in current application.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.listProviders",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "listProviders",
       "displayRank": 900,
       "exampleRequests": [
         {
-          "application": "bing",
+          "application": "example",
           "entryPoint": "listProviders"
         }
       ]
@@ -84,12 +84,12 @@
     "description": "Get an object as JSON based on current application.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.getNamedObject",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "getNamedObject",
       "displayRank": 900,
       "exampleRequests": [
         {
-          "application": "bing",
+          "application": "example",
           "entryPoint": "getNamedObject",
           "input": {
             "name": "getType"
@@ -103,12 +103,12 @@
     "description": "Get definition of a type in current application.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.getType",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "getType",
       "displayRank": 900,
       "exampleRequests": [
         {
-          "application": "bing",
+          "application": "example",
           "entryPoint": "getType",
           "input": {
             "typeName": "functionName"
@@ -122,12 +122,12 @@
     "description": "Get the provider definition for a URI protocol.",
     "value": {
       "_type": "EntryPoint",
-      "moduleName": "winery",
-      "functionName": "builtins.entryPoints.getProvider",
+      "moduleName": "../lib/builtin-entrypoints",
+      "functionName": "getProvider",
       "displayRank": 900,
       "exampleRequests": [
         {
-          "application": "bing",
+          "application": "example",
           "entryPoint": "getProvider",
           "input": {
             "protocolName": "te"
