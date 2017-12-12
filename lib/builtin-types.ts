@@ -89,7 +89,7 @@ export function createEntryPoint(
 
 /// <summary> Constructor for Interceptor. </summary>
 export function createInterceptor(
-    definition: Interceptor,
+    definition: InterceptorDefinition,
     context: objectModel.ObjectContext): Interceptor {
     // TODO: any check?
     return <Interceptor>createFunction(definition, context);

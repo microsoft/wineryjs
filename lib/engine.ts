@@ -20,7 +20,7 @@ export interface Engine {
     /// <param name="appModuleName"> module name of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
-    register(appModuleName: string, appInstanceNames: string[], zone: napa.Zone): void;
+    register(appModuleName: string, appInstanceNames: string[], zone: napa.zone.Zone): void;
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
@@ -30,8 +30,8 @@ export interface Engine {
     applicationInstanceNames: string[];
 }
 
-/// <summary> Engine on local container or Node.JS isolate. </summary>
-export class LocalEngine implements Engine{
+/// <summary> Engine on a leaf JavaScript worker . </summary>
+export class LeafEngine implements Engine{
     // Lower-case name to application map.
     private _applications: Map<string, Application> = new Map<string, Application>();
 
@@ -63,10 +63,10 @@ export class LocalEngine implements Engine{
     public register(
         appModuleName: string, 
         appInstanceNames: string[], 
-        zone: napa.Zone = null): void {
+        zone: napa.zone.Zone = null): void {
 
         if (zone != null) {
-            throw new Error("LocalEngine doesn't support register on a different Zone.");
+            throw new Error("LeafEngine doesn't support register on a remote Zone.");
         }
 
         // Load application.
@@ -137,16 +137,16 @@ export class LocalEngine implements Engine{
     }
 }
 
-/// <summary> Engine on a remote NapaJS container. </summary>
-export class RemoteEngine {
+/// <summary> Engine proxy to talk to another JavaScript worker. </summary>
+export class EngineProxy {
     /// <summary> Zone to run the app </summary>
-    private _zone: napa.Zone;
+    private _zone: napa.zone.Zone;
 
     /// <summary> Application instance names running on this engine. </summary>
     private _applicationInstanceNames: string[] = [];
 
     /// <summary> Constructor. </summary>
-    public constructor(zone: napa.Zone) {
+    public constructor(zone: napa.zone.Zone) {
         assert(zone != null);
         this._zone = zone;
     }
@@ -157,7 +157,7 @@ export class RemoteEngine {
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
     public register(appModuleName: string, 
         appInstanceNames: string[], 
-        zone: napa.Zone = undefined): void {
+        zone: napa.zone.Zone = undefined): void {
         if (zone != null && zone != this._zone) {
             throw new Error("RemoteEngine cannot register application for a different zone.");
         }
@@ -174,8 +174,8 @@ export class RemoteEngine {
         //let responseString = this._container.run('serve', [JSON.stringify(request)], );
         let zone = this._zone;
         return zone.execute('winery', 'serve', [request])
-            .then((result: string) => {
-                return Promise.resolve(wire.ResponseHelper.parse(result));
+            .then((result: napa.zone.Result) => {
+                return Promise.resolve(wire.ResponseHelper.parse(result.payload));
             });
     }
 
@@ -191,7 +191,7 @@ export class EngineHub implements Engine {
     private _localEngine: Engine;
 
     /// <summary> Zone to remote engine map. </summary>
-    private _remoteEngines: Map<napa.Zone, Engine> = new Map<napa.Zone, Engine>();
+    private _remoteEngines: Map<napa.zone.Zone, Engine> = new Map<napa.zone.Zone, Engine>();
 
     /// <summary> Settings for local engine if needed. </summary>
     private _settings: EngineSettings;
@@ -212,11 +212,11 @@ export class EngineHub implements Engine {
     /// <param name="moduleName"> module name of a winery application.</param>
     /// <param name="applicationNames"> a list of strings used as application names</param>
     /// <param name="zone"> zone to run the app. If null, use current isolate. </param>
-    public register(appModuleName: string, appInstanceNames: string[], zone: napa.Zone = undefined) {
+    public register(appModuleName: string, appInstanceNames: string[], zone: napa.zone.Zone = undefined) {
         let engine: Engine = undefined;
         if (zone == null) {
             if (this._localEngine == null) {
-                this._localEngine = new LocalEngine(this._settings);
+                this._localEngine = new LeafEngine(this._settings);
             }
             engine = this._localEngine;
         }
@@ -225,7 +225,7 @@ export class EngineHub implements Engine {
                 engine = this._remoteEngines.get(zone);
             }
             else {
-                engine = new RemoteEngine(zone);
+                engine = new EngineProxy(zone);
                 this._remoteEngines.set(zone, engine);
             }
         }

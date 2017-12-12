@@ -11,7 +11,7 @@ export * from './wire'
 
 import { Request, Response} from './wire';
 import * as path from 'path';
-import * as napa from 'napajs';
+import { zone } from 'napajs';
 
 /// <summary> A global engine instance. </summary>
 let _engine: engine.Engine = undefined;
@@ -24,7 +24,7 @@ declare var __in_napa: boolean;
 function initEngine() {
     if (typeof __in_napa !== undefined) {
         // This module is loaded in NapaJS container.
-        _engine = new engine.LocalEngine(_engineSettings);
+        _engine = new engine.LeafEngine(_engineSettings);
     }
     else {
         // This module is loaded in Node.JS isolate.
@@ -40,7 +40,7 @@ function initEngine() {
 export function register(
     appModuleName: string, 
     appInstanceNames: string[], 
-    zone: napa.Zone = null): void {
+    zone: zone.Zone = null): void {
 
     // Lazy creation of engine when register is called at the first time.
     if (_engine == null) {

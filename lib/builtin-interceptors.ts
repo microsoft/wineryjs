@@ -1,5 +1,4 @@
-import * as logger from '@napajs/logger';
-import * as metrics from '@napajs/metrics';
+import { log } from 'napajs';
 
 import * as app from './app';
 import * as wire from './wire';
@@ -42,7 +41,7 @@ export async function executeEntryPoint(
 export async function logRequest(
     context: app.RequestContext): Promise<wire.Response> {
 
-    logger.debug(JSON.stringify(context.request));
+    log.debug(JSON.stringify(context.request));
     return await context.continueExecution();
 }
 
@@ -51,7 +50,7 @@ export async function logResponse(
     context: app.RequestContext): Promise<wire.Response> {
     
     let response = await context.continueExecution();
-    logger.debug(JSON.stringify(response));
+    log.debug(JSON.stringify(response));
     return response;
 }
 
@@ -59,9 +58,9 @@ export async function logResponse(
 export async function logRequestResponse(
     context: app.RequestContext): Promise<wire.Response> {
 
-    logger.debug(JSON.stringify(context.request));
+    log.debug(JSON.stringify(context.request));
     let response = await context.continueExecution();
-    logger.debug(JSON.stringify(response));
+    log.debug(JSON.stringify(response));
     return response;
 }
 
@@ -69,7 +68,7 @@ export async function logRequestResponse(
 export async function finalizeResponse(
     context: app.RequestContext): Promise<wire.Response> {
 
-    let startTime = metrics.now();
+    let startTime = process.hrtime(); 
     let response = await context.continueExecution();
 
     // Attach debug info if needed.
@@ -79,8 +78,9 @@ export async function finalizeResponse(
 
     // Attach perf info if needed.
     if (context.controlFlags.perf) {
+        let duration = process.hrtime(startTime);
         response.perfInfo = {
-            processingLatencyInMS : metrics.elapseSince(startTime)
+            processingLatencyInMS : (duration[0] * 1e3 + duration[1] / 1e6)
         };
     }
     return response;

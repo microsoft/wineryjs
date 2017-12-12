@@ -1,18 +1,26 @@
 {
     "name": "winery",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "author": "napajs",
-    "description": "Framework for building highly iterative applications in JavaScript.",
-    "keywords": ["winery", "application framework", "dependency injection", "iterative", "continuous modification"],
+    "description": "A framework for experimentation in production",
+    "keywords": [
+        "experimentation",
+        "A/B testing",
+        "application framework",
+        "dependency injection",
+        "continuous modification"
+    ],
     "main": "./lib/index.js",
     "types": "./types/index.d.ts",
     "readme": "./README.md",
     "dependencies": {
-        "strip-json-comments": ">= 2.0.0"
+        "napajs": "^0.1.7",
+        "strip-json-comments": "^2.0.0"
     },
     "devDependencies": {
-        "@types/node": ">= 7.0.8",
-        "@types/mocha": ">= 2.2.0",
-        "@types/xml2js": ">= 0.0.1"
+        "mocha": "^3.5.0",
+        "typescript": "^2.4.2",
+        "@types/node": "^8.0.22",
+        "@types/mocha": "^2.2.41"
     }
 }

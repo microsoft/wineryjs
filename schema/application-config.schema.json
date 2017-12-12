@@ -1,27 +1,27 @@
 ﻿{
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://winery.napajs.org/application-config",
+  "id": "http://www.wineryjs.org/application-config",
   "type": "object",
   "title": "Vineyard application configuration schema.",
   "description": "This JSON schema defines the root JSON file to define a  application.",
   "name": "/",
   "properties": {
     "id": {
-      "id": "http://winery.napajs.org/application-config/id",
+      "id": "http://www.wineryjs.org/application-config/id",
       "type": "string",
       "title": "Application ID.",
       "description": "Required. Application id which is unique in Napa.",
       "name": "id"
     },
     "description": {
-      "id": "http://winery.napajs.org/application-config/description",
+      "id": "http://www.wineryjs.org/application-config/description",
       "type": "string",
       "title": "Application description.",
       "description": "Required. Purpose and scope of this application.",
       "name": "description"
     },
     "allowPerRequestOverride": {
-        "id": "http://winery.napajs.org/object-type-config/item/allowPerRequestOverride",
+        "id": "http://www.wineryjs.org/object-type-config/item/allowPerRequestOverride",
         "type": "boolean",
         "title": "Allow per-request override schema.",
         "description": "Whether to allow per-request override for this application.",
@@ -29,59 +29,59 @@
         "default": true
     },
     "defaultExecutionStack": {
-      "id": "http://winery.napajs.org/application-config/defaultExecutionStack",
+      "id": "http://www.wineryjs.org/application-config/defaultExecutionStack",
       "type": "array",
       "title": "Default execution stack consists of a list of interceptor names.",
       "description": "Optional. If not specified, will inherit from Engine configuration.",
       "name": "defaultExecutionStack",
       "items": {
-        "id": "http://winery.napajs.org/application-config/defaultExecutionStack/0",
+        "id": "http://www.wineryjs.org/application-config/defaultExecutionStack/0",
         "type": "string",
         "title": "Interceptor name",
         "description": "Interceptor are stacked as execution stack. ."
       }
     },
     "objectTypes": {
-      "id": "http://winery.napajs.org/application-config/objectTypes",
+      "id": "http://www.wineryjs.org/application-config/objectTypes",
       "type": "array",
       "title": "Object type definition files.",
       "description": "Required. Object types supported in this application.",
       "name": "objectTypes",
       "items": {
-        "id": "http://winery.napajs.org/application-config/objectTypes/0",
+        "id": "http://www.wineryjs.org/application-config/objectTypes/0",
         "type": "string",
         "title": "Path of an object type definition file",
         "description": "Multiple object type definition file is supported."
       }
     },
     "namedObjects": {
-      "id": "http://winery.napajs.org/application-config/namedObjects",
+      "id": "http://www.wineryjs.org/application-config/namedObjects",
       "type": "array",
       "title": "Named objects definition files.",
       "description": "Required. Named objects are objects that you want to access them by app.getObject('<name>').",
       "name": "namedObjects",
       "items": {
-        "id": "http://winery.napajs.org/application-config/namedObjects/0",
+        "id": "http://www.wineryjs.org/application-config/namedObjects/0",
         "type": "string",
         "title": "Path of a named object definition file.",
         "description": "Multiple named object definition file is supported."
       }
     },
     "objectProviders": {
-      "id": "http://winery.napajs.org/application-config/objectProviders",
+      "id": "http://www.wineryjs.org/application-config/objectProviders",
       "type": "array",
       "title": "Object providers definition files.",
       "description": "Optional. Object providers are functions that provide objects by URI.",
       "name": "objectProviders",
       "items": {
-        "id": "http://winery.napajs.org/application-config/objectProviders/0",
+        "id": "http://www.wineryjs.org/application-config/objectProviders/0",
         "type": "string",
         "title": "Path of an object provider definition file.",
         "description": "Multiple object provider definition file is supported."
       }
     },
     "metrics": {
-      "id": "http://winery.napajs.org/application-config/metrics",
+      "id": "http://www.wineryjs.org/application-config/metrics",
       "type": "object",
       "title": "Metrics collection definition.",
       "description": "Performance metricss definition for current application.",
@@ -89,20 +89,20 @@
       "additionalProperties": false,
       "properties": {
         "sectionName": {
-          "id": "http://winery.napajs.org/application-config/metrics/sectionName",
+          "id": "http://www.wineryjs.org/application-config/metrics/sectionName",
           "type": "string",
           "title": "Section name.",
           "description": "Section name of performance metrics.",
           "name": "sectionName"
         },
         "definition": {
-          "id": "http://winery.napajs.org/application-config/metricss/definition",
+          "id": "http://www.wineryjs.org/application-config/metricss/definition",
           "type": "array",
           "title": "Definition files",
           "description": "A list of metrics definition files.",
           "name": "definition",
           "items": {
-            "id": "http://winery.napajs.org/application-config/metricss/definition/0",
+            "id": "http://www.wineryjs.org/application-config/metricss/definition/0",
             "type": "string",
             "title": "Path of a metrics definition file",
             "description": "Multiple metrics definition file is supported."

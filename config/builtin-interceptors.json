@@ -4,8 +4,8 @@
         "description": "Interceptor to pass through current interception. ",
         "value": {
             "_type": "Interceptor",
-            "moduleName": "winery",
-            "functionName": "builtins.interceptors.passThrough"
+            "moduleName": "../lib/builtin-interceptors",
+            "functionName": "passThrough"
         }
     },
     {
@@ -13,8 +13,8 @@
         "description": "Interceptor to short circuit execution. ",
         "value": {
             "_type": "Interceptor",
-            "moduleName": "winery",
-            "functionName": "builtins.interceptors.shortCircuit"
+            "moduleName": "../lib/builtin-interceptors",
+            "functionName": "shortCircuit"
         }
     },
     {
@@ -22,8 +22,8 @@
         "description": "Interceptor to execute entrypoint from request context. ",
         "value": {
             "_type": "Interceptor",
-            "moduleName": "winery",
-            "functionName": "builtins.interceptors.executeEntryPoint"
+            "moduleName": "../lib/builtin-interceptors",
+            "functionName": "executeEntryPoint"
         }
     },
     {
@@ -31,8 +31,8 @@
         "description": "Interceptor to finalize response. ",
         "value": {
             "_type": "Interceptor",
-            "moduleName": "winery",
-            "functionName": "builtins.interceptors.finalizeResponse"
+            "moduleName": "../lib/builtin-interceptors",
+            "functionName": "finalizeResponse"
         }
     },
     {
@@ -40,8 +40,8 @@
         "description": "Interceptor to log request. ",
         "value": {
             "_type": "Interceptor",
-            "moduleName": "winery",
-            "functionName": "builtins.interceptors.logRequest"
+            "moduleName": "../lib/builtin-interceptors",
+            "functionName": "logRequest"
         }
     },
     {
@@ -49,8 +49,8 @@
         "description": "Interceptor to log response. ",
         "value": {
             "_type": "Interceptor",
-            "moduleName": "winery",
-            "functionName": "builtins.interceptors.logResponse"
+            "moduleName": "../lib/builtin-interceptors",
+            "functionName": "logResponse"
         }
     },
     {
@@ -58,8 +58,8 @@
         "description": "Interceptor to log request and response. ",
         "value": {
             "_type": "Interceptor",
-            "moduleName": "winery",
-            "functionName": "builtins.interceptors.logRequestResponse"
+            "moduleName": "../lib/builtin-interceptors",
+            "functionName": "logRequestResponse"
         }
     }
 ]

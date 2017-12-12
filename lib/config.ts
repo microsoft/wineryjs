@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as utils from './utils';
 import * as objectModel from './object-model';
 import * as app from './app';
-import * as metrics from '@napajs/metrics'
+import { metric } from 'napajs'
 import * as engine from './engine'
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -154,10 +154,9 @@ export class MetricConfig {
             'type': (metricTypeName: string) => {
                 let lowerCaseTypeName = metricTypeName.toLowerCase();
                 switch (lowerCaseTypeName) {
-                    case 'number': return metrics.MetricType.Number;
-                    case 'rate': return metrics.MetricType.Rate;
-                    case 'percentile': return metrics.MetricType.Percentile;
-                    case 'latency': return metrics.MetricType.Percentile;
+                    case 'number': return metric.MetricType.Number;
+                    case 'rate': return metric.MetricType.Rate;
+                    case 'percentile': return metric.MetricType.Percentile;
                     default: throw new Error("Invalid metric type: '" + metricTypeName + "'.");
                 }
             }

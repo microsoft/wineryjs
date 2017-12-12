@@ -2,8 +2,8 @@
     {
         "typeName": "Function",
         "description": "Constructor for Function object.",
-        "moduleName": "winery",
-        "functionName": "builtins.types.createFunction",
+        "moduleName": "../lib/builtin-types",
+        "functionName": "createFunction",
         "schema": "winery/schema/function-def.schema.json",
         "exampleObjects": [
             {
@@ -20,8 +20,8 @@
     {
         "typeName": "EntryPoint",
         "description": "Entrypoint type .",
-        "moduleName": "winery",
-        "functionName": "builtins.types.createEntryPoint",
+        "moduleName": "../lib/builtin-types",
+        "functionName": "createEntryPoint",
         "schema": "winery/schema/entrypoint-def.schema.json",
         "exampleObjects": [   
             {
@@ -48,8 +48,8 @@
     {
         "typeName": "Interceptor",
         "description": "Interceptor is a function defined as: (requestContext: RequestContext) => Promise<Response>.",
-        "moduleName": "winery",
-        "functionName": "builtins.types.createInterceptor",
+        "moduleName": "../lib/builtin-types",
+        "functionName": "createInterceptor",
         "schema": "winery/schema/interceptor-def.schema.json",
         "exampleObjects": [
             {
