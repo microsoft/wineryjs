@@ -11,36 +11,37 @@ export * from './wire'
 
 import { Request, Response} from './wire';
 import * as path from 'path';
-import { zone } from 'napajs';
+import * as napa from 'napajs';
 
 /// <summary> A global engine instance. </summary>
 let _engine: engine.Engine = undefined;
 let _engineSettings = config.EngineConfig.fromConfig(
     path.resolve(__dirname, "../config/engine.json"));
 
-declare var __in_napa: boolean;
-
 /// <summary> Initialize engine on demand. </summary>
 function initEngine() {
-    if (typeof __in_napa !== undefined) {
-        // This module is loaded in NapaJS container.
-        _engine = new engine.LeafEngine(_engineSettings);
-    }
-    else {
-        // This module is loaded in Node.JS isolate.
-        _engine = new engine.EngineHub(_engineSettings);
-    }
+    _engine = new engine.EngineHub(_engineSettings);
 }
 
 /// <summary> Register a winery application. </summary>
 /// <param name="appModuleName"> Module name for winery application, which contains an app.json under the path. </param>
 /// <param name="appInstanceNames"> A list of names used to serve application, which correspond to 'application' property in Request. </param>
 /// <param name="zone"> Optional. Napa zone to run the application, if not specified, run application in current V8 isolate. </param>
-/// <exception> Throws Error if the module is not found or not a valid winery application. </exception>
+/// <returns> Returns a promise of void which will be resolved when register completes. If error happens, promise will be rejected with exception. </returns>
 export function register(
     appModuleName: string, 
     appInstanceNames: string[], 
-    zone: zone.Zone = null): void {
+    zone: napa.zone.Zone = null): Promise<void> {
+
+    // If module is in relative path, figure out the full path from caller directory name.
+    if (appModuleName.startsWith('.')) {
+        let callSites = napa.v8.currentStack(2);
+        if (callSites.length > 1) {
+            appModuleName = path.resolve(path.dirname(callSites[1].getFileName()), appModuleName);
+        }
+    }
+
+    let appModulePath: string = path.dirname(require.resolve(appModuleName + '/app.json'));
 
     // Lazy creation of engine when register is called at the first time.
     if (_engine == null) {
@@ -48,7 +49,7 @@ export function register(
     }
 
     return _engine.register(
-        appModuleName, 
+        appModulePath, 
         appInstanceNames, 
         zone);
 }
