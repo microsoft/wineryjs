@@ -17,10 +17,10 @@ export interface EngineSettings extends Settings{
 /// <summary> Interface for application engine. </summary>
 export interface Engine {
     /// <summary> Register an application instance in current engine. </summary>
-    /// <param name="appModuleName"> module name of a winery application.</param>
+    /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
-    register(appModuleName: string, appInstanceNames: string[], zone: napa.zone.Zone): void;
+    register(appModulePath: string, appInstanceNames: string[], zone: napa.zone.Zone): Promise<void>;
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
@@ -57,36 +57,42 @@ export class LeafEngine implements Engine{
     }
 
     /// <summary> Register an application instance in current engine. </summary>
-    /// <param name="appModuleName"> module name of a winery application.</param>
+    /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
     public register(
-        appModuleName: string, 
+        appModulePath: string, 
         appInstanceNames: string[], 
-        zone: napa.zone.Zone = null): void {
+        zone: napa.zone.Zone = null): Promise<void> {
 
         if (zone != null) {
-            throw new Error("LeafEngine doesn't support register on a remote Zone.");
+            return Promise.reject("LeafEngine doesn't support register on a remote Zone.");
         }
 
         // Load application.
-        let appConfigPath = require.resolve(appModuleName + '/app.json');
+        let appConfigPath = require.resolve(appModulePath + '/app.json');
         let app = new Application(
                 this._objectContext,
                 config.ApplicationConfig.fromConfig(
                 this._settings,
                 appConfigPath));
 
-        // Put application in registry.
+        // If any instance name has already been registered, fail the whole register operation.
         for (let instanceName of appInstanceNames) {
             let lowerCaseName = instanceName.toLowerCase();
             if (this._applications.has(lowerCaseName)) {
-                throw new Error("Already registered with application name: '`$applicationName`'.");
+                return Promise.reject(`Already registered with application name: '${instanceName}'.`);
             }
+        }
 
+        // Put application in registry.
+        for (let instanceName of appInstanceNames) {
+            let lowerCaseName = instanceName.toLowerCase();
             this._applications.set(lowerCaseName, app);
             this._applicationInstanceNames.push(instanceName);
         }
+
+        return Promise.resolve();
     }
 
     /// <summary> Serve a request. </summary>
@@ -152,28 +158,39 @@ export class EngineProxy {
     }
 
     /// <summary> Register an application instance in current engine. </summary>
-    /// <param name="appModuleName"> module name of a winery application.</param>
+    /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
-    public register(appModuleName: string, 
+    public register(appModulePath: string, 
         appInstanceNames: string[], 
-        zone: napa.zone.Zone = undefined): void {
+        zone: napa.zone.Zone = undefined): Promise<void> {
         if (zone != null && zone != this._zone) {
-            throw new Error("RemoteEngine cannot register application for a different zone.");
+            return Promise.reject("EngineProxy cannot register application for a different zone.");
         }
-            
-        // TODO: @dapeng. implement this after introducing container.runAllSync.
-        // this._container.loadFileSync(path.resolve(__dirname, "index.js"));
-        // this._container.runAllSync('register', [appModuleName, JSON.stringify(appInstanceNames)]);
-        // this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
+
+        let instanceString: string = "";
+        for (let i = 0; i < appInstanceNames.length; ++i) {
+            if (i > 0) {
+                instanceString += ', ';
+            }
+            instanceString += `"${appInstanceNames[i]}"`;
+        }
+        let setupCode = `
+            var win = require("${__dirname.replace(/[\\]/g, "/")}/index");
+            win.register("${appModulePath.replace(/[\\]/g, "/")}", [${instanceString}])
+                .catch(e => console(e));
+            `;
+
+        return this._zone.broadcast(setupCode).then(() => {
+            this._applicationInstanceNames.concat(appInstanceNames);
+        });
     }
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
     public async serve(request: string | wire.Request): Promise<wire.Response> {
-        //let responseString = this._container.run('serve', [JSON.stringify(request)], );
         let zone = this._zone;
-        return zone.execute('winery', 'serve', [request])
+        return zone.execute('', 'win.serve', [request])
             .then((result: napa.zone.Result) => {
                 return Promise.resolve(wire.ResponseHelper.parse(result.payload));
             });
@@ -191,7 +208,7 @@ export class EngineHub implements Engine {
     private _localEngine: Engine;
 
     /// <summary> Zone to remote engine map. </summary>
-    private _remoteEngines: Map<napa.zone.Zone, Engine> = new Map<napa.zone.Zone, Engine>();
+    private _proxies: Map<napa.zone.Zone, Engine> = new Map<napa.zone.Zone, Engine>();
 
     /// <summary> Settings for local engine if needed. </summary>
     private _settings: EngineSettings;
@@ -209,10 +226,10 @@ export class EngineHub implements Engine {
     }
 
     /// <summary> Register an application for serving. </summary>
-    /// <param name="moduleName"> module name of a winery application.</param>
-    /// <param name="applicationNames"> a list of strings used as application names</param>
+    /// <param name="appModulePath"> full module path of a winery application.</param>
+    /// <param name="appInstanceNames"> a list of strings used as application instance names</param>
     /// <param name="zone"> zone to run the app. If null, use current isolate. </param>
-    public register(appModuleName: string, appInstanceNames: string[], zone: napa.zone.Zone = undefined) {
+    public register(appModulePath: string, appInstanceNames: string[], zone: napa.zone.Zone = undefined) : Promise<void> {
         let engine: Engine = undefined;
         if (zone == null) {
             if (this._localEngine == null) {
@@ -221,20 +238,21 @@ export class EngineHub implements Engine {
             engine = this._localEngine;
         }
         else {
-            if (this._remoteEngines.has(zone)) {
-                engine = this._remoteEngines.get(zone);
+            if (this._proxies.has(zone)) {
+                engine = this._proxies.get(zone);
             }
             else {
                 engine = new EngineProxy(zone);
-                this._remoteEngines.set(zone, engine);
+                this._proxies.set(zone, engine);
             }
         }
-        engine.register(appModuleName, appInstanceNames, undefined);
-        this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
-        for (let instanceName of this._applicationInstanceNames) {
-            let lowerCaseName = instanceName.toLowerCase();
-            this._engineMap.set(lowerCaseName, engine);
-        }
+        return engine.register(appModulePath, appInstanceNames, undefined).then(() => {
+            this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
+            for (let instanceName of appInstanceNames) {
+                let lowerCaseName = instanceName.toLowerCase();
+                this._engineMap.set(lowerCaseName, engine);
+            }
+        });
     }
 
     /// <summary> Serve winery request. </summary>
@@ -246,7 +264,7 @@ export class EngineHub implements Engine {
                     () => { return JSON.parse(<string>request);});
             }
 
-            // TODO: @dapeng, avoid extra parsing/serialization for remote engine.
+            // TODO: @dapeng, avoid extra parsing/serialization for engine proxy.
             let appName = (<wire.Request>request).application;
             if (appName == null) {
                 throw new Error("Property 'application' is missing from request.");
