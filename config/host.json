@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////
-// This file contains root settings for winery.
+// This file contains host settings for winery.
 // Users can do per-application override of these values.
 
 {

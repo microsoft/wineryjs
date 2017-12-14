@@ -7,7 +7,6 @@ import fs = require('fs');
 var Ajv = require('./ajv-bundle');
 var xml2js = require('./xml2js-bundle');
 
-/// TODO: move config reading to @napajs/config module.
 /// <summary> Class that wraps JSON schema validation. </summary>
 export class JsonSchema {
     private _fileName: string;

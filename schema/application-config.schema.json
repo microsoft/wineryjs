@@ -32,7 +32,7 @@
       "id": "http://www.wineryjs.org/application-config/defaultExecutionStack",
       "type": "array",
       "title": "Default execution stack consists of a list of interceptor names.",
-      "description": "Optional. If not specified, will inherit from Engine configuration.",
+      "description": "Optional. If not specified, will inherit from Host configuration.",
       "name": "defaultExecutionStack",
       "items": {
         "id": "http://www.wineryjs.org/application-config/defaultExecutionStack/0",

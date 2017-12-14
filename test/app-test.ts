@@ -1,5 +1,5 @@
 import {Application, RequestContext} from '../lib/app';
-import {LeafEngine} from '../lib/engine';
+import {LeafHost} from '../lib/host';
 
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
@@ -12,17 +12,17 @@ import * as assert from 'assert';
 
 
 describe('winery/app', () => {
-     let engine = new LeafEngine(
-            config.EngineConfig.fromConfig(
-                require.resolve('../config/engine.json')));
+     let host = new LeafHost(
+            config.HostConfig.fromConfig(
+                require.resolve('../config/host.json')));
 
     let app: Application = undefined; 
 
     describe('Application', () => {
         it('#ctor', () => {
-            app = new Application(engine.objectContext,
+            app = new Application(host.objectContext,
                 config.ApplicationConfig.fromConfig(
-                engine.settings,
+                host.settings,
                 path.resolve(__dirname, "test-app/app.json")));
         });
 
