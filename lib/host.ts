@@ -8,15 +8,15 @@ import * as wire from './wire';
 import * as config from './config';
 import * as utils from './utils';
 
-/// <summary> Engine config, which is the root config of winery. </summary>
-export interface EngineSettings extends Settings{
+/// <summary> Host config, which is the root config of winery. </summary>
+export interface HostSettings extends Settings{
     /// <summary> Throw exception on error, or return Response with error code. Default is true. </summary>
     throwExceptionOnError: boolean;
 }
 
-/// <summary> Interface for application engine. </summary>
-export interface Engine {
-    /// <summary> Register an application instance in current engine. </summary>
+/// <summary> Interface for application host. </summary>
+export interface Host {
+    /// <summary> Register an application instance in current host. </summary>
     /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
@@ -26,27 +26,27 @@ export interface Engine {
     /// <param name="request"> A JSON string or a request object. </param>
     serve(request: string | wire.Request): Promise<wire.Response>;
 
-    /// <summary> Get application instance names served by this engine. </param>
+    /// <summary> Get application instance names served by this host. </param>
     applicationInstanceNames: string[];
 }
 
-/// <summary> Engine on a leaf JavaScript worker . </summary>
-export class LeafEngine implements Engine{
+/// <summary> A concrete Host on a leaf JavaScript worker . </summary>
+export class LeafHost implements Host{
     // Lower-case name to application map.
     private _applications: Map<string, Application> = new Map<string, Application>();
 
     // Enabled application names. 
     private _applicationInstanceNames: string[] = [];
 
-    // Engine settings.
-    private _settings: EngineSettings;
+    // Host settings.
+    private _settings: HostSettings;
 
     // Global scope object context.
     private _objectContext: objectContext.ScopedObjectContext;
 
     /// <summary> Constructor. </summary>
-    /// <param> winery engine settings. </summary>
-    public constructor(settings: EngineSettings = null) {
+    /// <param> winery host settings. </summary>
+    public constructor(settings: HostSettings = null) {
         this._settings = settings;
         this._objectContext = new objectContext.ScopedObjectContext(
             "global",
@@ -56,7 +56,7 @@ export class LeafEngine implements Engine{
         );
     }
 
-    /// <summary> Register an application instance in current engine. </summary>
+    /// <summary> Register an application instance in current host. </summary>
     /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
@@ -66,7 +66,7 @@ export class LeafEngine implements Engine{
         zone: napa.zone.Zone = null): Promise<void> {
 
         if (zone != null) {
-            return Promise.reject("LeafEngine doesn't support register on a remote Zone.");
+            return Promise.reject("LeafHost doesn't support register on a remote Zone.");
         }
 
         // Load application.
@@ -123,7 +123,7 @@ export class LeafEngine implements Engine{
         return this._applicationInstanceNames;
     }
 
-    /// <summary> Get engine level object context. </summary>
+    /// <summary> Get host level object context. </summary>
     public get objectContext(): objectContext.ScopedObjectContext {
         return this._objectContext;
     }
@@ -143,12 +143,12 @@ export class LeafEngine implements Engine{
     }
 }
 
-/// <summary> Engine proxy to talk to another JavaScript worker. </summary>
-export class EngineProxy {
+/// <summary> Host proxy to talk to another JavaScript worker. </summary>
+export class HostProxy implements Host {
     /// <summary> Zone to run the app </summary>
     private _zone: napa.zone.Zone;
 
-    /// <summary> Application instance names running on this engine. </summary>
+    /// <summary> Application instance names running on this host. </summary>
     private _applicationInstanceNames: string[] = [];
 
     /// <summary> Constructor. </summary>
@@ -157,7 +157,7 @@ export class EngineProxy {
         this._zone = zone;
     }
 
-    /// <summary> Register an application instance in current engine. </summary>
+    /// <summary> Register an application instance in current host. </summary>
     /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
@@ -165,7 +165,7 @@ export class EngineProxy {
         appInstanceNames: string[], 
         zone: napa.zone.Zone = undefined): Promise<void> {
         if (zone != null && zone != this._zone) {
-            return Promise.reject("EngineProxy cannot register application for a different zone.");
+            return Promise.reject("HostProxy cannot register application for a different zone.");
         }
 
         let instanceString: string = "";
@@ -182,7 +182,7 @@ export class EngineProxy {
             `;
 
         return this._zone.broadcast(setupCode).then(() => {
-            this._applicationInstanceNames.concat(appInstanceNames);
+            this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
         });
     }
 
@@ -196,32 +196,32 @@ export class EngineProxy {
             });
     }
 
-    /// <summary> Get application instance names served by this engine. </param>
+    /// <summary> Get application instance names served by this host. </param>
     public get applicationInstanceNames(): string[] {
         return this._applicationInstanceNames;
     }
 }
 
-/// <summary> Engine hub. (this can only exist in Node.JS isolate) </summary>
-export class EngineHub implements Engine {
-    /// <summary> Local engine. Only instantiate when application is registered locally. </summary>
-    private _localEngine: Engine;
+/// <summary> Host hub. (this can only exist in Node.JS isolate) </summary>
+export class HostHub implements Host {
+    /// <summary> Local host. Only instantiate when application is registered locally. </summary>
+    private _localHost: Host;
 
-    /// <summary> Zone to remote engine map. </summary>
-    private _proxies: Map<napa.zone.Zone, Engine> = new Map<napa.zone.Zone, Engine>();
+    /// <summary> Zone to remote host map. </summary>
+    private _proxies: Map<napa.zone.Zone, Host> = new Map<napa.zone.Zone, Host>();
 
-    /// <summary> Settings for local engine if needed. </summary>
-    private _settings: EngineSettings;
+    /// <summary> Settings for local host if needed. </summary>
+    private _settings: HostSettings;
 
     /// <summary> Application instance names. </summary>
     private _applicationInstanceNames: string[] = [];
 
-    /// <summary> Application instance name to engine map. </summary>
-    private _engineMap: Map<string, Engine> = new Map<string, Engine>();
+    /// <summary> Application instance name to host map. </summary>
+    private _hostMap: Map<string, Host> = new Map<string, Host>();
 
     /// <summary> Constructor. </summary>
-    /// <param> winery engine settings. </summary>
-    public constructor(settings: EngineSettings = null) {
+    /// <param> winery host settings. </summary>
+    public constructor(settings: HostSettings = null) {
         this._settings = settings;
     }
 
@@ -230,54 +230,54 @@ export class EngineHub implements Engine {
     /// <param name="appInstanceNames"> a list of strings used as application instance names</param>
     /// <param name="zone"> zone to run the app. If null, use current isolate. </param>
     public register(appModulePath: string, appInstanceNames: string[], zone: napa.zone.Zone = undefined) : Promise<void> {
-        let engine: Engine = undefined;
+        let host: Host = undefined;
         if (zone == null) {
-            if (this._localEngine == null) {
-                this._localEngine = new LeafEngine(this._settings);
+            if (this._localHost == null) {
+                this._localHost = new LeafHost(this._settings);
             }
-            engine = this._localEngine;
+            host = this._localHost;
         }
         else {
             if (this._proxies.has(zone)) {
-                engine = this._proxies.get(zone);
+                host = this._proxies.get(zone);
             }
             else {
-                engine = new EngineProxy(zone);
-                this._proxies.set(zone, engine);
+                host = new HostProxy(zone);
+                this._proxies.set(zone, host);
             }
         }
-        return engine.register(appModulePath, appInstanceNames, undefined).then(() => {
+        return host.register(appModulePath, appInstanceNames, undefined).then(() => {
             this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
             for (let instanceName of appInstanceNames) {
                 let lowerCaseName = instanceName.toLowerCase();
-                this._engineMap.set(lowerCaseName, engine);
+                this._hostMap.set(lowerCaseName, host);
             }
         });
     }
 
     /// <summary> Serve winery request. </summary>
     public async serve(request: string | wire.Request): Promise<wire.Response> {
-        return new Promise<Engine>(resolve => {
+        return new Promise<Host>(resolve => {
             if (typeof request === 'string') {
                 request = utils.appendMessageOnException(
                     ". Fail to parse request string.",
                     () => { return JSON.parse(<string>request);});
             }
 
-            // TODO: @dapeng, avoid extra parsing/serialization for engine proxy.
+            // TODO: @dapeng, avoid extra parsing/serialization for host proxy.
             let appName = (<wire.Request>request).application;
             if (appName == null) {
                 throw new Error("Property 'application' is missing from request.");
             }
 
             let lowerCaseName = appName.toLowerCase();
-            if (!this._engineMap.has(lowerCaseName)) {
+            if (!this._hostMap.has(lowerCaseName)) {
                 throw new Error("Application '" + appName + "' is not registered for serving");
             }
             
-            resolve(this._engineMap.get(lowerCaseName));
-        }).then((engine: Engine) => {
-            return engine.serve(request);
+            resolve(this._hostMap.get(lowerCaseName));
+        }).then((host: Host) => {
+            return host.serve(request);
         });
     }
 

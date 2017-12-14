@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This file contains application serving code for winery.
+// This file contains application definition for winery.
 //
 // Each application sub-directory starts with an 'app.json', which is the root JSON file of this application. 
 // The 'app.json' declares several aspects of an application, described by './schema/application-config.schema.json'. 
@@ -45,8 +45,6 @@
 
 
 // External dependencies.
-
-// TODO: implement os.hostname(), it's used for debugging.
 import * as os from 'os';
 import * as path from 'path';
 import * as assert from 'assert';
@@ -61,7 +59,7 @@ import * as config from './config'
 import { NamedObject } from './named-object';
 
 /////////////////////////////////////////////////////////////////////////////////////////
-/// Application Engine for managing all applications.
+/// Application for managing all execution stack and required resources.
 
 /// <summary> Interface for global winery settings. </summary>
 export interface Settings {
@@ -148,7 +146,7 @@ export interface MetricDefinition {
 /// <summary> Class for settings of an application </summary>
 export interface ApplicationSettings extends Settings {
     /// <summary> ID of application. 
-    /// To distinguish from name, which is associated with application instance at runtime by AppEngine.register(),
+    /// To distinguish from name, which is associated with application instance at runtime by Host.register(),
     /// ID is used for identifying the purpose of application, usually we can put module name as ID.
     /// </summary>
     id: string;
@@ -178,17 +176,17 @@ export class Application {
     private _perEntryPointExecutionStack: Map<string, Interceptor[]>;
 
     /// <summary> Construct application from application settings. </summary>
-    /// <param name="engine"> Application engine that run current application. </summary>
+    /// <param name="hostContext"> Host level object context. </summary>
     /// <param name="settings"> Application settings. </summary>
     public constructor(
-        parentContext: objectContext.ScopedObjectContext,
+        hostContext: objectContext.ScopedObjectContext,
         settings: ApplicationSettings) {
         
         this._settings = settings;
         this._perAppObjectContext = new objectContext.ScopedObjectContext(
             "application",
             settings.baseDir,
-            parentContext,
+            hostContext,
             settings.objectContext);
 
         // Create default execution stack.

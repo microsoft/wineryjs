@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as config from '../lib/config';
 import * as app from '../lib/app';
-import * as engine from '../lib/engine';
+import * as host from '../lib/host';
 import * as path from 'path';
 import { metric } from 'napajs';
 
@@ -227,26 +227,26 @@ describe('winery/config', () => {
         });
     });
 
-    let engineSettings: engine.EngineSettings = undefined;
-    describe('EngineConfig', () => {
+    let hostSettings: host.HostSettings = undefined;
+    describe('HostConfig', () => {
         it('#fromConfig', () => {
-            engineSettings = config.EngineConfig.fromConfig(
-                require.resolve("../config/engine.json"));
+            hostSettings = config.HostConfig.fromConfig(
+                require.resolve("../config/host.json"));
 
-            assert.equal(engineSettings.allowPerRequestOverride, true);
-            assert.deepEqual(engineSettings.defaultExecutionStack, [
+            assert.equal(hostSettings.allowPerRequestOverride, true);
+            assert.deepEqual(hostSettings.defaultExecutionStack, [
                 "finalizeResponse",
                 "executeEntryPoint"
             ]);
-            assert.equal(engineSettings.baseDir, path.dirname(require.resolve('../config/engine.json')));
-            assert.equal(engineSettings.throwExceptionOnError, true);
+            assert.equal(hostSettings.baseDir, path.dirname(require.resolve('../config/host.json')));
+            assert.equal(hostSettings.throwExceptionOnError, true);
         });
     });
     
     describe('ApplicationConfig', () => {
         let appSettings: app.ApplicationSettings = undefined;
         it('#fromConfig', () => {
-            appSettings = config.ApplicationConfig.fromConfig(engineSettings,
+            appSettings = config.ApplicationConfig.fromConfig(hostSettings,
                 path.resolve(__dirname, "test-app/app.json"));
 
         });

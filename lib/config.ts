@@ -3,7 +3,7 @@ import * as utils from './utils';
 import * as objectModel from './object-model';
 import * as app from './app';
 import { metric } from 'napajs'
-import * as engine from './engine'
+import * as host from './host'
 
 //////////////////////////////////////////////////////////////////////////////////
 // Static classes that create or read definition objects.
@@ -202,12 +202,12 @@ export class ApplicationConfig {
     /// Throw exception if JS object doesn't match schema.
     /// Schema: "../schema/application-config.schema.json"
     /// </summary>
-    /// <param name="parentSettings"> Parent settings to inherit as default values. </param>
+    /// <param name="parentSettings"> Host settings to inherit as default values. </param>
     /// <param name="jsValue"> a JS value to create ApplicationSettings object. </param>    
     /// <param name="basePath"> Base path used to resolve relative paths. </param>
     /// <returns> An ApplicationSettings object. </returns>
     public static fromConfigObject(
-        parentSettings: app.Settings, 
+        hostSettings: app.Settings, 
         jsValue: any, 
         basePath: string): app.ApplicationSettings {
 
@@ -219,20 +219,20 @@ export class ApplicationConfig {
             description: jsValue.description,
             allowPerRequestOverride: jsValue.allowPerRequestOverride,
             defaultExecutionStack: jsValue.defaultExecutionStack,
-            objectContext: parentSettings.objectContext,
+            objectContext: hostSettings.objectContext,
             metrics: []
         };
 
         // Optional: allowPerRequestOverride. 
-        // Inherit engine settings if it's not provided from application.
+        // Inherit host settings if it's not provided from application.
         if (appSettings.allowPerRequestOverride == null) {
-            appSettings.allowPerRequestOverride = parentSettings.allowPerRequestOverride;
+            appSettings.allowPerRequestOverride = hostSettings.allowPerRequestOverride;
         }
 
         // Optional: defaultExecutionStack. 
-        // Inherit engine settings if it's not provided from application.
+        // Inherit host settings if it's not provided from application.
         if (appSettings.defaultExecutionStack == null) {
-            appSettings.defaultExecutionStack = parentSettings.defaultExecutionStack;
+            appSettings.defaultExecutionStack = hostSettings.defaultExecutionStack;
         }
 
         // Required: 'objectTypes'
@@ -299,7 +299,7 @@ export class ApplicationConfig {
         }
 
         appSettings.objectContext = new objectModel.ScopedObjectContextDefinition(
-            parentSettings.objectContext,
+            hostSettings.objectContext,
             typeDefinitions,
             providerDefinitions,
             namedObjectDefinitions,
@@ -354,20 +354,20 @@ export class ApplicationConfig {
     }
 }
 
-/// <summary> Helper class to read EngineSettings from config. </summary>
-export class EngineConfig {
+/// <summary> Helper class to read HostSettings from config. </summary>
+export class HostConfig {
     /// <summary> JSON schema used to validate config. </summary>
     private static readonly SETTINGS_SCHEMA: utils.JsonSchema 
-        = new utils.JsonSchema(path.resolve(SCHEMA_DIR, "engine-config.schema.json"));
+        = new utils.JsonSchema(path.resolve(SCHEMA_DIR, "host-config.schema.json"));
 
-    /// <summary> Create EngineSettings from a JS object that conform with schema.
+    /// <summary> Create HostSettings from a JS object that conform with schema.
     /// Throw exception if JS object doesn't match schema.
-    /// Schema: "../schema/engine-config.schema.json"
+    /// Schema: "../schema/host-config.schema.json"
     /// </summary>
-    /// <param name="jsValue"> a JS value to create EngineSettings object. </param>    
+    /// <param name="jsValue"> a JS value to create HostSettings object. </param>    
     /// <param name="basePath"> Base path used to resolve relative paths. </param>
-    /// <returns> An EngineSettings object. </returns>
-    public static fromConfigObject(jsValue: any, basePath: string): engine.EngineSettings {
+    /// <returns> A HostSettings object. </returns>
+    public static fromConfigObject(jsValue: any, basePath: string): host.HostSettings {
          utils.ensureSchema(jsValue, this.SETTINGS_SCHEMA);
          
          let typeDefinitions: objectModel.TypeDefinition[] = [];
@@ -409,19 +409,19 @@ export class EngineConfig {
          };
     }
 
-    /// <summary> Create EngineSettings object from engine config file (.config or .json)
+    /// <summary> Create HostSettings object from host config file (.config or .json)
     /// Throws exception if configuration file parse failed or doesn't match the schema.
-    /// Schema: '../schema/engine-config.schema.json'
+    /// Schema: '../schema/host-config.schema.json'
     /// </summary>
-    /// <param name="engineConfigFile"> a JSON file in engine config schema. </param>
-    /// <returns> An EngineSettings object. </returns>
-    public static fromConfig(engineConfigFile: string): engine.EngineSettings {
+    /// <param name="hostConfigFile"> a JSON file in host config schema. </param>
+    /// <returns> An HostSettings object. </returns>
+    public static fromConfig(hostConfigFile: string): host.HostSettings {
         return utils.appendMessageOnException(
-            "Error found in winery setting file: '" +engineConfigFile + "'.",
+            "Error found in winery setting file: '" +hostConfigFile + "'.",
             () => {
                 return this.fromConfigObject(
-                    utils.readConfig(engineConfigFile),
-                    path.dirname(engineConfigFile));
+                    utils.readConfig(hostConfigFile),
+                    path.dirname(hostConfigFile));
             });
     }
 }
