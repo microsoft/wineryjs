@@ -14,10 +14,23 @@ import { ObjectContext } from './object-context';
 
 /// <summary> Interface for Named object definition. </summary>
 export interface NamedObjectDefinition {
+    /// <summary> Name or key to retrieve this object. </summary>
     name: string;
+
+    /// <summary> Description for this object. </summary>
     description?: string;
+
+    /// <summary> If this object is private, means that cannot be listed by entry points `listNamedObjects`. </summary>
     private?: boolean;
+
+    /// <summary> If this object overrides a previous object definition with the same name. 
+    /// This may be useful if you borrow definition file from other apps and want to override individual ones.
+    /// </summary>
     override?: boolean;
+
+    /// <summary> Value of this named object, which is described by plain JavaScript object or URI.
+    /// The plain JavaScript object / URI can be constructed by registered ObjectFactory and ObjectProvider.
+    /// </summary>
     value: any;
 
     /// <summary> Dependency from current definition to object context. This is calculated automatically.</summary>
