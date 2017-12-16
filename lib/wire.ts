@@ -7,16 +7,16 @@ import * as path from 'path';
 
 /// <summary> Interface for control flags. </summary>
 export type ControlFlags = {
-    /// <summary> Enable debugging or not. </summary>
+    /// <summary> Enable debugging or not. Set to false by default. </summary>
     debug?: boolean;
 
-    /// <summary> Return performance numbers or not. </summary>
+    /// <summary> Return performance numbers or not. Set to false by default. </summary>
     perf?: boolean;
 }
 
 /// <summary> Interface for winery request. </summary>
 export interface Request {
-    /// <summary> Application name </summary>
+    /// <summary> Registered application instance name </summary>
     application: string;
 
     /// <summary> Entry point name </summary>
@@ -25,7 +25,7 @@ export interface Request {
     /// <summary> Trace ID </summary>
     traceId?: string;
 
-    /// <summary> Input JS object for entry point </summary>
+    /// <summary> User input as the 1st argument passing to entry point function </summary>
     input?: any;
 
     /// <summary> Control flags </summary>

@@ -16,11 +16,24 @@ export interface ObjectWithType {
 
 /// <summary> Object type definition to register a type in Napa. </summary>
 export interface TypeDefinition {
+    /// <summary> Type name to apply this constructor. </summary>
     typeName: string;
+
+    /// <summary> Description of this type. </summary>
     description?: string;
+
+    /// <summary> Constructor module name. </summary>
     moduleName: string;
+
+    /// <summary> Constructor function name. </summary>
     functionName: string;
+
+    /// <summary> If this definition overrides a previous type definition with the same type name. 
+    /// This may be useful if you borrow definition file from other apps and want to override individual ones.
+    /// </summary>
     override?: boolean;
+
+    /// <summary> Example input object for human consumption. </summary>
     exampleObjects?: any[];
 }
 

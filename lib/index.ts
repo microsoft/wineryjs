@@ -3,9 +3,9 @@ import * as objectModel from './object-model';
 import * as builtins from './builtins';
 import * as config from './config';
 import * as utils from './utils'
-import * as engine from './engine';
+import * as host from './host';
 
-export {builtins, config, engine, objectModel, utils};
+export {builtins, config, host, objectModel, utils};
 export * from './app'
 export * from './wire'
 
@@ -13,14 +13,14 @@ import { Request, Response} from './wire';
 import * as path from 'path';
 import * as napa from 'napajs';
 
-/// <summary> A global engine instance. </summary>
-let _engine: engine.Engine = undefined;
-let _engineSettings = config.EngineConfig.fromConfig(
-    path.resolve(__dirname, "../config/engine.json"));
+/// <summary> A global host instance. </summary>
+let _host: host.Host = undefined;
+let _hostSettings = config.HostConfig.fromConfig(
+    path.resolve(__dirname, "../config/host.json"));
 
-/// <summary> Initialize engine on demand. </summary>
-function initEngine() {
-    _engine = new engine.EngineHub(_engineSettings);
+/// <summary> Initialize host on demand. </summary>
+function initHost() {
+    _host = new host.HostHub(_hostSettings);
 }
 
 /// <summary> Register a winery application. </summary>
@@ -43,12 +43,12 @@ export function register(
 
     let appModulePath: string = path.dirname(require.resolve(appModuleName + '/app.json'));
 
-    // Lazy creation of engine when register is called at the first time.
-    if (_engine == null) {
-        initEngine();
+    // Lazy creation of host when register is called at the first time.
+    if (_host == null) {
+        initHost();
     }
 
-    return _engine.register(
+    return _host.register(
         appModulePath, 
         appInstanceNames, 
         zone);
@@ -59,10 +59,10 @@ export function register(
 /// <returns> A promise of Response. This function call may be synchrous or asynchrous depending on the entrypoint. </returns>
 export async function serve(
     request: string | Request): Promise<Response> {
-    return await _engine.serve(request);
+    return await _host.serve(request);
 }
 
-/// <summary> Get all application names served by current engine. </summary>
+/// <summary> Get all application names served by current host. </summary>
 export function getApplicationInstanceNames(): string[] {
-    return _engine.applicationInstanceNames;
+    return _host.applicationInstanceNames;
 }

@@ -119,11 +119,24 @@ export interface ObjectProvider {
 
 /// <summary> Object provider definition to register a URI based object provider in Napa. </summary>
 export interface ProviderDefinition {
+    /// <summary> </summary>
     protocol: string;
+
+    /// <summary> Description of this protocol. </summary>
     description?: string;
+
+    /// <summary> Provider module name. </summary>
     moduleName: string;
+
+    /// <summary> Provider function name. </summary>
     functionName: string;
+
+    /// <summary> If this provider overrides a previous declared provider with the same protocol name. 
+    /// This may be useful if you borrow definition file from other apps and want to override individual ones.
+    /// </summary>
     override?: boolean;
+
+    /// <summary> Example URI for human consumption. </summary>
     exampleUri?: string[];
 }
 
