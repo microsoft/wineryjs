@@ -1,6 +1,6 @@
 # Winery.js
 
-Winery.js is a framework to enable services to run experiments in parallel with serving production traffic. Besides A/B testing, Winery.js supports experimentation at per-request level, which minimizes turnaround time as code evolves. Winery.js also provides a structure for creating applications declaratively, with the access to [Napa.js](https://github.com/Microsoft/napajs) capabilities, such as multi-threading, pluggable logging, metric, and etc. Before Winery.js was branched out as an open source project, it has been used in Bing to empower feature experiments for machine learned models.
+Winery.js is a framework to enable services to run experiments in parallel with serving production traffic. Besides A/B testing, it supports experimentation at per-request level, which minimizes turnaround time when code evolves fast. Winery.js also provides a structure for creating applications declaratively, with the access to [Napa.js](https://github.com/Microsoft/napajs) capabilities, such as multi-threading, pluggable logging, metric, and etc. Before this work was branched out as an open source project, it has been used in Bing to empower feature experiments for machine learned models.
 
 ## Installation
 ```
@@ -29,17 +29,17 @@ const request: w.Request = {
 const response: w.Response = await w.serve(request);
 console.log(response);
 ```
-## Why Winery.js
-The goal of Winery.js is to take experimentation agility to the extreme, which needs the ability to change a wide range of behaviors (logics, resources) instantly without impacting production service quality. This framework is an implementation of ideas discussed in white paper [Continuous modification: a process to build constantly evoling services](https://github.com/daiyip/continuous-modification).
-
+## Why Winery.js?
+The goal of Winery.js is to take experimentation agility to the extreme, which urges the ability to change a wide range of behaviors (logics, resources) instantly without impacting production service quality. This framework is an implementation of ideas discussed in white paper [Continuous modification: a process to build constantly evoling services](https://github.com/daiyip/continuous-modification).
 
 ## Features
 - Support per-request dependency injection for rapid development
 - Support per-request-plan dependency injection for A/B testing
-- Rich dependency injection capabilities: parameters, objects, functions
+- Rich dependency injection capabilities: data, functions and behaviors
 - Declarative application development
 - Flexible flow control: Entrypoint with stacked interceptors
 - Built-in metric and request logging support
+- Built-in types, entry points and interceptors
 - Hosting application on Napa zone for computation heavy scenarios
 
 ## Architecture
@@ -48,6 +48,7 @@ As an application framework, Winery.js has following concepts at high level:
 - [`Application`](./docs/api/application.md): entity that manages a list of service methods and resources for a specific problem domain
 - [`Request`](./docs/api/request.md): plain JavaScript object to describe request sent to an `Application`
 - [`Response`](./docs/api/response.md): plain JavaScript object to describe response return from an `Application`
+
 
 ![Winery.js Architecture](./docs/images/arch.png)
 
