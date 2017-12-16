@@ -53,7 +53,7 @@ As an application framework, Winery.js has following concepts at high level:
 ![Winery.js Architecture](./docs/images/arch.png)
 
 ## Tutorials
-- [Writing Winery.js applications step by step](./docs/tutorial/step-by-step/.md)
+- [Writing Winery.js applications step by step](./docs/tutorial/step-by-step.md)
 
 # Contribute
 You can contribute to Winery.js in following ways:
