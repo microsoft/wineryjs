@@ -138,6 +138,7 @@ Example 4: a succeeded response with debug on and perf on.
 ```
 
 Example 5: a failed response with debug on.
+```ts
 {
     responseCode: 1,
     errorMessage: "Error: Cannot find module 'abc'",
@@ -151,3 +152,4 @@ Example 5: a failed response with debug on.
         }
     }
 }
+```
