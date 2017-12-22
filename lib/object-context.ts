@@ -57,7 +57,7 @@ export interface ObjectContext {
     /// <returns> Named object, or undefined if not found. </returns>
     get(name: string): NamedObject;
 
-    /// <summary> Iterator each object on current context. Overrided object will only be visited once from higher scope. </summary>
+    /// <summary> Iterate each object on current context. Overriden object will only be visited once from higher scope. </summary>
     /// <param name="callback"> Callback on each named object. </summary>
     forEach(callback: (object: NamedObject) => void): void;
 

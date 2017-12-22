@@ -2,7 +2,7 @@
 
 `Response` is a plain JavaScript object to describe responses returned from an `Application`.
 
-It's defined in [`./lib/wire.ts`](../../lib/wire.ts) as following:
+It's defined by [JSON schema](../../schema/response.schema.json) or interface  [`Response`](../../lib/wire.ts) as following:
 
 ```ts
 // <summary> Response code </summary>
@@ -41,46 +41,42 @@ export interface Response {
     perfInfo?: PerfInfo;
 }
 ```
-For succeeded requests, users will mostly care about the `output` property.
-But for failed requests, `responseCode` and `errorMessage` may be useful to indicate the error.
+## Basic Fields
 
-If `controlFlags.debug` is set to true in `Request`, `debugInfo` will be present, which is defined as:
+| Property Name | Present | Description   |
+|---------------|----------------|---------------|
+| responseCode  | Always              | Response code |
+| errorMessage  | When responseCode is not 0 (success)              | A brief message on why request had failed|
+| output        | When entrypoint function has a return value              | Entrypoint return value |
+| debugInfo     | When `controlFlags.debug` set to `true` | Exception details, event logs for current request |
+| perfInfo      | When `controlFlags.perf` set to `true` | Updated metrics for current request |
 
-```ts
+## Debug Information
+When `controlFlags.debug` is set to `true`, `debugInfo` is returned containing 3 optional fields:
+| Property name | Present                  | Description                                |
+|---------------|--------------------------|--------------------------------------------|
+| exception     | When exception is thrown | Exception details                          |
+| events        | Always                   | Output from `context.debug` sorted by time |
+| details       | Always                   | Key/value pairs from `context.detail`      |
+### Exception
+Property *"exception"* is an object with following fields:
+| Property name | Type   | Description                                  |
+|---------------|--------|----------------------------------------------|
+| stack         | string | stack trace                                  |
+| message       | string | exception message                            |
+| fileName      | string | file name from where exception is thrown     |
+| lineNumber    | number | line number from where exception is thrown   |
+| columnNumber  | number | column number from where exception is thrown |
+### Events
+Property *\"events\"* is an array of objects with following fields:
+| Property name | Type   | Description                             |
+|---------------|--------|-----------------------------------------|
+| eventTime     | Date   | time when event is logged               |
+| logLevel      | string | "debug", "info", "warning", or "error"  |
+| message       | string | message of the event                    |
 
-/// <summary> Exception information in response. </summary>
-export type ExceptionInfo = {
-    stack: string;
-    message: string;
-    fileName?: string;
-    lineNumber?: number;
-    columnNumber?: number;
-}
-
-/// <summary> Debug event in DebugInfo. </summary>
-export type DebugEvent = {
-    eventTime: Date;
-    logLevel: string;
-    message: string;
-}
-
-/// <summary> Debug information when debug flag is on. </summary>
-export type DebugInfo = {
-    exception: ExceptionInfo;
-    events: DebugEvent[];
-    details: { [key: string]: any };
-    machineName: string;
-}
-```
-
-If `controlFlags.perf` is set to true in `Request`, `perfInfo` will be present, now we only have total latency as perf data, but more may be added in future.
-
-```ts
-/// <summary> Write performance numbers when perf flag is on. </summary>
-export type PerfInfo = {
-    processingLatencyInMS: number;
-}
-```
+### Performance Information
+When `controlFlags.perf` is set to `true`, `perfInfo` will be filled. It's a dictionary of key/values, the keys are the display name of metrics, and the values are the value of these metrics.
 
 ## Examples:
 
