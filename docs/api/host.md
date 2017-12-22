@@ -1,5 +1,5 @@
 # Host
-`Host` is a concept to host applications and serve user requests. Its interface is defined in [`lib/host.ts`](../../lib/host.md) as:
+`Host` is an abstraction to host applications and serve user requests. Its interface is defined in [`lib/host.ts`](../../lib/host.md) as:
 
 ```ts
 /// <summary> Interface for application host. </summary>

@@ -2,7 +2,7 @@
 
 `Request` is a plain JavaScript object to describe requests sent to an `Application`.
 
-It's defined in [`./lib/wire.ts`](../../lib/wire.ts) as following:
+It's defined by [JSON schema](../../schema/request.schema.json) or interface [`Request`](../../lib/wire.ts):
 
 ```ts
 /// <summary> Interface for control flags. </summary>
@@ -41,94 +41,23 @@ export interface Request {
     overrideProviders?: objectModel.ProviderDefinition[];
 }
 ```
-### Input for Overriding Data and Behaviors
-Further, all information carried in the request for dependency injection are under properties named `overrideXXX`. In particular, 3 types of override are supported:
-- `overrideTypes`: override object creation behaviors. See [`ObjectFactory`](./application.md#object-factory)
-- `overrideProviders`: override object provisioning behaviors from URI. See [`ObjectProvider`](./application.md#object-provider).
-- `overrideObjects`: override named objects. See [`NamedObject`](./application.md#named-object).
+## Basic Fields
+| Property name |  Required | Description                                                 |
+|---------------|-----------|-------------------------------------------------------------|
+| application   | Y         | Application instance name (or alias) to request for service |
+| entrypoint    | Y         | Name of the entrypoint object to request for service        |
+| input         | N         | User object as input that will be passed to entrypoint function, whose schema is entrypoint specific |
+| controlFlags  | N         | Flags for enabling debugging and instrumentation |
+ 
+## Fields to Override Object Context
+Further, object creation and object retrieval behaviors can be overriden from request with properties with prefix *"override"*. 
 
-Interfaces of these override information are defined as following:
+| Property name     | Required | Description |
+|-------------------|----------|-------------|
+| overrideTypes     | N        | override constructor of objects created [from plain JavaScript object](./object-context.md#from-plain-javascript-object) |
+| overrideProviders | N        | override provider of objects created [from URI](./object-context.md#from-uri) |
+| overrideObjects   | N        | override [named objects](./object-context.md#named-object) |
 
-[`./lib/object-type.ts`](../../lib/object-type.ts)
-```ts
-/// <summary> Object type definition to register a type in Napa. </summary>
-export interface TypeDefinition {
-    /// <summary> Type name to apply this constructor. </summary>
-    typeName: string;
-
-    /// <summary> Description of this type. </summary>
-    description?: string;
-
-    /// <summary> Constructor module name. </summary>
-    moduleName: string;
-
-    /// <summary> Constructor function name. </summary>
-    functionName: string;
-
-    /// <summary> If this definition overrides a previous type definition with the same type name. 
-    /// This may be useful if you borrow definition file from other apps and want to override individual ones.
-    /// </summary>
-    override?: boolean;
-
-    /// <summary> Example input object for human consumption. </summary>
-    exampleObjects?: any[];
-}
-```
-
-[`./lib/object-provider.ts`](../../lib/object-provider.ts)
-
-```ts
-/// <summary> Object provider definition to register a URI based object provider in Napa. </summary>
-export interface ProviderDefinition {
-    /// <summary> </summary>
-    protocol: string;
-
-    /// <summary> Description of this protocol. </summary>
-    description?: string;
-
-    /// <summary> Provider module name. </summary>
-    moduleName: string;
-
-    /// <summary> Provider function name. </summary>
-    functionName: string;
-
-    /// <summary> If this provider overrides a previous declared provider with the same protocol name. 
-    /// This may be useful if you borrow definition file from other apps and want to override individual ones.
-    /// </summary>
-    override?: boolean;
-
-    /// <summary> Example URI for human consumption. </summary>
-    exampleUri?: string[];
-}
-```
-
-[`./lib/named-object.ts`](../../lib/named-object.ts)
-```ts
-/// <summary> Interface for Named object definition. </summary>
-export interface NamedObjectDefinition {
-    /// <summary> Name or key to retrieve this object. </summary>
-    name: string;
-
-    /// <summary> Description for this object. </summary>
-    description?: string;
-
-    /// <summary> If this object is private, means that cannot be listed by entry points `listNamedObjects`. </summary>
-    private?: boolean;
-
-    /// <summary> If this object overrides a previous object definition with the same name. 
-    /// This may be useful if you borrow definition file from other apps and want to override individual ones.
-    /// </summary>
-    override?: boolean;
-
-    /// <summary> Value of this named object, which is described by plain JavaScript object or URI.
-    /// The plain JavaScript object / URI can be constructed by registered ObjectFactory and ObjectProvider.
-    /// </summary>
-    value: any;
-
-    /// <summary> Dependency from current definition to object context. This is calculated automatically.</summary>
-    dependencies?: ObjectContextDependency;
-}
-```
 
 ## Examples
 

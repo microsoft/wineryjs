@@ -28,7 +28,7 @@ export interface NamedObjectDefinition {
     /// </summary>
     override?: boolean;
 
-    /// <summary> Value of this named object, which is described by plain JavaScript object or URI.
+    /// <summary> Value of the input to create this named object, which is described by plain JavaScript object or URI.
     /// The plain JavaScript object / URI can be constructed by registered ObjectFactory and ObjectProvider.
     /// </summary>
     value: any;
