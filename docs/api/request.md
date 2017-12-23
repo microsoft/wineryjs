@@ -54,7 +54,7 @@ There are two groups of fields in `Request`:
 | input         | N         | User object as input that will be passed to entrypoint function, whose schema is entrypoint specific |
 | controlFlags  | N         | Flags for enabling debugging and instrumentation |
  
-## Fields to Override Object Context
+## Override Fields
 Further, object creation and object retrieval behaviors can be overriden from request with properties with prefix *"override"*. 
 
 | Property name     | Required | Description |

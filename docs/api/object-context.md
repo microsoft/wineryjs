@@ -1,6 +1,8 @@
 # Object Context
 
-`ObjectContext` is an abstraction to encapsulate behaviors for object creation and object retrieval at runtime. Its interface is defined in [`../lib/object-context.ts`](../../lib/object-context.ts) as following:
+**Object Context** is an entity to encapsulate behaviors for object creation and object retrieval at runtime. 
+
+Its interface `ObjectContext` is defined in [`../lib/object-context.ts`](../../lib/object-context.ts) as following:
 
 ```ts
 /// <summary> Interface for ObjectContext </summary>
@@ -25,6 +27,7 @@ export interface ObjectContext {
     baseDir: string;
 }
 ```
+## Override Chain
 `ObjectContext` can be chained to form an override relationship, that child context can inherit/override behaviors from its parent. 
 
 By chaining all runtime entities together, from `Request`,  `RequestTemplate` to `Application` and `Host`, users can override behaviors for object creation and retrieval at any of these 4 levels.
@@ -32,9 +35,9 @@ By chaining all runtime entities together, from `Request`,  `RequestTemplate` to
 ![Object Context Overriding Chain](../images/object-context-chain.png)
 
 ## Object Creation
-Winery.js provides two ways for object creation, one is to construct an object from a plain JavaScript object input, the other is to create an object from a URI.
+Winery.js provides two ways for object creation, one is to construct an object from a plain JavaScript object input (Object types), the other is to create an object from a URI (Object providers)
 
-### From plain JavaScript object
+### Object Types
 - For primitive types, method `ObjectContext.create` simply pass through their values.
 
 - For object-type input, a string property *"_type"* is required, which will be used as a key to look up constructor (or factory method) for creating the object.
@@ -95,7 +98,7 @@ The registration entry for *Point* shall look like:
 ```
 You can also check out [registration for built-in types](../../config/builtin-types.json).
 
-#### <a name="object-type-usage"></a>Usage
+#### <a name="object-type-usage"></a>Using Object Types
 Following code creates two `Point2D` objects at runtime and print their distance:
 ```ts
 import {ObjectContext} from 'winery'
@@ -108,7 +111,7 @@ function doSomething(context: ObjectContext): void {
 ```
 Please note that you should always use `ObjectContext` to create the objects instead of `new` it directly if you want to override the object creation behavior later.
 
-### From URI
+### Object Providers
 In many cases, it's beneficial to describe an object using an URI, like "file://abc.txt", or "http://www.something.com/a", and etc. Therefore, Winery.js also supports creating an object from an [URI](../../lib/object-provider.ts).
 
 It's very similar to creating objects from plain objects, except that the input is just a string in the format of an URI.
@@ -140,7 +143,7 @@ Following JSON object (see [schema](../../schema/object-provider-config.schema.j
 ```
 Similarly, provider methods can be registered at `Host` and `Application` level in files referenced by property *"objectProviders"*, or get overriden at `RequestTemplate` and `Request` level in elements of property *"overrideProviders"*.
 
-#### <a name="object-provider-usage"></a> Usage
+#### <a name="object-provider-usage"></a> Using Object Providers
 To create Point2D from URIs at runtime:
 ```ts
 function doSomething(context: ObjectContext): void {
@@ -151,10 +154,10 @@ function doSomething(context: ObjectContext): void {
 ```
 
 ## Object Retrieval
-How to retrive an existing object is another dimension of the problem. Winery.js supports this functionality via `NamedObject`, which is an object associated with a global unique name.
+How to retrive an existing object is another dimension of the problem. Winery.js supports this functionality via **Named Object**, which is an object associated with a global unique name.
 
-### Named Object
-`NamedObject` is created from `NamedObjectDefinition`, while `NamedObjectDefinition` can be specified from a plain JavaScript object or from JSON. 
+### Named Objects
+Named objects are defined by interface `NamedObject`, which is created from `NamedObjectDefinition`. `NamedObjectDefinition` can be specified from a plain JavaScript object or from JSON. 
 
 Both of them are defined in [`./lib/named-object.ts`](../../lib/named-object.ts):
 ```ts
@@ -208,7 +211,7 @@ A JSON object below conforms to the [schema](../../schema/named-object-config.sc
 The same as [`ObjectTypes`](#from-plain-javascript-object) and [`ObjectProviders`](#from-uri), `NamedObject` can be registered at `Host` and `Application` level by files under property *"namedObjects"*, or get overriden at `RequestTemplate` and `Request` level by carrying the new definition under property *"overrideObjects"*. 
 
 
-### <a name="named-object-usage"></a> Usage
+### <a name="named-object-usage"></a> Using Named Objects
 Following code demostrates the retrival of this pre-defined object at runtime. 
 ```ts
 function doSomething(context: ObjectContext): void {
