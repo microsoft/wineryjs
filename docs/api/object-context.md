@@ -29,8 +29,7 @@ export interface ObjectContext {
 
 By chaining all runtime entities together, from `Request`,  `RequestTemplate` to `Application` and `Host`, users can override behaviors for object creation and retrieval at any of these 4 levels.
 
-TODO: add diagram here
-
+![Object Context Overriding Chain](../images/object-context-chain.png)
 
 ## Object Creation
 Winery.js provides two ways for object creation, one is to construct an object from a plain JavaScript object input, the other is to create an object from a URI.

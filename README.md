@@ -41,7 +41,7 @@ console.log(response);
 - Built-in instrumentation and monitoring support
 
 
-## High Level Design
+## Overview
 
 Winery.js was built based on the idea of dependency injection at various levels, thus its core is to encapsulate object creation and object retrieval behaviors with an overriding mechanism. White paper [Continuous modification: a process to build constantly evoling services](https://github.com/daiyip/continuous-modification) had discussed this idea in details. 
 
@@ -54,10 +54,29 @@ These runtime entities are:
 - [`Request`](./docs/api/request.md): multi-instance object that describes request from user. Live short and is configurable at runtime.
 
 
-![Winery.js Architecture](./docs/images/arch.png)
+![Winery.js Architecture](./docs/images/architecture.png)
 
-## Tutorials
-- [Writing Winery.js applications step by step](./docs/tutorial/step-by-step.md)
+## Specification
+- [Application](./docs/api/application.md)
+  - [Concepts](./docs/api/application.md#concepts)
+  - [Developing an Application](./docs/api/application.md#develop)
+- [Host](./docs/api/host.md)
+  - [Concepts](./docs/api/host.md#concepts)
+  - [Configuring a Host]((./docs/api/host.md#configuration))
+  - [Hosting Applications](./docs/api/host.md#usage)
+- [Request Template](./docs/api/request-template.md)
+  - [Concepts](./docs/api/request-template.md#concept)
+  - [Creating a Request Template](./docs/api/request-template.md#create)
+- [Request](./docs/api/request.md)
+  - [Concepts](./docs/api/request.md#concepts)
+  - [Examples](./docs/api/request.md#examples)
+- [Response](./docs/api/response.md)
+  - [Concepts](./docs/api/response.md#concepts)
+  - [Examples](./docs/api/response.md#examples)
+- [Object Context](./docs/api/object-context.md)
+  - [Concepts](./docs/api/object-context.md#concepts)
+  - [Configuring Object Context](./docs/api/object-context.md#configuration)
+
 
 # Contribute
 You can contribute to Winery.js in following ways:
