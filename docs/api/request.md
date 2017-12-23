@@ -41,6 +41,11 @@ export interface Request {
     overrideProviders?: objectModel.ProviderDefinition[];
 }
 ```
+There are two groups of fields in `Request`: 
+- Basic fields that describes request destination and input of service method
+- Fields that define request level ObjectContext to override request template level or application level ObjectContext.
+
+![Request Object Layout](../images/request-layout.png)
 ## Basic Fields
 | Property name |  Required | Description                                                 |
 |---------------|-----------|-------------------------------------------------------------|

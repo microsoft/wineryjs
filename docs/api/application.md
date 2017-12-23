@@ -1,18 +1,25 @@
 # Application
-`Application` is an abstraction that manages resources for request execution and serve user requests under a problem domain. It holds
-- An [`ObjectContext`](./object-context.md) object as a container for application-level objects, such as `Interceptor`, `EntryPoint`, and etc. 
+
+`Application` is an entity that exposes a list of logical related service methods, and manages resources to execute them.  
+
+From deployment perspective, application is developed and distributed as a NPM module, with an `app.json` at its root directory.
+
+Programmingly, an application is a container that  holds
+- An [`ObjectContext`](./object-context.md) object as an application-level container of object types, object providers, and a collection of named objects. Particularly, named objects of `Interceptor` and `EntryPoint` type create the execution stack for request processing.
 - A collection of `Metric` for application level monitoring
 
-TODO: add diagram
+![Application Object Layout](../images/application-layout.png)
 
-Based on `Interceptor`s and `Entrypoint`s, a mechanism for routing requests and execute them are established.
 ## Execution stack
+Based on **Interceptor** and **Entry Point**, an application execution stack is implemented for routing requests and execute them.
 
-When serving a request, the execution flow is organized into a stack of `Interceptor`s. Each interceptor can shortcircuit the request or relay to next interceptor. The design of interceptors allow us to apply policies like authentication, logging, pre-process and post-process in a configurable way to each `EntryPoint`, yet provide a convenient way to debug requests.
+When serving a request, execution is planned as a stack of interceptors. Each interceptor can shortcircuit the request or relay to the next interceptor. Stacking interceptors allow us to apply policies like authentication, logging, request pre-processing and response post-processing in a flexible and reusable way. 
 
-TODO: add diagram.
+![Application Execution Stack](../images/execution-stack.png)
 
-The default execution stack is configured in `host.json` and can be overriden in `app.json` via property *"defaultExecutionStack"*, which is set to default as:
+Unless specified explicitly at per entry point level, all entry points use a default execution stack specified by property *"defaultExecutionStack"* from `host.json`, which can be overriden from the same property defined in  `app.json`. 
+
+The default execution stack is set as:
 ```json
 {
     "defaultExecutionStack": [
@@ -23,10 +30,9 @@ The default execution stack is configured in `host.json` and can be overriden in
 ```
 `finalizeResponse` and `executeEntryPoint` here are built-in interceptors registered [here](../../config/builtin-interceptors.json). Users can also register their own interceptors, see [Interceptor Registration](#interceptor-registration).
 
-As an important note, `EntryPoint` is executed by interceptor `executeEntryPoint`, which should always be put at the bottom of execution stack.
+Worthy noting, entry point is executed by interceptor `executeEntryPoint`, which should always be put at the bottom of execution stack.
 
-
-Execution stack can also be configured per `EntryPoint` by property *"executionStack"*. Here is an example:
+Execution stack can also be specified per entry point by property *"executionStack"* under entry point configuration. Following is an example:
 ```json
 {
     "name": "bar",
@@ -45,15 +51,15 @@ Execution stack can also be configured per `EntryPoint` by property *"executionS
 
 ### Interceptors
 
-`Interceptor` is an async function that take a `RequestContext` as input, and returns a `Promise` of [`Response`](./response.md). Interceptors are registered as `NamedObject`s, and can be referenced by name in execution stack. 
+`Interceptor` is an async function that take a `RequestContext` as input, and returns a Promise of [`Response`](./response.md). Interceptors are registered as [Named Objects](./object-context#named-object), thus can be referenced by name from execution stack definition.
 
-Its interface is defined as:
+Its programming interface is defined as:
 
 ```ts
 export type Interceptor = (context: RequestContext) => Promise<wire.Response>;
 ```
 #### Implementing an Interceptor
-An `Interceptor` can either shortcircuit the execution by returning a `Promise` of `Response`: 
+An `Interceptor` can either shortcircuit the execution by returning a Promise of `Response`: 
 
 ```ts
 /// <summary> Interceptor: short circuit. 
@@ -67,7 +73,7 @@ export async function shortCircuit(
 }
 ```
 
-Or relay the execution to next interceptor:
+Or relay request execution to the next interceptor:
 ```ts
 /// <summary> Interceptor: pass through.
 /// This interceptor is used for debug purpose when doing per-request override
@@ -78,9 +84,10 @@ export async function passThrough(
 }
 ```
 
-#### <a name="interceptor-registration"></a> Registration
+#### <a name="interceptor-registration"></a> Registering an Interceptor
 
-Being an `NamedObject`, `Interceptor` can be registered at all levels from `Host` to `Request`. To register an interceptor, a JSON element shall be added:
+Being managed as a named object, interceptor can be defined and overriden at all levels from [Host](./host.md) to [Request](./request.md).
+Following JSON element shows an example to register an interceptor.
 ```json
 {
     "name": "passThrough",
@@ -92,33 +99,34 @@ Being an `NamedObject`, `Interceptor` can be registered at all levels from `Host
     }
 }
 ```
+After registration, `passThrough` can be referenced in execution stack.
 #### Built-in Interceptors
-Here are built-in interceptors to support standard execution stack and most common debug purposes.
+Winery.js introduced a few  built-in interceptors to support common execution flow:
 
 | Interceptor name     | Description                                         |
 |----------------------|-----------------------------------------------------|
-| `executeEntryPoint`  | Locate and call `EntryPoint` and return `Response`  |
-| `finalizeResponse`   | Prepare *"debugInfo"* and *"perfInfo*" in `Response`|
-| `passThrough`        | Pass through to next interceptor                    |
+| `executeEntryPoint`  | Locate and call entry point and return response  |
+| `finalizeResponse`   | Fill *"debugInfo"* and *"perfInfo*" in response|
+| `passThrough`        | Pass through to the next interceptor                    |
 | `shortCircuit`       | Shortcircuit with a dummy succeeded response        |
-| `logRequest`         | Log `Request`                                       |
-| `logResponse`        | Log `Response`                                      |
-| `logRequestResponse` | Log both `Request` and `Response`                   |
+| `logRequest`         | Log request                                       |
+| `logResponse`        | Log response                                      |
+| `logRequestResponse` | Log both request and response                   |
 
-### EntryPoints
-`EntryPoint` is a function-type `NamedObject` exposed to user as a service method, whose name can be matched againstproperty *"entrypoint"* from [`Request`](./request.md) to serve request.
+### Entry Points
+`EntryPoint` is a function-type named object exposed to user as service method, whose name can be matched against property *"entrypoint"* from [Request](./request.md).
 
-Its interface is defined as:
+Its programming interface is defined as:
 ```ts
 export type EntryPoint = (requestContext?: RequestContext, input?: any) => any;
 ```
-An `EntryPoint` can be a synchronous function or an asynchrnous function. When it's a synchrounous function, `Host.serve` will return a resolved `Promise` of its return value.
+An `EntryPoint` can be a synchronous function or an asynchrnous function. When it's a synchrounous function, `Host.serve` will return a resolved Promise of its return type.
 
 User can use `requestContext` to create objects or retrieve named objects that can be overriden at various levels.
-#### Creating new Entry Points
+#### Developing Entry Points
 
-##### Coding
-Following code defines a synchronous `EntryPoint`:
+##### Writing an Entry Point Function
+Following example shows how to implements a synchronous `EntryPoint`:
 
 filename: `./test.ts`
 ```ts
@@ -132,7 +140,7 @@ export function sum(context: RequestContext, input: number[]): number{
 ```
 
 ##### <a name="entrypoint-registration"></a>Registration
-From `app.json`, add a file entry named `entrypoints.json` (can be any name) under property *"namedObjects"*, and put following content in `entrypoints.json`:
+Create a file named `entrypoints.json` (can be any name), and put the file name under property *"namedObjects"* from `app.json`. And put following content in `entrypoints.json`:
 ```ts
 [
     {
@@ -154,8 +162,8 @@ From `app.json`, add a file entry named `entrypoints.json` (can be any name) und
 ]
 
 ```
-##### Send Request
-Then user can send request by calling `Host.serve` and get response from your entry point.
+##### Trying a Request
+Then you can send a sample request by calling `Host.serve` with your request object:
 
 *Sample request*:
 ```json
@@ -174,7 +182,7 @@ Then user can send request by calling `Host.serve` and get response from your en
 }
 ```
 #### Built-in Entry Points
-Here are built-in entry points which are general for `NamedObject` (like `EntryPoint`) discovery, and so on:
+Winery.js introduced a few [built-in entry points](../../config/builtin-entrypoints.json) which bring common functionalities for all applications, such as entry point discovery, named object lookup, etc.
 
 | Entry point name  | Description                                             |
 |-------------------|---------------------------------------------------------|
@@ -186,14 +194,79 @@ Here are built-in entry points which are general for `NamedObject` (like `EntryP
 | `getNamedObject`  | Get a named object definition by name                   |
 | `getType`         | Get an object type definition by type name              |
 | `getProvider`     | Get an object provider definition by protocol name      |
+## Application-level Resources
+Besides components for execution, behaviors for object creation and  resources such as parameters, data model, etc. are important for serving requests as well.
+
+There is no special design to deal with resources in application, it all depends on `ObjectContext` to manage object creation behaviors and to load and retrieval resources via named objects. If you are not familiar with the concept of Object Context, please read [its specification](./object-context.md) first.
+
+#### Configuring App-level Object Types
+Application-level object types can be configured under property *"objectTypes"* in `app.json`.
+```json
+{
+    "objectTypes": [
+        "./object-types1.json",
+        "./object-types2.json"
+    ]
+}
+```
+Each element under *"objectTypes"* is a file name which is created following the guide of  [object type registration](./object-context.md#object-type-registration).
+
+At runtime, you can create objects of these types following [this instruction](./object-context.md#object-type-usage).
+
+#### Configuring App-level Object Providers
+Application-level object providers can be configured under property *"objectProviders"* in `app.json`.
+```json
+{
+    "objectProviders": [
+        "./object-providers1.json",
+        "./object-providers2.json"
+    ]
+}
+```
+Each element under *"objectProviders"* is a file name which is created following the guide of  [object provider registration](./object-context.md#object-provider-registration).
+
+At runtime, you can create objects from URI following [this instruction](./object-context.md#object-provider-usage).
+
+#### Configuring App-level Named Objects
+
+Application-level named objects can be configured under property *"namedObjects"* in `app.json`.
+```json
+{
+    "namedObjects": [
+        "./interceptors.json",
+        "./entrypoints.json",
+        "./resources.json"
+    ]
+}
+```
+Each element under *"namedObjects"* is a file name which is created following the guide for  [named object registration](./object-context.md#object-provider-registration). 
+
+Please be aware that the interceptors, entrypoints, and other resources are all named objects, you can define them in different JSON file for better manageability, but it's not mandatory. 
+
+At runtime, you can access named objects following [this instruction](./object-context.md#named-object-usage).
+
 ## Monitoring
-Monitoring is a vital part of service experimentation. Therefore, Winery.js has built-in support for `Metric`. 
+Monitoring is a vital part of service experimentation. Therefore, Winery.js has built-in support for [`Metric`](https://github.com/Microsoft/napajs/blob/master/docs/api/metric.md#cpp-metric) objects exposed from [Napa.js](https://github.com/Microsoft/napajs). 
 
 
 ### <a name="metric-registration"></a> Registration
-Each application can add `Metric` definition in JSON file referenced by property *"metrics"* in `app.json`.
+Each application can add dozens of `Metric` objects by registering them via property *"metrics"* in `app.json`.
+```json
+{
+    "metrics": {
+        "sectionName": "<metric-section-name>",
+        "definition": [
+            "./metric-collection1.json",
+            "./metric-collection2.json"
+        ]
+    }
+}
+```
+Property *"sectionName"* is used as section name to create every `Metric` object, it's specified at application level assuming that all metrics under the same application shall use the same section name. Thus different applications can have the same metric name but different section name to avoid confliction.
 
-Following JSON element defines a `Metric` named *"requestRate"* of `Rate` type (among `Rate`, `Number` and `Percentile`), whose display name is *"Request Rate"*. 
+Each JSON file under property *"definition"* shall declare an array of objects which are conformed with [the schema of Metric definition](../../schema/metric-config.schema.json). 
+
+E.g, following JSON element defines a `Metric` named *"requestRate"* of `Rate` type (among `Rate`, `Number` and `Percentile`), whose display name is *"Request Rate"*. 
 
 ```json
 [
