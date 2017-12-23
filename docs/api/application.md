@@ -1,23 +1,23 @@
 # Application
 
-`Application` is an entity that exposes a list of logical related service methods, and manages resources to execute them.  
+**Application** is an entity that exposes a list of logical related service methods, and manages resources to execute them.  
 
-From deployment perspective, application is developed and distributed as a NPM module, with an `app.json` at its root directory.
+From deployment perspective, application is developed and distributed as a NPM module, with an `app.json` (see [schema](../../schema/application-config.schema.json)) at its root directory.
 
 Programmingly, an application is a container that  holds
-- An [`ObjectContext`](./object-context.md) object as an application-level container of object types, object providers, and a collection of named objects. Particularly, named objects of `Interceptor` and `EntryPoint` type create the execution stack for request processing.
+- An application-level [object context](./object-context.md) as a container for application object types, object providers, and a collection of named objects. In particular, named objects [**Interceptor**](#interceptors) and [**EntryPoint**](#entry-points) create the execution stack for request processing.
 - A collection of `Metric` for application level monitoring
 
 ![Application Object Layout](../images/application-layout.png)
 
-## Execution stack
+## Request Execution
 Based on **Interceptor** and **Entry Point**, an application execution stack is implemented for routing requests and execute them.
 
 When serving a request, execution is planned as a stack of interceptors. Each interceptor can shortcircuit the request or relay to the next interceptor. Stacking interceptors allow us to apply policies like authentication, logging, request pre-processing and response post-processing in a flexible and reusable way. 
 
 ![Application Execution Stack](../images/execution-stack.png)
 
-Unless specified explicitly at per entry point level, all entry points use a default execution stack specified by property *"defaultExecutionStack"* from `host.json`, which can be overriden from the same property defined in  `app.json`. 
+Unless specified explicitly at per entry point level, all entry points use a default execution stack specified by property *"defaultExecutionStack"* from `host.json` (see [schema](../../schema/host-config.schema.json)), which can be overriden from the same property defined in  `app.json`. 
 
 The default execution stack is set as:
 ```json
@@ -28,7 +28,7 @@ The default execution stack is set as:
     ]
 }
 ```
-`finalizeResponse` and `executeEntryPoint` here are built-in interceptors registered [here](../../config/builtin-interceptors.json). Users can also register their own interceptors, see [Interceptor Registration](#interceptor-registration).
+`finalizeResponse` and `executeEntryPoint` here are [built-in interceptors](../../config/builtin-interceptors.json). Users can also register their own interceptors, see [Interceptor Registration](#interceptor-registration).
 
 Worthy noting, entry point is executed by interceptor `executeEntryPoint`, which should always be put at the bottom of execution stack.
 
@@ -51,15 +51,19 @@ Execution stack can also be specified per entry point by property *"executionSta
 
 ### Interceptors
 
-`Interceptor` is an async function that take a `RequestContext` as input, and returns a Promise of [`Response`](./response.md). Interceptors are registered as [Named Objects](./object-context#named-object), thus can be referenced by name from execution stack definition.
+Interceptor is an function that receives a request, executes some logics upon the request, and return a response. It can relay request processing to other interceptors. 
 
-Its programming interface is defined as:
+Its programming interface `Interceptor` is defined as: 
 
 ```ts
 export type Interceptor = (context: RequestContext) => Promise<wire.Response>;
 ```
+
+ To allow interceptor overriding at runtime, interceptors are managed as [Named Objects](./object-context#named-object), thus they can be referenced by name from execution stack definition.
+
+
 #### Implementing an Interceptor
-An `Interceptor` can either shortcircuit the execution by returning a Promise of `Response`: 
+An interceptor can either shortcircuit the execution by returning a Promise of `Response`: 
 
 ```ts
 /// <summary> Interceptor: short circuit. 
@@ -84,9 +88,10 @@ export async function passThrough(
 }
 ```
 
-#### <a name="interceptor-registration"></a> Registering an Interceptor
+#### <a name="interceptor-registration"></a> Registration
 
 Being managed as a named object, interceptor can be defined and overriden at all levels from [Host](./host.md) to [Request](./request.md).
+
 Following JSON element shows an example to register an interceptor.
 ```json
 {
@@ -105,22 +110,23 @@ Winery.js introduced a few  built-in interceptors to support common execution fl
 
 | Interceptor name     | Description                                         |
 |----------------------|-----------------------------------------------------|
-| `executeEntryPoint`  | Locate and call entry point and return response  |
-| `finalizeResponse`   | Fill *"debugInfo"* and *"perfInfo*" in response|
-| `passThrough`        | Pass through to the next interceptor                    |
-| `shortCircuit`       | Shortcircuit with a dummy succeeded response        |
-| `logRequest`         | Log request                                       |
-| `logResponse`        | Log response                                      |
-| `logRequestResponse` | Log both request and response                   |
+| executeEntryPoint  | Locate and call entry point and return response  |
+| finalizeResponse   | Fill *"debugInfo"* and *"perfInfo*" in response|
+| passThrough        | Pass through to the next interceptor                    |
+| shortCircuit       | Shortcircuit with a dummy succeeded response        |
+| logRequest         | Log request                                       |
+| logResponse        | Log response                                      |
+| logRequestResponse | Log both request and response                   |
 
 ### Entry Points
-`EntryPoint` is a function-type named object exposed to user as service method, whose name can be matched against property *"entrypoint"* from [Request](./request.md).
 
-Its programming interface is defined as:
+Entry Point is a function exposed to user as service method. Entry point has a name, which can be matched against property *"entrypoint"* from [Request](./request.md) to serve the request.
+
+Its programming interface `EntryPoint` is defined as:
 ```ts
 export type EntryPoint = (requestContext?: RequestContext, input?: any) => any;
 ```
-An `EntryPoint` can be a synchronous function or an asynchrnous function. When it's a synchrounous function, `Host.serve` will return a resolved Promise of its return type.
+Entry point can be a synchronous function or an asynchrnous function. When it's a synchrounous function, `Host.serve` will return a resolved Promise of its return type.
 
 User can use `requestContext` to create objects or retrieve named objects that can be overriden at various levels.
 #### Developing Entry Points
@@ -186,20 +192,20 @@ Winery.js introduced a few [built-in entry points](../../config/builtin-entrypoi
 
 | Entry point name  | Description                                             |
 |-------------------|---------------------------------------------------------|
-| `listApplication` | List all applications served by current host            |
-| `listEntryPoints` | List all entry points for an application                |
-| `listNamedObjects`| List all public `NamedObject`                           |
-| `listTypes`       | List all registered types for an application            |
-| `listProviders`   | List all registered object providers for an application |
-| `getNamedObject`  | Get a named object definition by name                   |
-| `getType`         | Get an object type definition by type name              |
-| `getProvider`     | Get an object provider definition by protocol name      |
-## Application-level Resources
-Besides components for execution, behaviors for object creation and  resources such as parameters, data model, etc. are important for serving requests as well.
+| listApplication | List all applications served by current host            |
+| listEntryPoints | List all entry points for an application                |
+| listNamedObjects| List all public `NamedObject`                           |
+| listTypes       | List all registered types for an application            |
+| listProviders   | List all registered object providers for an application |
+| getNamedObject  | Get a named object definition by name                   |
+| getType         | Get an object type definition by type name              |
+| getProvider     | Get an object provider definition by protocol name      |
+## Managing Resources
+Besides modeling request execution, resources such as parameters, data model, etc. are also important for serving requests. Not only data resoures, behaviors such as object creation are also regarded as resources.
 
-There is no special design to deal with resources in application, it all depends on `ObjectContext` to manage object creation behaviors and to load and retrieval resources via named objects. If you are not familiar with the concept of Object Context, please read [its specification](./object-context.md) first.
+There is no special design to deal with resources in application, it all depends on **Object Context** to manage both data and behaviorial resources. If you are not familiar with the these concept, you should read [object context specification](./object-context.md) first.
 
-#### Configuring App-level Object Types
+#### App-level Object Types
 Application-level object types can be configured under property *"objectTypes"* in `app.json`.
 ```json
 {
@@ -213,7 +219,7 @@ Each element under *"objectTypes"* is a file name which is created following the
 
 At runtime, you can create objects of these types following [this instruction](./object-context.md#object-type-usage).
 
-#### Configuring App-level Object Providers
+#### App-level Object Providers
 Application-level object providers can be configured under property *"objectProviders"* in `app.json`.
 ```json
 {
@@ -227,7 +233,7 @@ Each element under *"objectProviders"* is a file name which is created following
 
 At runtime, you can create objects from URI following [this instruction](./object-context.md#object-provider-usage).
 
-#### Configuring App-level Named Objects
+#### App-level Named Objects
 
 Application-level named objects can be configured under property *"namedObjects"* in `app.json`.
 ```json

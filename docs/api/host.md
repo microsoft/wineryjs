@@ -1,5 +1,7 @@
 # Host
-`Host` is an abstraction to host applications and serve user requests. Its interface is defined in [`lib/host.ts`](../../lib/host.md) as:
+**Host** is an entity to host [**Applications**](./application.md) on various environments (Node event loop or [Napa zones](https://github.com/Microsoft/napajs/blob/master/docs/api/zone.md#intro) or mixed)
+
+Its programming interface `Host` is defined in [`lib/host.ts`](../../lib/host.md) as:
 
 ```ts
 /// <summary> Interface for application host. </summary>
@@ -21,13 +23,15 @@ export interface Host {
     applicationInstanceNames: string[];
 }
 ```
+## Configuring a Host
 
-### Application Registration
-A `Host` can host multiple `Application`s at the same time, each `Application` can be registered with multiple instance names or aliases. Decoupling application instance name from applicaton module name gives us the flexibility to switch modules without impacting user inputs, since instance name will be used as the key to dispatch `Request` to the right application, which is specified by property *`application`* from `Request`.
+## Application Hosting
+### Registration
+A host can host multiple applications at the same time, each application can be registered with multiple instance names (aliases). Decoupling application instance name from applicaton module name gives us the flexibility to switch modules without impacting user inputs, since instance name will be used as the key to dispatch requests to the right application, which is specified by property *"application"* from [`Request`](./request.md#basic-fields).
 
-To support computation intensive scenarios, `Host` supports dispatching requests to another JavaScripts thread via [Napa zones](https://github.com/Microsoft/napajs/blob/master/docs/api/zone.md#intro). Thus there are three types of `Host` underlying to federate `Request` among multiple JavaScript threads.
+To support computation intensive scenarios, host supports dispatching requests to another JavaScripts thread via [Napa zones](https://github.com/Microsoft/napajs/blob/master/docs/api/zone.md#intro). Thus there are three types of hosts underlying to federate requests among multiple JavaScript threads.
 
-There are three types of `Host`:
+These three types of hosts are:
 - **Leaf host**: host application in current JavaScript thread.
 - **Host proxy**: route requests to remote JavaScript thread (zone worker)
 - **Host hub**: route request among leaf host and proxies.
@@ -36,37 +40,39 @@ The diagram below depicts their collaborations.
 
 ![](../images/hosting.png)
 
-Users don't have to interact with concrte `Host` types, when calling `winery()`, it returns a `Host hub` that can be used to register applications in both local thread or remote Napa zones.
+Users don't have to interact with concrete host types, when calling `winery.host()`, it returns a host hub that can be used to register applications in both local thread or remote Napa zones.
 
 Here is an examples to register multiple applications served in multiple zones.
 
 ```typescript
-import napa = require('napajs');
-import winery = require('winery');
+import * as napa from 'napajs';
+import * as winery from 'winery';
 
 // By using multiple container, we can define different runtime policies.
 // Create container1 with default settings.
-var zone1 = napa.zone.create('zone1');
+let zone1 = napa.zone.create('zone1');
 
 // Create container2 with customized settings.
-var zone2 = napa.zone.create('zone2', {
+let zone2 = napa.zone.create('zone2', {
         workers: 4,
         maxStackSize: 1048576,      // 1 MB
         maxOldSpaceSize: 33554432,  // 32 MB
         maxSemiSpaceSize: 33554432, // 32 MB
     });
 
+let host = winery.host();
+
 try {
     // Serve an io-intensive-app in Node.JS eventloop.
-    await winery.register('io-intensive-app', ['example1']);
+    await host.register('io-intensive-app', ['example1']);
 
     // Serve example-app2 using name 'example2' and example-app3 using name 'example3a' in zone1. 
-    await winery.register('example-app2', ['example2'], zone1);
-    await winery.register('example-app3', ['example3a'], zone1);
+    await host.register('example-app2', ['example2'], zone1);
+    await host.register('example-app3', ['example3a'], zone1);
 
     // Serve example-app3 using name 'example3b' and example-app4 using name 'example4' in zone2. 
-    await winery.register('example-app3', ['example3b'], zone2);
-    await winery.register('example-app4', ['example4'], zone2);
+    await host.register('example-app3', ['example3b'], zone2);
+    await host.register('example-app4', ['example4'], zone2);
 }
 catch (e) {
     console.log("winery register failed:" + e);
@@ -77,15 +83,17 @@ catch (e) {
 With application registered, request serving is straightforward:
 ```ts
 
+import {Request, Response} from 'winery'
+
 // Create a request.
-var request: winery.Request = {
+var request: Request = {
     application: 'example1',
     entrypoint: 'echo',
     input: 'hello, world'
 };
 
 // Get a response.
-var response: winery.Response = await winery.serve(request);
+var response: Response = await host.serve(request);
 console.log(response);
 
 ```
