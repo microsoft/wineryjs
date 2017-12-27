@@ -12,7 +12,7 @@ npm install winery
 ```typescript
 import * as winery from 'winery';
 
-const host = winery.host();
+const host = winery.hub();
 await host.register('example-app', ['example']);
 
 const request: winery.Request = {
@@ -63,8 +63,9 @@ These runtime entities are:
   - [Managing Resources](./docs/api/application.md#managing-resources)
   - [Monitoring](./docs/api/application.md#monitoring)
 - [Host](./docs/api/host.md)
-  - [Configuring a Host](./docs/api/host.md#configuring-a-host)
-  - [Application Hosting](./docs/api/host.md#application-hosting)
+  - [Creating a Host](./docs/api/host.md#creating-a-host)
+  - [Application Registration](./docs/api/host.md#application-registration)
+  - [Request Serving](./docs/api/host.md#request-serving)
 - [Request Template (TBD)](./docs/api/request-template.md)
   - [Concepts](./docs/api/request-template.md#concept)
   - [Creating a Request Template](./docs/api/request-template.md#create)
