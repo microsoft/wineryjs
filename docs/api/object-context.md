@@ -1,8 +1,8 @@
 # Object Context
 
-**Object Context** is an entity to encapsulate behaviors for object creation and object retrieval at runtime. 
+**Object Context** is an entity to encapsulate behaviors for object creation and retrieval at runtime. 
 
-Its interface `ObjectContext` is defined in [`../lib/object-context.ts`](../../lib/object-context.ts) as following:
+Its interface `ObjectContext` is defined in [`lib/object-context.ts`](../../lib/object-context.ts) as following:
 
 ```ts
 /// <summary> Interface for ObjectContext </summary>
@@ -28,16 +28,17 @@ export interface ObjectContext {
 }
 ```
 ## Override Chain
-`ObjectContext` can be chained to form an override relationship, that child context can inherit/override behaviors from its parent. 
+Object context can be chained to form an override relationship, that child context can inherit/override behaviors from its parent. 
 
 By chaining all runtime entities together, from `Request`,  `RequestTemplate` to `Application` and `Host`, users can override behaviors for object creation and retrieval at any of these 4 levels.
 
 ![Object Context Overriding Chain](../images/object-context-chain.png)
 
 ## Object Creation
-Winery.js provides two ways for object creation, one is to construct an object from a plain JavaScript object input (Object types), the other is to create an object from a URI (Object providers)
+Winery.js provides two ways for object creation, one is to construct an object from a plain JavaScript object input through **object types**, the other is to create an object from a URI through **object providers**
 
 ### Object Types
+Object types are mapped to their factory method 
 - For primitive types, method `ObjectContext.create` simply pass through their values.
 
 - For object-type input, a string property *"_type"* is required, which will be used as a key to look up constructor (or factory method) for creating the object.
@@ -98,7 +99,7 @@ The registration entry for *Point* shall look like:
 ```
 You can also check out [registration for built-in types](../../config/builtin-types.json).
 
-#### <a name="object-type-usage"></a>Using Object Types
+#### <a name="object-type-usage"></a>Creating objects with types
 Following code creates two `Point2D` objects at runtime and print their distance:
 ```ts
 import {ObjectContext} from 'winery'

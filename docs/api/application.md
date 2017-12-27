@@ -4,7 +4,7 @@
 
 From deployment perspective, application is developed and distributed as a NPM module, with an `app.json` (see [schema](../../schema/application-config.schema.json)) at its root directory.
 
-Programmingly, an application is a container that  holds
+Programmingly, an application is a container that holds
 - An application-level [object context](./object-context.md) as a container for application object types, object providers, and a collection of named objects. In particular, named objects [**Interceptor**](#interceptors) and [**EntryPoint**](#entry-points) create the execution stack for request processing.
 - A collection of `Metric` for application level monitoring
 
