@@ -47,21 +47,21 @@ There are two groups of fields in `Request`:
 
 ![Request Object Layout](../images/request-layout.png)
 ## Basic Fields
-| Property name |  Required | Description                                                 |
-|---------------|-----------|-------------------------------------------------------------|
-| application   | Y         | Application instance name (or alias) to request for service |
-| entrypoint    | Y         | Name of the entrypoint object to request for service        |
+| Property name |  Required | Description                                                                                          |
+|---------------|-----------|------------------------------------------------------------------------------------------------------|
+| application   | Y         | Application instance name (or alias) to request for service                                          |
+| entrypoint    | Y         | Name of the entrypoint object to request for service                                                 |
 | input         | N         | User object as input that will be passed to entrypoint function, whose schema is entrypoint specific |
 | controlFlags  | N         | Flags for enabling debugging and instrumentation |
  
 ## Override Fields
 Further, object creation and object retrieval behaviors can be overriden from request with properties with prefix *"override"*. 
 
-| Property name     | Required | Description |
-|-------------------|----------|-------------|
+| Property name     | Required | Description                                                                                                              |
+|-------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
 | overrideTypes     | N        | override constructor of objects created [from plain JavaScript object](./object-context.md#from-plain-javascript-object) |
-| overrideProviders | N        | override provider of objects created [from URI](./object-context.md#from-uri) |
-| overrideObjects   | N        | override [named objects](./object-context.md#named-object) |
+| overrideProviders | N        | override provider of objects created [from URI](./object-context.md#from-uri)                                            |
+| overrideObjects   | N        | override [named objects](./object-context.md#named-object)                                                               |
 
 
 ## Examples
