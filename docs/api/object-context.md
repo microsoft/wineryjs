@@ -27,10 +27,10 @@ export interface ObjectContext {
     baseDir: string;
 }
 ```
-## Override Chain
+## Overriding Rule
 Object context can be chained to form an override relationship, that child context can inherit/override behaviors from its parent. 
 
-By chaining all runtime entities together, from `Request`,  `RequestTemplate` to `Application` and `Host`, users can override behaviors for object creation and retrieval at any of these 4 levels.
+By chaining all runtime entities together, from `Request`,  `RequestTemplate` to `Application` and `Host`, users can override behaviors for object creation and retrieval from more specific level to more general level.
 
 ![Object Context Overriding Chain](../images/object-context-chain.png)
 

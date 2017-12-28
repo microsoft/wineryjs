@@ -59,7 +59,7 @@ These runtime entities are:
 
 ## Specification
 - [Object Context](./docs/api/object-context.md)
-  - [Override Chain](./docs/api/object-context.md#override-chain)
+  - [Overriding Rule](./docs/api/object-context.md#overriding-rule)
   - [Object Types](./docs/api/object-context.md#object-types)
   - [Object Providers](./docs/api/object-context.md#object-providers)
   - [Named Objects](./docs/api/object-context.md#named-objects)
@@ -69,8 +69,12 @@ These runtime entities are:
   - [Request Serving](./docs/api/host.md#request-serving)
 - [Application](./docs/api/application.md)
   - [Request Execution](./docs/api/application.md#request-execution)
-  - [Managing Resources](./docs/api/application.md#managing-resources)
+  - [Application-level Resources](./docs/api/application.md#application-level-resources)
   - [Monitoring](./docs/api/application.md#monitoring)
+- [Request Template](./docs/api/request-template.md)
+  - [Template-level Resources](./docs/api/request-template.md#template-level-resources)
+  - [Template Inheritance](./docs/api/request-template.md#template-inheritance)
+  - [Examples](./docs/api/request-template.md#examples)
 - [Request](./docs/api/request.md)
   - [Basic Fields](./docs/api/request.md#basic-fields)
   - [Override Fields](./docs/api/request.md#override-fields)
@@ -80,9 +84,6 @@ These runtime entities are:
   - [Debug Information](./docs/api/response.md#debug-information)
   - [Performance Information](./docs/api/response.md#performance-information)
   - [Examples](./docs/api/response.md#examples)
-- [Request Template (TBD)](./docs/api/request-template.md)
-  - [Concepts](./docs/api/request-template.md#concept)
-  - [Creating a Request Template](./docs/api/request-template.md#create)
 
 # Contribute
 You can contribute to Winery.js in following ways:

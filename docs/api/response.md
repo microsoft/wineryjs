@@ -43,16 +43,17 @@ export interface Response {
 ```
 ## Basic Fields
 
-| Property Name | Present | Description   |
-|---------------|----------------|---------------|
-| responseCode  | Always              | Response code |
-| errorMessage  | When responseCode is not 0 (success)              | A brief message on why request had failed|
-| output        | When entrypoint function has a return value              | Entrypoint return value |
-| debugInfo     | When `controlFlags.debug` set to `true` | Exception details, event logs for current request |
-| perfInfo      | When `controlFlags.perf` set to `true` | Updated metrics for current request |
+| Property Name | Present                                       | Description                                       |
+|---------------|-----------------------------------------------|---------------------------------------------------|
+| responseCode  | Always                                        | Response code                                     |
+| errorMessage  | When responseCode is not 0 (success)          | A brief message on why request had failed         |
+| output        | When entrypoint function has a return value   | Entrypoint return value                           |
+| debugInfo     | When `controlFlags.debug` set to `true`       | Exception details, event logs for current request |
+| perfInfo      | When `controlFlags.perf` set to `true`        | Updated metrics for current request               |
 
 ## Debug Information
 When `controlFlags.debug` is set to `true`, `debugInfo` is returned containing 3 optional fields:
+
 | Property name | Present                  | Description                                |
 |---------------|--------------------------|--------------------------------------------|
 | exception     | When exception is thrown | Exception details                          |
@@ -60,6 +61,7 @@ When `controlFlags.debug` is set to `true`, `debugInfo` is returned containing 3
 | details       | Always                   | Key/value pairs from `context.detail`      |
 ### Exception
 Property *"exception"* is an object with following fields:
+
 | Property name | Type   | Description                                  |
 |---------------|--------|----------------------------------------------|
 | stack         | string | stack trace                                  |
@@ -69,13 +71,14 @@ Property *"exception"* is an object with following fields:
 | columnNumber  | number | column number from where exception is thrown |
 ### Events
 Property *\"events\"* is an array of objects with following fields:
+
 | Property name | Type   | Description                             |
 |---------------|--------|-----------------------------------------|
 | eventTime     | Date   | time when event is logged               |
 | logLevel      | string | "debug", "info", "warning", or "error"  |
 | message       | string | message of the event                    |
 
-### Performance Information
+## Performance Information
 When `controlFlags.perf` is set to `true`, `perfInfo` will be filled. It's a dictionary of key/values, the keys are the display name of metrics, and the values are the value of these metrics.
 
 ## Examples:

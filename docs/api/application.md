@@ -200,12 +200,12 @@ Winery.js introduced a few [built-in entry points](../../config/builtin-entrypoi
 | getNamedObject  | Get a named object definition by name                   |
 | getType         | Get an object type definition by type name              |
 | getProvider     | Get an object provider definition by protocol name      |
-## Managing Resources
+## Application-level Resources
 Besides modeling request execution, resources such as parameters, data model, etc. are also important for serving requests. Not only data resoures, behaviors such as object creation are also regarded as resources.
 
 There is no special design to deal with resources in application, it all depends on **Object Context** to manage both data and behaviorial resources. If you are not familiar with the these concept, you should read [object context specification](./object-context.md) first.
 
-#### App-level Object Types
+#### Object Types
 Application-level object types can be configured under property *"objectTypes"* in `app.json`.
 ```json
 {
@@ -219,7 +219,7 @@ Each element under *"objectTypes"* is a file name which is created following the
 
 At runtime, you can create objects of these types following [this instruction](./object-context.md#object-type-usage).
 
-#### App-level Object Providers
+#### Object Providers
 Application-level object providers can be configured under property *"objectProviders"* in `app.json`.
 ```json
 {
@@ -233,7 +233,7 @@ Each element under *"objectProviders"* is a file name which is created following
 
 At runtime, you can create objects from URI following [this instruction](./object-context.md#object-provider-usage).
 
-#### App-level Named Objects
+#### Named Objects
 
 Application-level named objects can be configured under property *"namedObjects"* in `app.json`.
 ```json
