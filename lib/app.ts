@@ -204,9 +204,9 @@ export class Application {
         // Prepare per-entrypoint execution stack.
         this._perEntryPointExecutionStack = new Map<string, Interceptor[]>();
         this._perAppObjectContext.forEach(object => {
-            if (object.definition.value._type === 'EntryPoint') {
+            if (object.def.value._type === 'EntryPoint') {
                 let executionStack: Interceptor[] = this._defaultExecutionStack;
-                let customStack = object.definition.value.executionStack;
+                let customStack = object.def.value.executionStack;
                 
                 // Entrypoint has specified executionStack.
                 if (customStack != null) {
@@ -220,7 +220,7 @@ export class Application {
                     }
                 }
                 this._perEntryPointExecutionStack.set(
-                    object.definition.name, 
+                    object.def.name, 
                     executionStack);
             }
         });
@@ -313,8 +313,8 @@ export class Application {
     /// <returns> Entrypoint (function) if found. Otherwise throws exception. </returns>
     public getEntryPoint(entryPointName: string): EntryPoint  {
         let object = this.getNamedObject(entryPointName);
-        if (object != null && object.definition.value._type != 'EntryPoint') {
-            throw new Error("Object '" + entryPointName + "' is not of EntryPoint type. Encountered: '" + object.definition.name + "'.");
+        if (object != null && object.def.value._type != 'EntryPoint') {
+            throw new Error("Object '" + entryPointName + "' is not of EntryPoint type. Encountered: '" + object.def.name + "'.");
         }
         return object != null? object.value : null;
     }
@@ -324,8 +324,8 @@ export class Application {
     /// <returns> Interceptor object if found, undefined otherwise. </returns>
     public getInterceptor(name: string): Interceptor {
         let object = this.getNamedObject(name);
-        if (object != null && object.definition.value._type !== 'Interceptor') {
-            throw new Error("Object '" + name + "' is not of Interceptor type. Encountered: '" + object.definition.name + "'.");
+        if (object != null && object.def.value._type !== 'Interceptor') {
+            throw new Error("Object '" + name + "' is not of Interceptor type. Encountered: '" + object.def.name + "'.");
         }
         return object == null? null: object.value;
     }
@@ -430,7 +430,7 @@ export class RequestContext {
     /// <summary> prepare execution stack for an entrypoint name, assuming per-request object context is setup. </summary>
     private prepareExecutionStack(entryPointName: string): Interceptor[] {
         // If nothing has been overrided, use cached execution stack directly. 
-        if (this._perRequestObjectContext.definition.namedObjectDefs.length == 0) {
+        if (this._perRequestObjectContext.def.namedObjectDefs.length == 0) {
             if (this._entryPoint == null) {
                 throw new Error("Entrypoint '" + entryPointName + "' does not exist.");
             }
@@ -439,7 +439,7 @@ export class RequestContext {
 
         // Per-request override happens, it could be entrypoint override or interceptor override.
         let entryPointObject = this.getNamedObject(entryPointName);
-        let interceptorNames: string[] = entryPointObject.definition.value.executionStack;
+        let interceptorNames: string[] = entryPointObject.def.value.executionStack;
         if (interceptorNames == null) {
             interceptorNames = this.application.settings.defaultExecutionStack;
         }
@@ -465,7 +465,7 @@ export class RequestContext {
                 else {
                     // Interceptor is overriden from request. Look up new.
                     if (interceptorObject.value == null
-                        || interceptorObject.definition.value._type !== 'Interceptor') {
+                        || interceptorObject.def.value._type !== 'Interceptor') {
                         throw new Error("Bad override on interceptor '" 
                             + interceptorName 
                             + "', should be of Interceptor type and not null. ")
@@ -590,7 +590,7 @@ export class RequestContext {
     /// <returns> Entrypoint (function) if found. Otherwise throws exception. </returns>
     public getEntryPoint(entryPointName: string): EntryPoint  {
         let object = this.getNamedObject(entryPointName);
-        if (object != null && object.definition.value._type != 'EntryPoint') {
+        if (object != null && object.def.value._type != 'EntryPoint') {
             throw new Error("Object '" + entryPointName + "' is not of EntryPoint type.");
         }
         return object != null? object.value : null;
@@ -601,7 +601,7 @@ export class RequestContext {
     /// <returns> Interceptor object if found, undefined otherwise. </returns>
     public getInterceptor(name: string): Interceptor {
         let object = this.getNamedObject(name);
-        if (object != null && object.definition.name !== 'Interceptor') {
+        if (object != null && object.def.name !== 'Interceptor') {
             throw new Error("Object '" + name + "' is not of Interceptor type.");
         }
         return object == null? null: object.value;

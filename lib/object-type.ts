@@ -37,8 +37,8 @@ export interface TypeDefinition {
     exampleObjects?: any[];
 }
 
-/// <summary> Function interface for object constructor, which takes an input object and produce an output object. </summary>
-export interface ObjectConstructor { 
+/// <summary> Function interface for factory method, which takes an input object and produce an output object. </summary>
+export interface FactoryMethod { 
     (input: ObjectWithType | ObjectWithType[], context?: ObjectContext): any
 }
 
@@ -66,7 +66,7 @@ export interface ObjectFactory {
 export class TypeRegistry implements ObjectFactory {
 
     /// <summary> Type name to creator map. </summary>
-    private _typeToCreatorMap: Map<string, ObjectConstructor> = new Map<string, ObjectConstructor>();
+    private _typeToFactoryMethod: Map<string, FactoryMethod> = new Map<string, FactoryMethod>();
 
     /// <summary> Create an output object from input object. Exception will be thrown if type is not found in current application. </summary>
     /// <param name="input"> Input object with a property '_type', the value of '_type' should be registered in current application. </param>
@@ -94,7 +94,7 @@ export class TypeRegistry implements ObjectFactory {
         }
 
         if (this.supports(typeName)) {
-            return this._typeToCreatorMap.get(typeName)(input, context);
+            return this._typeToFactoryMethod.get(typeName)(input, context);
         }
         throw new Error("Not supported type: '" + typeName + "'.");
     }
@@ -102,15 +102,15 @@ export class TypeRegistry implements ObjectFactory {
     /// <summary> Register an object creator for a type. Later call to this method on the same type will override the creator of former call.</summary>
     /// <param name="type"> Case sensitive type name.</param>
     /// <param name="creator"> Function that takes one object as input and returns an object.</param>
-    public register(type: string, creator: ObjectConstructor): void {
-        this._typeToCreatorMap.set(type, creator);
+    public register(type: string, creator: FactoryMethod): void {
+        this._typeToFactoryMethod.set(type, creator);
     }
 
     /// <summary> Check if current type registry contain a type.</summary>
     /// <param name="type"> Case sensitive type name. </param>
     /// <returns> True if type is registered, otherwise false. </param>
     public supports(typeName: string): boolean {
-        return this._typeToCreatorMap.has(typeName);
+        return this._typeToFactoryMethod.has(typeName);
     }
 
     /// <summary> Create TypeRegistry from a collection of TypeDefinitions </summary>

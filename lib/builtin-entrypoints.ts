@@ -21,11 +21,11 @@ export function listEntryPoints(
 
     let entryPointDefs: vy.objectModel.NamedObjectDefinition[] = [];
     request.application.objectContext.forEach(namedObject => {
-        let def = namedObject.definition;
+        let def = namedObject.def;
         if (def.value._type === 'EntryPoint'
-            && (input.allowPrivate || !namedObject.definition.private)
+            && (input.allowPrivate || !namedObject.def.private)
             && (input.allowGlobal || namedObject.scope !== "global")) {
-            entryPointDefs.push(namedObject.definition);
+            entryPointDefs.push(namedObject.def);
         }
     });
 
@@ -54,9 +54,9 @@ export function listNamedObjects(
     
     let objectNames: string[] = [];
     request.application.objectContext.forEach(namedObject => {
-        if ((input.allowPrivate || !namedObject.definition.private)
+        if ((input.allowPrivate || !namedObject.def.private)
         && (namedObject.scope in input.scopes)) {
-            objectNames.push(namedObject.definition.name);
+            objectNames.push(namedObject.def.name);
         }
     });
     return objectNames;
@@ -69,11 +69,11 @@ export function getNamedObject(request: vy.RequestContext, input: { name: string
     }
 
     let object = request.getNamedObject(input.name);
-    if (object == null || object.definition == null) {
+    if (object == null || object.def == null) {
         return null;
     }
 
-    return object.definition;
+    return object.def;
 }
 
 /// <summary> List all types supported in current application. </summary>

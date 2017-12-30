@@ -121,7 +121,7 @@ export class ScopedObjectContext implements ObjectContext {
     }
 
     /// <summary> Get definition for current object context. </summary>
-    public get definition(): ScopedObjectContextDefinition {
+    public get def(): ScopedObjectContextDefinition {
         return this._definition;
     }
 
@@ -137,8 +137,8 @@ export class ScopedObjectContext implements ObjectContext {
         let currentScope: ScopedObjectContext = this;
         while (currentScope != null) {
             currentScope._namedObjects.forEach(object => {
-                if (!visited.has(object.definition.name)) {
-                    visited.add(object.definition.name);
+                if (!visited.has(object.def.name)) {
+                    visited.add(object.def.name);
                     callback(object);
                 }
             });
@@ -226,8 +226,8 @@ export class ScopedObjectContext implements ObjectContext {
                 // it and insert into cache in current scope.
                 if (this.needsUpdate(namedObject)) {
                     namedObject = {
-                        definition: namedObject.definition,
-                        value: this.create(namedObject.definition.value),
+                        def: namedObject.def,
+                        value: this.create(namedObject.def.value),
                         scope: this._scope
                     };
                     
@@ -248,7 +248,7 @@ export class ScopedObjectContext implements ObjectContext {
             // Current scope is top scope, override never happens.
             return false;
         }
-        let def = namedObject.definition;
+        let def = namedObject.def;
         // Object context override from request happened.
         let overrides = this._definition;
 
@@ -447,7 +447,7 @@ export class ScopedObjectContextDefinition {
         // Second pass to get closure from redirect/indirect dependencies.
         // Key: object name. Value: Closure of dependent object names.
         let resolved: Map<string, Set<string>> = new Map<string, Set<string>>();
-        let toResolve: { unresolvedDeps: Set<string>, definition: NamedObjectDefinition }[]  = [];
+        let toResolve: { unresolvedDeps: Set<string>, def: NamedObjectDefinition }[]  = [];
 
         // Create dependencies to resolve.
         for (let def of this._objectDefs) {
@@ -459,7 +459,7 @@ export class ScopedObjectContextDefinition {
                 });
                 toResolve.push({
                     unresolvedDeps: unresolvedDeps,
-                    definition: def
+                    def: def
                 });
             }
             else {
@@ -469,7 +469,7 @@ export class ScopedObjectContextDefinition {
 
         // Multi-round resolution.
         while (toResolve.length != 0) {
-            let remaining: { unresolvedDeps: Set<string>, definition: NamedObjectDefinition }[] = [];
+            let remaining: { unresolvedDeps: Set<string>, def: NamedObjectDefinition }[] = [];
             let resolvedThisRound = 0;
 
             // One round to resolved each unresolved.
@@ -481,13 +481,13 @@ export class ScopedObjectContextDefinition {
                     if (depClosure != null) {
                         record.unresolvedDeps.delete(dep);
                         depClosure.forEach(depName => {
-                            record.definition.dependencies.setObjectDependency(depName);
+                            record.def.dependencies.setObjectDependency(depName);
                         });
                     }
                 }
                 // All unresolved dependencies are already resolved. 
                 if (unresolvedDeps.length == 0) {
-                    resolved.set(record.definition.name, record.definition.dependencies.objectDependencies);
+                    resolved.set(record.def.name, record.def.dependencies.objectDependencies);
                     ++resolvedThisRound;
                 }
                 else {
@@ -496,7 +496,7 @@ export class ScopedObjectContextDefinition {
             }
             if (resolvedThisRound == 0) {
                 throw new Error("Undefined named object or cyclic dependencies found: '"
-                    + toResolve.map(obj => { return obj.definition.name; }).join(","))
+                    + toResolve.map(obj => { return obj.def.name; }).join(","))
                 + "'.";
             }
             toResolve = remaining;

@@ -98,7 +98,7 @@ export class Uri {
 }
 
 /// <summary> Function interface that takes a Uri as parameter and produce a JS value </summary>
-export type ObjectLoader = (uri: Uri | Uri[], context?: ObjectContext) => any;
+export type ProviderMethod = (uri: Uri | Uri[], context?: ObjectContext) => any;
 
 /// <summary> Interface for provider that retrieve object via a URI </summary>
 export interface ObjectProvider {
@@ -143,8 +143,8 @@ export interface ProviderDefinition {
 /// <summary> An implementation of ObjectProvider via protocol based registry. </summary>
 export class ProviderRegistry implements ObjectProvider {
 
-    /// <summary> Map of protocol (lower-case) to object loader. </summary>
-    private _protocolToLoaderMap: Map<string, ObjectLoader> = new Map<string, ObjectLoader>();
+    /// <summary> Map of protocol (lower-case) to provider method. </summary>
+    private _protocolToProviderMethod: Map<string, ProviderMethod> = new Map<string, ProviderMethod>();
 
     /// <summary> Provide any JS value from a URI object. 
     /// <param name="uri"> a URI object or URI array </param>
@@ -167,7 +167,7 @@ export class ProviderRegistry implements ObjectProvider {
         }
         let lowerCaseProtocol = protocol.toLowerCase();
         if (this.supports(lowerCaseProtocol)) {
-            return this._protocolToLoaderMap.get(lowerCaseProtocol)(uri, context);
+            return this._protocolToProviderMethod.get(lowerCaseProtocol)(uri, context);
         }
         throw new Error("Unsupported protocol '" + protocol + "'.");
     }
@@ -175,15 +175,15 @@ export class ProviderRegistry implements ObjectProvider {
     /// <summary> Register an object provider with a protocol. Later call to this method on the same protocol will override the provider of former call.</summary>
     /// <param name="type"> Case insensitive protocol name.</param>
     /// <param name="creator"> An object provider.</param>
-    public register(protocol: string, loader: ObjectLoader): void {
-        this._protocolToLoaderMap.set(protocol.toLowerCase(), loader);
+    public register(protocol: string, loader: ProviderMethod): void {
+        this._protocolToProviderMethod.set(protocol.toLowerCase(), loader);
     }
 
     /// <summary> Check if current provider support a protocol name.</summary>
     /// <param name="protocol"> Case insensitive protocol name. </param>
     /// <returns> True if protocol is supported, otherwise false. </param>
     public supports(protocol: string): boolean {
-        return this._protocolToLoaderMap.has(protocol.toLowerCase());
+        return this._protocolToProviderMethod.has(protocol.toLowerCase());
     }
 
     /// <summary> Created ProviderRegistry from a collection of ProviderDefinition objects. </summary>
