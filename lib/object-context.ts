@@ -217,8 +217,9 @@ export class ScopedObjectContext implements ObjectContext {
         }
     
         // Not found at current level, try to find in parent.
-        if (this._parent != null) {
-            namedObject = this._parent._namedObjects.get(name);
+        let parent = this._parent;
+        while (parent != null) {
+            namedObject = parent._namedObjects.get(name);
             if (namedObject != null) {
                 // We check if the named object returned from parent scope needs
                 // to be invalidated in current scope. In that case we will re-create 
@@ -232,9 +233,11 @@ export class ScopedObjectContext implements ObjectContext {
                     
                     this._namedObjects.insert(namedObject);
                 }
+                return namedObject;
             }
+            parent = parent._parent;
         }
-        return namedObject;
+        return null;
     }
 
     /// <summary> Determine if a named object is sensitive to type/provider/named object override in current context,
