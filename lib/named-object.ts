@@ -39,7 +39,7 @@ export interface NamedObjectDefinition {
 
 export interface NamedObject {
     /// <summary> Definition of current named object. </summary>
-    definition: NamedObjectDefinition;
+    def: NamedObjectDefinition;
 
     /// <summary> Value of current named object </summary>
     value: any;
@@ -88,7 +88,7 @@ export class NamedObjectRegistry implements NamedObjectCollection {
     /// <summary> Insert a named object. </summary>
     /// <param name="object"> an Named object instance. </param>
     public insert(object: NamedObject): void {
-        this._nameToObjectMap.set(object.definition.name, object);
+        this._nameToObjectMap.set(object.def.name, object);
     }
 
     /// <summary> Create NamedObjectRegistry from a collection of NamedObjectDefinition objects. </summary>
@@ -106,7 +106,7 @@ export class NamedObjectRegistry implements NamedObjectCollection {
             for (let def of namedObjectDefCollection) {
                 let value = context.create(def.value);
                 registry.insert({
-                    definition: def,
+                    def: def,
                     value: value,
                     scope: scope
                 });

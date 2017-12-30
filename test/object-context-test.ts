@@ -146,7 +146,7 @@ describe('winery/object-context', () => {
         it('#getters', () => {
             assert.strictEqual(perAppContext.scope, "application");
             assert.strictEqual(perAppContext.baseDir, __dirname);
-            assert.strictEqual(perAppContext.definition, perAppContextDef);
+            assert.strictEqual(perAppContext.def, perAppContextDef);
             assert.strictEqual(perAppContext.parent, null);
             assert.strictEqual(perRequestContext.parent, perAppContext);
         });
@@ -212,7 +212,7 @@ describe('winery/object-context', () => {
         it('#forEach: without parent scope', () => {
             let objectNames: string[] = []
             perAppContext.forEach(object => {
-                objectNames.push(object.definition.name);
+                objectNames.push(object.def.name);
             });
             assert.strictEqual(objectNames.length, 3);
             assert(objectNames.indexOf('objectA') >= 0);
@@ -225,8 +225,8 @@ describe('winery/object-context', () => {
             let objectByName = new Map<string, objectModel.NamedObject>();
             perRequestContext.forEach(object => {
                 ++objectCount;
-                objectByName.set(object.definition.name, object);
-                if (object.definition.name !== 'objectB') {
+                objectByName.set(object.def.name, object);
+                if (object.def.name !== 'objectB') {
                     assert(object.scope === 'request');
                 }
             });

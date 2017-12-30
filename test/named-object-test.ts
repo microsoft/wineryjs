@@ -6,7 +6,7 @@ describe('winery/named-object', () => {
         let collection = new objectModel.NamedObjectRegistry();
         let objectA: objectModel.NamedObject = {
             scope: "global",
-            definition: {
+            def: {
                 name: "objectA",
                 value: 1
             },
