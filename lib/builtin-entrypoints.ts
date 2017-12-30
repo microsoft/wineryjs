@@ -81,7 +81,7 @@ export function getNamedObject(request: vy.RequestContext, input: { name: string
 export function listTypes(request: vy.RequestContext): string[] {
     let appDef = request.application.settings;
     let typeNames: string[] = [];
-    for (let typeDef of appDef.objectContext.types) {
+    for (let typeDef of appDef.objectContextDef.typeDefs) {
         typeNames.push(typeDef.typeName);
     }
     return typeNames;
@@ -95,7 +95,7 @@ export function getType(request: vy.RequestContext, input: { typeName: string })
     }
 
     let appDef = request.application.settings;
-    let types = appDef.objectContext.types;
+    let types = appDef.objectContextDef.typeDefs;
     for (let i = 0; i < types.length; i++){
         if (types[i].typeName.toLowerCase() == input.typeName.toLowerCase()) {
             return types[i];
@@ -110,7 +110,7 @@ export function getType(request: vy.RequestContext, input: { typeName: string })
 export function listProviders(request: vy.RequestContext): string[] {
     let appDef = request.application.settings;
     let protocolNames: string[] = [];
-    for (let providerDef of appDef.objectContext.providers) {
+    for (let providerDef of appDef.objectContextDef.providerDefs) {
         protocolNames.push(providerDef.protocol);
     }
     return protocolNames;
@@ -124,7 +124,7 @@ export function getProvider(request: vy.RequestContext, input: { protocolName: s
     }
 
     let appDef = request.application.settings;
-    let providers = appDef.objectContext.providers;
+    let providers = appDef.objectContextDef.providerDefs;
     for (let provider of providers) {
         if (provider.protocol.toLowerCase() === input.protocolName.toLowerCase()) {
             return provider;

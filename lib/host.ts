@@ -52,7 +52,7 @@ export class LeafHost implements Host{
             "global",
             this._settings.baseDir,
             null,
-            settings.objectContext
+            settings.objectContextDef
         );
     }
 

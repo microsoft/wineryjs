@@ -67,7 +67,7 @@ export interface Settings {
     allowPerRequestOverride: boolean;
 
     /// <summary> Global scoped context definition. </summary>
-    objectContext: objectContext.ScopedObjectContextDefinition;
+    objectContextDef: objectContext.ScopedObjectContextDefinition;
 
     /// <summary> Default execution stack for all applications. Applications, entrypoints can override. </summary>
     defaultExecutionStack?: string[];
@@ -187,7 +187,7 @@ export class Application {
             "application",
             settings.baseDir,
             hostContext,
-            settings.objectContext);
+            settings.objectContextDef);
 
         // Create default execution stack.
         this._defaultExecutionStack = [];
@@ -388,7 +388,7 @@ export class RequestContext {
         let perRequestObjectContextDef: objectContext.ScopedObjectContextDefinition = 
             app.settings.allowPerRequestOverride ?
                 new objectContext.ScopedObjectContextDefinition(
-                    app.settings.objectContext,
+                    app.settings.objectContextDef,
                     request.overrideTypes,
                     request.overrideProviders,
                     request.overrideObjects,
@@ -396,7 +396,7 @@ export class RequestContext {
                 )
                 :
                 new objectContext.ScopedObjectContextDefinition(
-                    app.settings.objectContext,
+                    app.settings.objectContextDef,
                     [],
                     [], 
                     [], 
@@ -430,7 +430,7 @@ export class RequestContext {
     /// <summary> prepare execution stack for an entrypoint name, assuming per-request object context is setup. </summary>
     private prepareExecutionStack(entryPointName: string): Interceptor[] {
         // If nothing has been overrided, use cached execution stack directly. 
-        if (this._perRequestObjectContext.definition.namedObjects.length == 0) {
+        if (this._perRequestObjectContext.definition.namedObjectDefs.length == 0) {
             if (this._entryPoint == null) {
                 throw new Error("Entrypoint '" + entryPointName + "' does not exist.");
             }
