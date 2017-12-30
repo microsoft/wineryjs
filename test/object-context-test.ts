@@ -2,13 +2,13 @@ import * as assert from 'assert';
 import * as objectModel from '../lib/object-model';
 
 describe('winery/object-context', () => {
-    let perAppContextDef: objectModel.ScopedObjectContextDefinition = null;
-    let perRequestContextDef: objectModel.ScopedObjectContextDefinition = null;
+    let perAppContextDef: objectModel.ScopedObjectContextDef = null;
+    let perRequestContextDef: objectModel.ScopedObjectContextDef = null;
 
     // Test suite for ScopedObjectContextDefinition.
     describe('ScopedObjectContextDefinition', () => {
         // Per app definitions.
-        let perAppTypeDefs: objectModel.TypeDefinition[] = [
+        let perAppTypeDefs: objectModel.TypeDef[] = [
             {
                 typeName: "TypeA",
                 moduleName: "./object-context-test",
@@ -21,7 +21,7 @@ describe('winery/object-context', () => {
             }
         ];
 
-        let perAppProviderDefs: objectModel.ProviderDefinition[] = [
+        let perAppProviderDefs: objectModel.ProviderDef[] = [
             {
                 protocol: "ProtocolA",
                 moduleName: "./object-context-test",
@@ -29,7 +29,7 @@ describe('winery/object-context', () => {
             }
         ];
 
-        let perAppObjectDefs: objectModel.NamedObjectDefinition[] = [
+        let perAppObjectDefs: objectModel.NamedObjectDef[] = [
             {
                 name: "objectA",
                 value: {
@@ -54,7 +54,7 @@ describe('winery/object-context', () => {
         ];
 
         // Per request definitions.
-        let perRequestTypeDefs: objectModel.TypeDefinition[] = [
+        let perRequestTypeDefs: objectModel.TypeDef[] = [
             {
                 typeName: "TypeA",
                 moduleName: "./object-context-test",
@@ -62,7 +62,7 @@ describe('winery/object-context', () => {
             }
         ];
 
-        let perRequestProviderDefs: objectModel.ProviderDefinition[] = [
+        let perRequestProviderDefs: objectModel.ProviderDef[] = [
             {
                 protocol: "ProtocolA",
                 moduleName: "./object-context-test",
@@ -70,7 +70,7 @@ describe('winery/object-context', () => {
             }
         ];
 
-        let perRequestObjectDefs: objectModel.NamedObjectDefinition[] = [
+        let perRequestObjectDefs: objectModel.NamedObjectDef[] = [
             {
                 name: "objectA",
                 value: {
@@ -90,8 +90,8 @@ describe('winery/object-context', () => {
         
         it("#ctor", () => {
             assert.doesNotThrow(() => {
-                perAppContextDef = new objectModel.ScopedObjectContextDefinition(null, perAppTypeDefs, perAppProviderDefs, perAppObjectDefs, true);
-                perRequestContextDef = new objectModel.ScopedObjectContextDefinition(perAppContextDef, perRequestTypeDefs, perRequestProviderDefs, perRequestObjectDefs, false);
+                perAppContextDef = new objectModel.ScopedObjectContextDef(null, perAppTypeDefs, perAppProviderDefs, perAppObjectDefs, true);
+                perRequestContextDef = new objectModel.ScopedObjectContextDef(perAppContextDef, perRequestTypeDefs, perRequestProviderDefs, perRequestObjectDefs, false);
             });
         });
 

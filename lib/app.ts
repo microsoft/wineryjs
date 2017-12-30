@@ -67,7 +67,7 @@ export interface Settings {
     allowPerRequestOverride: boolean;
 
     /// <summary> Global scoped context definition. </summary>
-    objectContextDef: objectContext.ScopedObjectContextDefinition;
+    objectContextDef: objectContext.ScopedObjectContextDef;
 
     /// <summary> Default execution stack for all applications. Applications, entrypoints can override. </summary>
     defaultExecutionStack?: string[];
@@ -385,9 +385,9 @@ export class RequestContext {
         this._request = request;
 
         // We only pass overriden stuff when per-request override is allowed.
-        let perRequestObjectContextDef: objectContext.ScopedObjectContextDefinition = 
+        let perRequestObjectContextDef: objectContext.ScopedObjectContextDef = 
             app.settings.allowPerRequestOverride ?
-                new objectContext.ScopedObjectContextDefinition(
+                new objectContext.ScopedObjectContextDef(
                     app.settings.objectContextDef,
                     request.overrideTypes,
                     request.overrideProviders,
@@ -395,7 +395,7 @@ export class RequestContext {
                     false                           // Don't do dependency analysis at request level.
                 )
                 :
-                new objectContext.ScopedObjectContextDefinition(
+                new objectContext.ScopedObjectContextDef(
                     app.settings.objectContextDef,
                     [],
                     [], 

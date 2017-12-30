@@ -17,9 +17,9 @@ export function listEntryPoints(
     request: vy.RequestContext,
     input: { detail: boolean, allowGlobal: boolean, allowPrivate: boolean } 
         = { detail: false, allowGlobal: true, allowPrivate: false }
-        ): string[] | vy.objectModel.NamedObjectDefinition[] {
+        ): string[] | vy.objectModel.NamedObjectDef[] {
 
-    let entryPointDefs: vy.objectModel.NamedObjectDefinition[] = [];
+    let entryPointDefs: vy.objectModel.NamedObjectDef[] = [];
     request.application.objectContext.forEach(namedObject => {
         let def = namedObject.def;
         if (def.value._type === 'EntryPoint'
@@ -89,7 +89,7 @@ export function listTypes(request: vy.RequestContext): string[] {
 
 /// <summary> Get definition of a type in current application. </summary>
 /// TODO: @dapeng, return types from global and request scope.
-export function getType(request: vy.RequestContext, input: { typeName: string }): vy.objectModel.TypeDefinition {
+export function getType(request: vy.RequestContext, input: { typeName: string }): vy.objectModel.TypeDef {
     if (input == null || input.typeName == null) {
         throw new Error("'typeName' property must be specified under 'input' object of request.");
     }
@@ -118,7 +118,7 @@ export function listProviders(request: vy.RequestContext): string[] {
 
 /// <summary> Get the provider definition for a URI protocol. </summary>
 /// TODO: @dapeng, return providers from global and request scope.
-export function getProvider(request: vy.RequestContext, input: { protocolName: string }): vy.objectModel.ProviderDefinition {
+export function getProvider(request: vy.RequestContext, input: { protocolName: string }): vy.objectModel.ProviderDef {
     if (input == null || input.protocolName == null) {
         throw new Error("'protocolName' property must be specified under 'input' object of request.");
     }

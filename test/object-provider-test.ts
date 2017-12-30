@@ -119,7 +119,7 @@ describe('winery/object-provider', () => {
         });
 
         it('ProviderRegistry#fromDefinition', () => {
-            let defs: objectModel.ProviderDefinition[] = [{
+            let defs: objectModel.ProviderDef[] = [{
                 protocol: "protocolA",
                 moduleName: "./object-provider-test",
                 functionName: "loadA"

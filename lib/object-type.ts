@@ -15,7 +15,7 @@ export interface ObjectWithType {
 };
 
 /// <summary> Object type definition to register a type in Napa. </summary>
-export interface TypeDefinition {
+export interface TypeDef {
     /// <summary> Type name to apply this constructor. </summary>
     typeName: string;
 
@@ -117,7 +117,7 @@ export class TypeRegistry implements ObjectFactory {
     /// <param name="typeDefCollection"> A collection of type definitions </param>
     /// <param name="baseDir"> Base directory name according to which module name will be resolved. </param>
     /// <returns> A TypeRegistry object. </returns>
-    public static fromDefinition(typeDefCollection: TypeDefinition[], baseDir: string): TypeRegistry {
+    public static fromDefinition(typeDefCollection: TypeDef[], baseDir: string): TypeRegistry {
         let registry = new TypeRegistry();
         if (typeDefCollection != null) {
             typeDefCollection.forEach(def => {

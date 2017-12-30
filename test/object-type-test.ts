@@ -80,7 +80,7 @@ describe('winery/object-type', () => {
         });
 
         it('#fromDefinition', () => {
-            let defs: objectModel.TypeDefinition[] = [{
+            let defs: objectModel.TypeDef[] = [{
                 typeName: "TypeA",
                 moduleName: "./object-type-test",
                 functionName: "createA"

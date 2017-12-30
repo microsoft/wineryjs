@@ -30,7 +30,7 @@ export class ObjectTypeConfig {
     /// <param name="validateSchema"> Whether validate schema, 
     /// this option is given due to request object already checked schema at request level. </param>
     /// <returns> A list of TypeDefinition objects. </returns>
-    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): objectModel.TypeDefinition[] {
+    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): objectModel.TypeDef[] {
         if (validateSchema) {
             utils.ensureSchema(jsValue, this.OBJECT_TYPE_CONFIG_SCHEMA);
         }
@@ -44,7 +44,7 @@ export class ObjectTypeConfig {
     /// <summary> From a config file to create a array of TypeDefinition. </summary>
     /// <param name="objectTypeConfig"> TypeDefinition config file. </param>
     /// <returns> A list of TypeDefinition objects. </returns>
-    public static fromConfig(objectTypeConfig: string): objectModel.TypeDefinition[] {
+    public static fromConfig(objectTypeConfig: string): objectModel.TypeDef[] {
         return utils.appendMessageOnException(
             "Error found in object type definition file '" + objectTypeConfig + "'.",
             () => { return this.fromConfigObject(utils.readConfig(objectTypeConfig)); });
@@ -70,7 +70,7 @@ export class ObjectProviderConfig {
     /// <param name="validateSchema"> Whether validate schema, 
     /// this option is given due to request object already checked schema at request level. </param>
     /// <returns> A list of ProviderDefinition objects. </returns>
-    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): objectModel.ProviderDefinition[]{
+    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): objectModel.ProviderDef[]{
         if (validateSchema) {
             utils.ensureSchema(jsValue, this.OBJECT_PROVIDER_CONFIG_SCHEMA);
         }
@@ -87,7 +87,7 @@ export class ObjectProviderConfig {
     /// </summary>
     /// <param name="objectProviderConfig"> a JSON file in object provider definition schema. </param>
     /// <returns> A list of ProviderDefinition objects. </returns>
-    public static fromConfig(objectProviderConfig: string): objectModel.ProviderDefinition[] {
+    public static fromConfig(objectProviderConfig: string): objectModel.ProviderDef[] {
         return utils.appendMessageOnException(
             "Error found in object provider definition file '" + objectProviderConfig + "'.",
             () => { return this.fromConfigObject(utils.readConfig(objectProviderConfig)); });
@@ -115,7 +115,7 @@ export class NamedObjectConfig {
     /// <param name="validateSchema"> Whether validate schema, 
     /// this option is given due to request object already checked schema at request level. </param>
     /// <returns> A list of NamedObjectDefinition objects. </returns>
-    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): objectModel.NamedObjectDefinition[]{
+    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): objectModel.NamedObjectDef[]{
         if (validateSchema) {
             utils.ensureSchema(jsValue, this.NAMED_OBJECT_CONFIG_SCHEMA);
         }
@@ -132,7 +132,7 @@ export class NamedObjectConfig {
     /// </summary>
     /// <param name="namedObjectConfigFile"> a JSON file in named object definition schema. </param>
     /// <returns> A list of NamedObjectDefinition objects. </returns>
-    public static fromConfig(namedObjectConfigFile: string): objectModel.NamedObjectDefinition[] {
+    public static fromConfig(namedObjectConfigFile: string): objectModel.NamedObjectDef[] {
         return utils.appendMessageOnException(
             "Error found in named object definition file '" + namedObjectConfigFile + "'.",
             () => { return this.fromConfigObject(utils.readConfig(namedObjectConfigFile)); });
@@ -237,7 +237,7 @@ export class ApplicationConfig {
 
         // Required: 'objectTypes'
         let typeDefFiles: string[] = jsValue.objectTypes;
-        let typeDefinitions: objectModel.TypeDefinition[] = [];
+        let typeDefinitions: objectModel.TypeDef[] = [];
         let typeToFileName: { [typeName: string]: string } = {};
         for (let typeDefFile of typeDefFiles) {
             let typeDefs = ObjectTypeConfig.fromConfig(path.resolve(basePath, typeDefFile));
@@ -257,7 +257,7 @@ export class ApplicationConfig {
 
         // Optional: 'objectProviders'
         let providerDefFiles: string[] = jsValue.objectProviders;
-        let providerDefinitions: objectModel.ProviderDefinition[] = [];
+        let providerDefinitions: objectModel.ProviderDef[] = [];
         let protocolToFileName: { [protocolName: string]: string } = {};
         if (providerDefFiles != null) {
             for (let providerDefFile of providerDefFiles) {
@@ -279,7 +279,7 @@ export class ApplicationConfig {
 
         // Required: 'namedObjects'
         let namedObjectDefFiles: string[] = jsValue.namedObjects;
-        let namedObjectDefinitions: objectModel.NamedObjectDefinition[] = [];
+        let namedObjectDefinitions: objectModel.NamedObjectDef[] = [];
         let nameToFileName: {[objectName: string]: string} = {};
 
         for (let namedObjectDefFile of namedObjectDefFiles) {
@@ -298,7 +298,7 @@ export class ApplicationConfig {
             }
         }
 
-        appSettings.objectContextDef = new objectModel.ScopedObjectContextDefinition(
+        appSettings.objectContextDef = new objectModel.ScopedObjectContextDef(
             hostSettings.objectContextDef,
             typeDefinitions,
             providerDefinitions,
@@ -370,7 +370,7 @@ export class HostConfig {
     public static fromConfigObject(jsValue: any, basePath: string): host.HostSettings {
          utils.ensureSchema(jsValue, this.SETTINGS_SCHEMA);
          
-         let typeDefinitions: objectModel.TypeDefinition[] = [];
+         let typeDefinitions: objectModel.TypeDef[] = [];
          if (jsValue.objectTypes != null) {
              for (let fileName of <string[]>(jsValue.objectTypes)) {
                 let filePath = path.resolve(basePath, fileName);
@@ -378,7 +378,7 @@ export class HostConfig {
              }
          }
 
-         let providerDefinitions: objectModel.ProviderDefinition[] = [];
+         let providerDefinitions: objectModel.ProviderDef[] = [];
          if (jsValue.objectProviders != null) {
             for (let fileName of <string[]>(jsValue.objectProviders)) {
                 let filePath = path.resolve(basePath, fileName);
@@ -386,7 +386,7 @@ export class HostConfig {
              }
          }
 
-         let namedObjectDefinitions: objectModel.NamedObjectDefinition[] = [];
+         let namedObjectDefinitions: objectModel.NamedObjectDef[] = [];
          if (jsValue.namedObjects != null ){
             for (let fileName of <string[]>(jsValue.namedObjects)) {
                 let filePath = path.resolve(basePath, fileName);
@@ -399,7 +399,7 @@ export class HostConfig {
             allowPerRequestOverride: jsValue.allowPerRequestOverride,
             throwExceptionOnError: jsValue.throwExceptionOnError,
             defaultExecutionStack: jsValue.defaultExecutionStack,
-            objectContextDef: new objectModel.ScopedObjectContextDefinition(
+            objectContextDef: new objectModel.ScopedObjectContextDef(
                 null,
                 typeDefinitions,
                 providerDefinitions,
