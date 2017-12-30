@@ -118,7 +118,7 @@ export interface ObjectProvider {
 }
 
 /// <summary> Object provider definition to register a URI based object provider in Napa. </summary>
-export interface ProviderDefinition {
+export interface ProviderDef {
     /// <summary> </summary>
     protocol: string;
 
@@ -190,7 +190,7 @@ export class ProviderRegistry implements ObjectProvider {
     /// <param name="providerDefCollection"> Collection of ProviderDefinition objects. </summary>
     /// <param name="baseDir"> Base directory name according to which module name will be resolved.</param>
     /// <returns> A ProviderRegistry object. </returns>
-    public static fromDefinition(providerDefCollection: ProviderDefinition[], baseDir: string): ProviderRegistry {
+    public static fromDefinition(providerDefCollection: ProviderDef[], baseDir: string): ProviderRegistry {
         let registry = new ProviderRegistry();
         if (providerDefCollection != null) {
             for (let def of providerDefCollection) {

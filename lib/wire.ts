@@ -32,13 +32,13 @@ export interface Request {
     controlFlags?: ControlFlags;
 
     /// <summary> Overridden types </summary>
-    overrideTypes?: objectModel.TypeDefinition[];
+    overrideTypes?: objectModel.TypeDef[];
 
     /// <summary> Overridden named objects </summary>
-    overrideObjects?: objectModel.NamedObjectDefinition[];
+    overrideObjects?: objectModel.NamedObjectDef[];
 
     /// <summary> Overridden providers </summary>
-    overrideProviders?: objectModel.ProviderDefinition[];
+    overrideProviders?: objectModel.ProviderDef[];
 }
 
 /// <summary> Response code </summary>

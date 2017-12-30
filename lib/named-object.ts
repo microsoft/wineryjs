@@ -13,7 +13,7 @@ import { ObjectContext } from './object-context';
 /// </summary>
 
 /// <summary> Interface for Named object definition. </summary>
-export interface NamedObjectDefinition {
+export interface NamedObjectDef {
     /// <summary> Name or key to retrieve this object. </summary>
     name: string;
 
@@ -39,7 +39,7 @@ export interface NamedObjectDefinition {
 
 export interface NamedObject {
     /// <summary> Definition of current named object. </summary>
-    def: NamedObjectDefinition;
+    def: NamedObjectDef;
 
     /// <summary> Value of current named object </summary>
     value: any;
@@ -98,7 +98,7 @@ export class NamedObjectRegistry implements NamedObjectCollection {
     /// <returns> NamedObjectRegistry </returns>
     public static fromDefinition(
         scope: string,
-        namedObjectDefCollection: NamedObjectDefinition[],
+        namedObjectDefCollection: NamedObjectDef[],
         context: ObjectContext): NamedObjectRegistry {
 
         let registry = new NamedObjectRegistry();

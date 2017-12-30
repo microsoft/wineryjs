@@ -1,8 +1,8 @@
 import * as path from 'path';
 
-import { TypeDefinition, TypeRegistry, ObjectFactory } from './object-type';
-import { Uri, ProviderDefinition, ObjectProvider, ProviderRegistry } from './object-provider';
-import { NamedObjectDefinition, NamedObject, NamedObjectRegistry, ObjectContextDependency } from './named-object';
+import { TypeDef, TypeRegistry, ObjectFactory } from './object-type';
+import { Uri, ProviderDef, ObjectProvider, ProviderRegistry } from './object-provider';
+import { NamedObjectDef, NamedObject, NamedObjectRegistry, ObjectContextDependency } from './named-object';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// This file defines the interfaces and an implementation of Object Context.
@@ -80,7 +80,7 @@ export interface ObjectContext {
 export class ScopedObjectContext implements ObjectContext {
     private _scope: string;
     private _parent: ScopedObjectContext;
-    private _definition: ScopedObjectContextDefinition;
+    private _definition: ScopedObjectContextDef;
 
     private _objectFactory: ObjectFactory;
     private _objectProvider: ObjectProvider;
@@ -98,7 +98,7 @@ export class ScopedObjectContext implements ObjectContext {
         scopeName: string, 
         baseDir: string,
         parent: ScopedObjectContext, 
-        definition: ScopedObjectContextDefinition) {
+        definition: ScopedObjectContextDef) {
         
         this._scope = scopeName;
         this._baseDir = baseDir;
@@ -121,7 +121,7 @@ export class ScopedObjectContext implements ObjectContext {
     }
 
     /// <summary> Get definition for current object context. </summary>
-    public get def(): ScopedObjectContextDefinition {
+    public get def(): ScopedObjectContextDef {
         return this._definition;
     }
 
@@ -318,18 +318,18 @@ export class ScopedObjectContext implements ObjectContext {
 }
 
 /// <summary> Class for scoped object context definition. </summary>
-export class ScopedObjectContextDefinition {
+export class ScopedObjectContextDef {
     /// <summary> Parent scoped object definition which is necessary to analze dependencies. </summary>
-    private _parent: ScopedObjectContextDefinition;
+    private _parent: ScopedObjectContextDef;
 
-    private _typeDefs: TypeDefinition[];
-    private _typeNameToDef: Map<string, TypeDefinition>;
+    private _typeDefs: TypeDef[];
+    private _typeNameToDef: Map<string, TypeDef>;
 
-    private _providerDefs: ProviderDefinition[];
-    private _protocolNameToDef: Map<string, ProviderDefinition>;
+    private _providerDefs: ProviderDef[];
+    private _protocolNameToDef: Map<string, ProviderDef>;
 
-    private _objectDefs: NamedObjectDefinition[];
-    private _objectNameToDef: Map<string, NamedObjectDefinition>;
+    private _objectDefs: NamedObjectDef[];
+    private _objectNameToDef: Map<string, NamedObjectDef>;
 
     /// <summary> Constructor </summary>
     /// <param name="parentDefinition"> Definition for parent scope. Set to null if there is not parent scope. </param>
@@ -339,10 +339,10 @@ export class ScopedObjectContextDefinition {
     /// <param name="enableDependencyAnalysis"> Whether enable dependency analysis on this context. 
     /// Currently we do for 'global' and 'application' scope, but not 'request' scope. </param>
     public constructor(
-        parentDefinition: ScopedObjectContextDefinition,
-        typeDefs: TypeDefinition[],
-        providerDefs: ProviderDefinition[],
-        objectDefs: NamedObjectDefinition[],
+        parentDefinition: ScopedObjectContextDef,
+        typeDefs: TypeDef[],
+        providerDefs: ProviderDef[],
+        objectDefs: NamedObjectDef[],
         enableDependencyAnalysis: boolean) {
 
         this._parent = parentDefinition;
@@ -350,17 +350,17 @@ export class ScopedObjectContextDefinition {
         this._providerDefs = providerDefs;
         this._objectDefs = objectDefs;
 
-        this._typeNameToDef = new Map<string, TypeDefinition>();
+        this._typeNameToDef = new Map<string, TypeDef>();
         for (let def of typeDefs) {
             this._typeNameToDef.set(def.typeName, def);
         }
 
-        this._protocolNameToDef = new Map<string, ProviderDefinition>();
+        this._protocolNameToDef = new Map<string, ProviderDef>();
         for (let def of providerDefs) {
             this._protocolNameToDef.set(def.protocol, def);
         }
 
-        this._objectNameToDef = new Map<string, NamedObjectDefinition>();
+        this._objectNameToDef = new Map<string, NamedObjectDef>();
         for (let def of objectDefs) {
             this._objectNameToDef.set(def.name, def);
         }
@@ -371,17 +371,17 @@ export class ScopedObjectContextDefinition {
     }
 
     /// <summary> Parent scope context definition. </summary>
-    public get parent(): ScopedObjectContextDefinition {
+    public get parent(): ScopedObjectContextDef {
         return this._parent;
     }
 
     /// <summary> Get all type definition in current context. </summary>
-    public get typeDefs(): TypeDefinition[] {
+    public get typeDefs(): TypeDef[] {
         return this._typeDefs;
     }
 
     /// <summary> Get type definition by type name. </summary>
-    public getTypeDef(typeName: string): TypeDefinition {
+    public getTypeDef(typeName: string): TypeDef {
         let def = this._typeNameToDef.get(typeName);
         if (def == null && this._parent != null) {
             def = this._parent.getTypeDef(typeName);
@@ -390,12 +390,12 @@ export class ScopedObjectContextDefinition {
     }
 
     /// <summary> Get all provider definition in current context. </summary>
-    public get providerDefs(): ProviderDefinition[] {
+    public get providerDefs(): ProviderDef[] {
         return this._providerDefs;
     }
 
     /// <summary> Get provider definition by protocol name. </summary>
-    public getProviderDef(protocolName: string): ProviderDefinition {
+    public getProviderDef(protocolName: string): ProviderDef {
         let def = this._protocolNameToDef.get(protocolName);
         if (def == null && this._parent != null) {
             return this._parent.getProviderDef(protocolName);
@@ -404,12 +404,12 @@ export class ScopedObjectContextDefinition {
     }
 
     /// <summary> Get all named object definition in current context. </summary>
-    public get namedObjectDefs(): NamedObjectDefinition[] {
+    public get namedObjectDefs(): NamedObjectDef[] {
         return this._objectDefs;
     }
 
     /// <summary> Get named object definition by name. </summary>
-    public getNamedObjectDef(name: string): NamedObjectDefinition {
+    public getNamedObjectDef(name: string): NamedObjectDef {
         let def = this._objectNameToDef.get(name);
         if (def == null && this._parent != null) {
             return this._parent.getNamedObjectDef(name);
@@ -425,7 +425,7 @@ export class ScopedObjectContextDefinition {
         // First pass to analyze direct dependencies, do type check and protocol check.
         for (let def of this._objectDefs) {
             def.dependencies = new ObjectContextDependency();
-            ScopedObjectContextDefinition.analyzeDirectDependencies(def.dependencies, def.value);
+            ScopedObjectContextDef.analyzeDirectDependencies(def.dependencies, def.value);
 
             // Do type check.
             let typeDeps = def.dependencies.typeDependencies;
@@ -447,7 +447,7 @@ export class ScopedObjectContextDefinition {
         // Second pass to get closure from redirect/indirect dependencies.
         // Key: object name. Value: Closure of dependent object names.
         let resolved: Map<string, Set<string>> = new Map<string, Set<string>>();
-        let toResolve: { unresolvedDeps: Set<string>, def: NamedObjectDefinition }[]  = [];
+        let toResolve: { unresolvedDeps: Set<string>, def: NamedObjectDef }[]  = [];
 
         // Create dependencies to resolve.
         for (let def of this._objectDefs) {
@@ -469,7 +469,7 @@ export class ScopedObjectContextDefinition {
 
         // Multi-round resolution.
         while (toResolve.length != 0) {
-            let remaining: { unresolvedDeps: Set<string>, def: NamedObjectDefinition }[] = [];
+            let remaining: { unresolvedDeps: Set<string>, def: NamedObjectDef }[] = [];
             let resolvedThisRound = 0;
 
             // One round to resolved each unresolved.
@@ -518,7 +518,7 @@ export class ScopedObjectContextDefinition {
             }
             let propertyNames = Object.getOwnPropertyNames(jsValue);
             for (let propertyName of propertyNames) {
-                ScopedObjectContextDefinition.analyzeDirectDependencies(dep, jsValue[propertyName]);
+                ScopedObjectContextDef.analyzeDirectDependencies(dep, jsValue[propertyName]);
             }
         }
     }
