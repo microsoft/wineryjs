@@ -219,7 +219,7 @@ export class ApplicationConfig {
             description: jsValue.description,
             allowPerRequestOverride: jsValue.allowPerRequestOverride,
             defaultExecutionStack: jsValue.defaultExecutionStack,
-            objectContext: hostSettings.objectContext,
+            objectContextDef: hostSettings.objectContextDef,
             metrics: []
         };
 
@@ -298,8 +298,8 @@ export class ApplicationConfig {
             }
         }
 
-        appSettings.objectContext = new objectModel.ScopedObjectContextDefinition(
-            hostSettings.objectContext,
+        appSettings.objectContextDef = new objectModel.ScopedObjectContextDefinition(
+            hostSettings.objectContextDef,
             typeDefinitions,
             providerDefinitions,
             namedObjectDefinitions,
@@ -399,7 +399,7 @@ export class HostConfig {
             allowPerRequestOverride: jsValue.allowPerRequestOverride,
             throwExceptionOnError: jsValue.throwExceptionOnError,
             defaultExecutionStack: jsValue.defaultExecutionStack,
-            objectContext: new objectModel.ScopedObjectContextDefinition(
+            objectContextDef: new objectModel.ScopedObjectContextDefinition(
                 null,
                 typeDefinitions,
                 providerDefinitions,

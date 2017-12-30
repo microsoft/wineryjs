@@ -105,9 +105,9 @@ export class ScopedObjectContext implements ObjectContext {
         this._definition = definition;
         this._parent = parent;
         
-        this._objectFactory = TypeRegistry.fromDefinition(definition.types, baseDir);
-        this._objectProvider = ProviderRegistry.fromDefinition(definition.providers, baseDir);
-        this._namedObjects = NamedObjectRegistry.fromDefinition(scopeName, definition.namedObjects, this);
+        this._objectFactory = TypeRegistry.fromDefinition(definition.typeDefs, baseDir);
+        this._objectProvider = ProviderRegistry.fromDefinition(definition.providerDefs, baseDir);
+        this._namedObjects = NamedObjectRegistry.fromDefinition(scopeName, definition.namedObjectDefs, this);
     }
 
     /// <summary> Get scope name. </summary>
@@ -249,29 +249,29 @@ export class ScopedObjectContext implements ObjectContext {
         // Object context override from request happened.
         let overrides = this._definition;
 
-        if (this._definition.types.length != 0) {
+        if (this._definition.typeDefs.length != 0) {
             let typeDeps = def.dependencies.typeDependencies;
             typeDeps.forEach(typeDep => {
                 // Type override happened.
-                if (overrides.getType(typeDep) != null) {
+                if (overrides.getTypeDef(typeDep) != null) {
                     return true;
                 }
             });
         }
-        if (this._definition.providers.length != 0) {
+        if (this._definition.providerDefs.length != 0) {
             let providerDeps = def.dependencies.protocolDependencies;
             providerDeps.forEach(providerDep => {
                 // Provide override happened.
-                if (overrides.getProvider(providerDep) != null) {
+                if (overrides.getProviderDef(providerDep) != null) {
                     return true;
                 }
             });
         }
-        if (this._definition.namedObjects.length != 0) {
+        if (this._definition.namedObjectDefs.length != 0) {
             let objectDeps = def.dependencies.objectDependencies;
             objectDeps.forEach(objectDep => {
                 // Dependent named object override happened.
-                if (overrides.getNamedObject(objectDep) != null) {
+                if (overrides.getNamedObjectDef(objectDep) != null) {
                     return true;
                 }
             });
@@ -319,14 +319,14 @@ export class ScopedObjectContextDefinition {
     /// <summary> Parent scoped object definition which is necessary to analze dependencies. </summary>
     private _parent: ScopedObjectContextDefinition;
 
-    private _typeDefinitions: TypeDefinition[];
-    private _typeNameToDefinition: Map<string, TypeDefinition>;
+    private _typeDefs: TypeDefinition[];
+    private _typeNameToDef: Map<string, TypeDefinition>;
 
-    private _providerDefinitions: ProviderDefinition[];
-    private _protocolNameToDefinition: Map<string, ProviderDefinition>;
+    private _providerDefs: ProviderDefinition[];
+    private _protocolNameToDef: Map<string, ProviderDefinition>;
 
-    private _objectDefinitions: NamedObjectDefinition[];
-    private _objectNameToDefinition: Map<string, NamedObjectDefinition>;
+    private _objectDefs: NamedObjectDefinition[];
+    private _objectNameToDef: Map<string, NamedObjectDefinition>;
 
     /// <summary> Constructor </summary>
     /// <param name="parentDefinition"> Definition for parent scope. Set to null if there is not parent scope. </param>
@@ -343,23 +343,23 @@ export class ScopedObjectContextDefinition {
         enableDependencyAnalysis: boolean) {
 
         this._parent = parentDefinition;
-        this._typeDefinitions = typeDefs;
-        this._providerDefinitions = providerDefs;
-        this._objectDefinitions = objectDefs;
+        this._typeDefs = typeDefs;
+        this._providerDefs = providerDefs;
+        this._objectDefs = objectDefs;
 
-        this._typeNameToDefinition = new Map<string, TypeDefinition>();
+        this._typeNameToDef = new Map<string, TypeDefinition>();
         for (let def of typeDefs) {
-            this._typeNameToDefinition.set(def.typeName, def);
+            this._typeNameToDef.set(def.typeName, def);
         }
 
-        this._protocolNameToDefinition = new Map<string, ProviderDefinition>();
+        this._protocolNameToDef = new Map<string, ProviderDefinition>();
         for (let def of providerDefs) {
-            this._protocolNameToDefinition.set(def.protocol, def);
+            this._protocolNameToDef.set(def.protocol, def);
         }
 
-        this._objectNameToDefinition = new Map<string, NamedObjectDefinition>();
+        this._objectNameToDef = new Map<string, NamedObjectDefinition>();
         for (let def of objectDefs) {
-            this._objectNameToDefinition.set(def.name, def);
+            this._objectNameToDef.set(def.name, def);
         }
 
         if (enableDependencyAnalysis) {
@@ -373,43 +373,43 @@ export class ScopedObjectContextDefinition {
     }
 
     /// <summary> Get all type definition in current context. </summary>
-    public get types(): TypeDefinition[] {
-        return this._typeDefinitions;
+    public get typeDefs(): TypeDefinition[] {
+        return this._typeDefs;
     }
 
     /// <summary> Get type definition by type name. </summary>
-    public getType(typeName: string): TypeDefinition {
-        let def = this._typeNameToDefinition.get(typeName);
+    public getTypeDef(typeName: string): TypeDefinition {
+        let def = this._typeNameToDef.get(typeName);
         if (def == null && this._parent != null) {
-            def = this._parent.getType(typeName);
+            def = this._parent.getTypeDef(typeName);
         }
         return def;
     }
 
     /// <summary> Get all provider definition in current context. </summary>
-    public get providers(): ProviderDefinition[] {
-        return this._providerDefinitions;
+    public get providerDefs(): ProviderDefinition[] {
+        return this._providerDefs;
     }
 
     /// <summary> Get provider definition by protocol name. </summary>
-    public getProvider(protocolName: string): ProviderDefinition {
-        let def = this._protocolNameToDefinition.get(protocolName);
+    public getProviderDef(protocolName: string): ProviderDefinition {
+        let def = this._protocolNameToDef.get(protocolName);
         if (def == null && this._parent != null) {
-            return this._parent.getProvider(protocolName);
+            return this._parent.getProviderDef(protocolName);
         }
         return def;
     }
 
     /// <summary> Get all named object definition in current context. </summary>
-    public get namedObjects(): NamedObjectDefinition[] {
-        return this._objectDefinitions;
+    public get namedObjectDefs(): NamedObjectDefinition[] {
+        return this._objectDefs;
     }
 
     /// <summary> Get named object definition by name. </summary>
-    public getNamedObject(name: string): NamedObjectDefinition {
-        let def = this._objectNameToDefinition.get(name);
+    public getNamedObjectDef(name: string): NamedObjectDefinition {
+        let def = this._objectNameToDef.get(name);
         if (def == null && this._parent != null) {
-            return this._parent.getNamedObject(name);
+            return this._parent.getNamedObjectDef(name);
         }
         return def;
     }
@@ -420,14 +420,14 @@ export class ScopedObjectContextDefinition {
     /// </summary>
     private analyzeNamedObjectDependencies(): void {
         // First pass to analyze direct dependencies, do type check and protocol check.
-        for (let def of this._objectDefinitions) {
+        for (let def of this._objectDefs) {
             def.dependencies = new ObjectContextDependency();
             ScopedObjectContextDefinition.analyzeDirectDependencies(def.dependencies, def.value);
 
             // Do type check.
             let typeDeps = def.dependencies.typeDependencies;
             typeDeps.forEach(typeDep => {
-                if (this.getType(typeDep) == null) {
+                if (this.getTypeDef(typeDep) == null) {
                     throw new Error("Unrecoginized type '" + typeDep + "' found in named object '" + def.name + "'.");
                 }
             });
@@ -435,7 +435,7 @@ export class ScopedObjectContextDefinition {
             // Do URI provider check.
             let protocolDeps = def.dependencies.protocolDependencies;
             protocolDeps.forEach(protocolDep => {
-                if (this.getProvider(protocolDep) == null) {
+                if (this.getProviderDef(protocolDep) == null) {
                     throw new Error("Unrecongized URI protocol '" + protocolDep + "' found in named object '" + def.name + "'.");
                 }
             });
@@ -447,7 +447,7 @@ export class ScopedObjectContextDefinition {
         let toResolve: { unresolvedDeps: Set<string>, definition: NamedObjectDefinition }[]  = [];
 
         // Create dependencies to resolve.
-        for (let def of this._objectDefinitions) {
+        for (let def of this._objectDefs) {
             let objectDeps = def.dependencies.objectDependencies;
             if (objectDeps.size != 0) {
                 let unresolvedDeps = new Set<string>();

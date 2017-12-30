@@ -2,8 +2,8 @@ import * as assert from 'assert';
 import * as objectModel from '../lib/object-model';
 
 describe('winery/object-context', () => {
-    let perAppDef: objectModel.ScopedObjectContextDefinition = null;
-    let perRequestDef: objectModel.ScopedObjectContextDefinition = null;
+    let perAppContextDef: objectModel.ScopedObjectContextDefinition = null;
+    let perRequestContextDef: objectModel.ScopedObjectContextDefinition = null;
 
     // Test suite for ScopedObjectContextDefinition.
     describe('ScopedObjectContextDefinition', () => {
@@ -90,24 +90,24 @@ describe('winery/object-context', () => {
         
         it("#ctor", () => {
             assert.doesNotThrow(() => {
-                perAppDef = new objectModel.ScopedObjectContextDefinition(null, perAppTypeDefs, perAppProviderDefs, perAppObjectDefs, true);
-                perRequestDef = new objectModel.ScopedObjectContextDefinition(perAppDef, perRequestTypeDefs, perRequestProviderDefs, perRequestObjectDefs, false);
+                perAppContextDef = new objectModel.ScopedObjectContextDefinition(null, perAppTypeDefs, perAppProviderDefs, perAppObjectDefs, true);
+                perRequestContextDef = new objectModel.ScopedObjectContextDefinition(perAppContextDef, perRequestTypeDefs, perRequestProviderDefs, perRequestObjectDefs, false);
             });
         });
 
         it('#getters', () => {
-            assert.strictEqual(perAppDef.parent, null);
-            assert.strictEqual(perAppDef.types, perAppTypeDefs);
-            assert.strictEqual(perAppDef.providers, perAppProviderDefs);
-            assert.strictEqual(perAppDef.namedObjects, perAppObjectDefs);
+            assert.strictEqual(perAppContextDef.parent, null);
+            assert.strictEqual(perAppContextDef.typeDefs, perAppTypeDefs);
+            assert.strictEqual(perAppContextDef.providerDefs, perAppProviderDefs);
+            assert.strictEqual(perAppContextDef.namedObjectDefs, perAppObjectDefs);
             
-            assert.strictEqual(perAppDef.getType('TypeA'), perAppTypeDefs[0]);
-            assert.strictEqual(perAppDef.getType('TypeB'), perAppTypeDefs[1]);
-            assert.strictEqual(perAppDef.getProvider('ProtocolA'), perAppProviderDefs[0]);
+            assert.strictEqual(perAppContextDef.getTypeDef('TypeA'), perAppTypeDefs[0]);
+            assert.strictEqual(perAppContextDef.getTypeDef('TypeB'), perAppTypeDefs[1]);
+            assert.strictEqual(perAppContextDef.getProviderDef('ProtocolA'), perAppProviderDefs[0]);
 
-            assert.strictEqual(perAppDef.getNamedObject('objectA'), perAppObjectDefs[0]);
-            assert.strictEqual(perAppDef.getNamedObject('objectB'), perAppObjectDefs[1]);
-            assert.strictEqual(perAppDef.getNamedObject('objectC'), perAppObjectDefs[2]);
+            assert.strictEqual(perAppContextDef.getNamedObjectDef('objectA'), perAppObjectDefs[0]);
+            assert.strictEqual(perAppContextDef.getNamedObjectDef('objectB'), perAppObjectDefs[1]);
+            assert.strictEqual(perAppContextDef.getNamedObjectDef('objectC'), perAppObjectDefs[2]);
         });
 
         it('#analyzeDependency', () => {
@@ -139,14 +139,14 @@ describe('winery/object-context', () => {
         let perRequestContext: objectModel.ScopedObjectContext = null;
         
         it('#ctor', () => {
-            perAppContext = new objectModel.ScopedObjectContext("application", __dirname, null, perAppDef);
-            perRequestContext = new objectModel.ScopedObjectContext("request", __dirname, perAppContext, perRequestDef);
+            perAppContext = new objectModel.ScopedObjectContext("application", __dirname, null, perAppContextDef);
+            perRequestContext = new objectModel.ScopedObjectContext("request", __dirname, perAppContext, perRequestContextDef);
         });
 
         it('#getters', () => {
             assert.strictEqual(perAppContext.scope, "application");
             assert.strictEqual(perAppContext.baseDir, __dirname);
-            assert.strictEqual(perAppContext.definition, perAppDef);
+            assert.strictEqual(perAppContext.definition, perAppContextDef);
             assert.strictEqual(perAppContext.parent, null);
             assert.strictEqual(perRequestContext.parent, perAppContext);
         });
