@@ -1,5 +1,5 @@
 import {Application, RequestContext} from '../lib/app';
-import {LeafHost} from '../lib/host';
+import {Leaf} from '../lib/host';
 
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
@@ -12,7 +12,7 @@ import * as assert from 'assert';
 
 
 describe('winery/app', () => {
-     let host = new LeafHost(
+     let host = new Leaf(
             config.HostConfig.fromConfig(
                 require.resolve('../config/host.json')));
 

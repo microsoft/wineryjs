@@ -2,17 +2,17 @@ import * as app from '../lib/app';
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
 import * as wire from '../lib/wire';
-import { Host, LeafHost, HostProxy, HostHub } from '../lib/host';
+import { Host, Leaf, Proxy, Hub } from '../lib/host';
 
 import * as path from 'path';
 import * as napa from 'napajs';
 import * as assert from 'assert';
 
 describe('winery/host', () => {
-    describe('LeafHost', () => {
-        let host: LeafHost = undefined;
+    describe('Leaf', () => {
+        let host: Host = undefined;
         it('#ctor', () => {
-            host = new LeafHost(
+            host = new Leaf(
                 config.HostConfig.fromConfig(
                     require.resolve('../config/host.json'))
             );
@@ -108,11 +108,11 @@ describe('winery/host', () => {
         });
     });
 
-    describe('HostProxy', () => {
-        let host: HostProxy = undefined;
+    describe('Proxy', () => {
+        let host: Host = undefined;
         let zone: napa.zone.Zone = napa.zone.create('zone2');
         it('#ctor', () => {
-            host = new HostProxy(zone);
+            host = new Proxy(zone);
         });
 
         it('#register: success', () => {
@@ -213,12 +213,12 @@ describe('winery/host', () => {
         });
     });
 
-    describe("HostHub", () => {
-        let host: HostHub = undefined;
+    describe("Hub", () => {
+        let host: Host = undefined;
         let zone: napa.zone.Zone = napa.zone.create('zone4');
 
         it('#ctor', () => {
-            host = new HostHub(
+            host = new Hub(
                 config.HostConfig.fromConfig(
                     require.resolve('../config/host.json')));
         });
