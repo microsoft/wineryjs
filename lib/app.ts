@@ -44,6 +44,9 @@
 // or current application from RequestContext.getApplication().
 
 
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 // External dependencies.
 import * as os from 'os';
 import * as path from 'path';

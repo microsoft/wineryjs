@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 import {Application, RequestContext} from '../lib/app';
 import {Leaf} from '../lib/host';
 
