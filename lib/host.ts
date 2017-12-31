@@ -20,7 +20,7 @@ export interface Host {
     /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
-    register(appModulePath: string, appInstanceNames: string[], zone: napa.zone.Zone): Promise<void>;
+    register(appModulePath: string, appInstanceNames: string[], zone?: napa.zone.Zone): Promise<void>;
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
@@ -31,7 +31,7 @@ export interface Host {
 }
 
 /// <summary> A concrete Host on a leaf JavaScript worker . </summary>
-export class LeafHost implements Host{
+export class Leaf implements Host{
     // Lower-case name to application map.
     private _applications: Map<string, Application> = new Map<string, Application>();
 
@@ -63,7 +63,7 @@ export class LeafHost implements Host{
     public register(
         appModulePath: string, 
         appInstanceNames: string[], 
-        zone: napa.zone.Zone = null): Promise<void> {
+        zone?: napa.zone.Zone): Promise<void> {
 
         if (zone != null) {
             return Promise.reject("LeafHost doesn't support register on a remote Zone.");
@@ -144,8 +144,9 @@ export class LeafHost implements Host{
 }
 
 /// <summary> Host proxy to talk to another JavaScript worker. </summary>
-export class HostProxy implements Host {
-    /// <summary> Zone to run the app </summary>
+export class Proxy implements Host {
+
+    /// <summary> Zone to run the app. </summary>
     private _zone: napa.zone.Zone;
 
     /// <summary> Application instance names running on this host. </summary>
@@ -160,40 +161,37 @@ export class HostProxy implements Host {
     /// <summary> Register an application instance in current host. </summary>
     /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
-    /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
+    /// <param name="zone"> zone to run the app. If absent, use current isolate. </param>
     public register(appModulePath: string, 
         appInstanceNames: string[], 
-        zone: napa.zone.Zone = undefined): Promise<void> {
+        zone?: napa.zone.Zone): Promise<void> {
         if (zone != null && zone != this._zone) {
             return Promise.reject("HostProxy cannot register application for a different zone.");
         }
 
-        let instanceString: string = "";
-        for (let i = 0; i < appInstanceNames.length; ++i) {
-            if (i > 0) {
-                instanceString += ', ';
-            }
-            instanceString += `"${appInstanceNames[i]}"`;
-        }
-        let setupCode = `
-            var win = require("${__dirname.replace(/[\\]/g, "/")}/index");
-            win.register("${appModulePath.replace(/[\\]/g, "/")}", [${instanceString}])
-                .catch(e => console(e));
-            `;
-
-        return this._zone.broadcast(setupCode).then(() => {
-            this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
-        });
+        return this._zone.broadcast((baseDir: string, appModulePath: string, instanceNames: string[]) => {
+                require(baseDir + '/index').hub().register(appModulePath, instanceNames);
+            }, [__dirname, appModulePath, appInstanceNames])
+            .then(() => {
+                this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
+            });
     }
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
     public async serve(request: string | wire.Request): Promise<wire.Response> {
         let zone = this._zone;
-        return zone.execute('', 'win.serve', [request])
+        return zone.execute((request: string | wire.Request): wire.Response => {
+                return require(__dirname + '/index').hub().serve(request);
+            }, [request])
             .then((result: napa.zone.Result) => {
                 return Promise.resolve(wire.ResponseHelper.parse(result.payload));
             });
+        /*
+        return zone.execute('', 'win.serve', [request])
+            .then((result: napa.zone.Result) => {
+                return Promise.resolve(wire.ResponseHelper.parse(result.payload));
+            });*/
     }
 
     /// <summary> Get application instance names served by this host. </param>
@@ -203,7 +201,7 @@ export class HostProxy implements Host {
 }
 
 /// <summary> Host hub. (this can only exist in Node.JS isolate) </summary>
-export class HostHub implements Host {
+export class Hub implements Host {
     /// <summary> Local host. Only instantiate when application is registered locally. </summary>
     private _localHost: Host;
 
@@ -226,26 +224,22 @@ export class HostHub implements Host {
     }
 
     /// <summary> Register an application for serving. </summary>
-    /// <param name="appModulePath"> full module path of a winery application.</param>
+    /// <param name="appModuleName"> module name of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as application instance names</param>
-    /// <param name="zone"> zone to run the app. If null, use current isolate. </param>
-    public register(appModulePath: string, appInstanceNames: string[], zone: napa.zone.Zone = undefined) : Promise<void> {
-        let host: Host = undefined;
-        if (zone == null) {
-            if (this._localHost == null) {
-                this._localHost = new LeafHost(this._settings);
-            }
-            host = this._localHost;
-        }
-        else {
-            if (this._proxies.has(zone)) {
-                host = this._proxies.get(zone);
-            }
-            else {
-                host = new HostProxy(zone);
-                this._proxies.set(zone, host);
+    /// <param name="zone"> zone to run the app. If absent, use current isolate. </param>
+    public register(appModuleName: string, appInstanceNames: string[], zone?: napa.zone.Zone) : Promise<void> {
+        // If module is in relative path, figure out the full path from caller directory name.
+        if (appModuleName.startsWith('.')) {
+            let callSites = napa.v8.currentStack(2);
+            if (callSites.length > 1) {
+                appModuleName = path.resolve(path.dirname(callSites[1].getFileName()), appModuleName);
             }
         }
+        let appModulePath: string = path.dirname(require.resolve(appModuleName + '/app.json'));
+
+        // Get or create host associated to zone.
+        let host: Host = this.findOrCreateHost(zone);
+        
         return host.register(appModulePath, appInstanceNames, undefined).then(() => {
             this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
             for (let instanceName of appInstanceNames) {
@@ -253,6 +247,26 @@ export class HostHub implements Host {
                 this._hostMap.set(lowerCaseName, host);
             }
         });
+    }
+
+    /// <summary> Find or create host for a zone. </summary>
+    private findOrCreateHost(zone: napa.zone.Zone): Host {
+        if (zone == null) {
+            if (this._localHost == null) {
+                this._localHost = new Leaf(this._settings);
+            }
+            return this._localHost;
+        }
+        else {
+            if (this._proxies.has(zone)) {
+                return this._proxies.get(zone);
+            }
+            else {
+                let host = new Proxy(zone);
+                this._proxies.set(zone, host);
+                return host;
+            }
+        }
     }
 
     /// <summary> Serve winery request. </summary>

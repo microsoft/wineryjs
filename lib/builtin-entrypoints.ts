@@ -3,23 +3,23 @@
 //
 
 import * as fs from 'fs';
-import * as vy from './index';
+import { hub, RequestContext, TypeDef, ProviderDef, NamedObjectDef } from './index';
 
 /// <summary> List all application names in current system. </summary>
-export function listApplications(request: vy.RequestContext): string[] {
-    return vy.getApplicationInstanceNames();
+export function listApplications(request: RequestContext): string[] {
+    return hub().applicationInstanceNames;
 }
 
 const DEFAULT_RANK_USER_ENTRYPOINT: number = 700; 
 
 /// <summary> List all entry point names under current application. </summary>
 export function listEntryPoints(
-    request: vy.RequestContext,
+    request: RequestContext,
     input: { detail: boolean, allowGlobal: boolean, allowPrivate: boolean } 
         = { detail: false, allowGlobal: true, allowPrivate: false }
-        ): string[] | vy.objectModel.NamedObjectDef[] {
+        ): string[] | NamedObjectDef[] {
 
-    let entryPointDefs: vy.objectModel.NamedObjectDef[] = [];
+    let entryPointDefs: NamedObjectDef[] = [];
     request.application.objectContext.forEach(namedObject => {
         let def = namedObject.def;
         if (def.value._type === 'EntryPoint'
@@ -49,7 +49,7 @@ export function listEntryPoints(
 
 /// <summary> List all named objects under current application. </summary>
 export function listNamedObjects(
-    request: vy.RequestContext,
+    request: RequestContext,
     input: { allowPrivate: boolean, scopes: string[] } = { allowPrivate: false, scopes: ['request', 'application']}): string[] {
     
     let objectNames: string[] = [];
@@ -63,7 +63,7 @@ export function listNamedObjects(
 }
 
 /// <summary> Display a named object by name. </summary>
-export function getNamedObject(request: vy.RequestContext, input: { name: string }): any {
+export function getNamedObject(request: RequestContext, input: { name: string }): any {
     if (input == null || input.name == null) {
         throw new Error("'name' property must be specified under 'input' object of request.");
     }
@@ -78,7 +78,7 @@ export function getNamedObject(request: vy.RequestContext, input: { name: string
 
 /// <summary> List all types supported in current application. </summary>
 /// TODO: @dapeng, return types from global and request scope.
-export function listTypes(request: vy.RequestContext): string[] {
+export function listTypes(request: RequestContext): string[] {
     let appDef = request.application.settings;
     let typeNames: string[] = [];
     for (let typeDef of appDef.objectContextDef.typeDefs) {
@@ -89,7 +89,7 @@ export function listTypes(request: vy.RequestContext): string[] {
 
 /// <summary> Get definition of a type in current application. </summary>
 /// TODO: @dapeng, return types from global and request scope.
-export function getType(request: vy.RequestContext, input: { typeName: string }): vy.objectModel.TypeDef {
+export function getType(request: RequestContext, input: { typeName: string }): TypeDef {
     if (input == null || input.typeName == null) {
         throw new Error("'typeName' property must be specified under 'input' object of request.");
     }
@@ -107,7 +107,7 @@ export function getType(request: vy.RequestContext, input: { typeName: string })
 
 /// <summary> List URI providers supported in current application. </summary>
 /// TODO: @dapeng, return providers from global and request scope.
-export function listProviders(request: vy.RequestContext): string[] {
+export function listProviders(request: RequestContext): string[] {
     let appDef = request.application.settings;
     let protocolNames: string[] = [];
     for (let providerDef of appDef.objectContextDef.providerDefs) {
@@ -118,7 +118,7 @@ export function listProviders(request: vy.RequestContext): string[] {
 
 /// <summary> Get the provider definition for a URI protocol. </summary>
 /// TODO: @dapeng, return providers from global and request scope.
-export function getProvider(request: vy.RequestContext, input: { protocolName: string }): vy.objectModel.ProviderDef {
+export function getProvider(request: RequestContext, input: { protocolName: string }): ProviderDef {
     if (input == null || input.protocolName == null) {
         throw new Error("'protocolName' property must be specified under 'input' object of request.");
     }
