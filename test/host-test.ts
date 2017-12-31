@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 import * as app from '../lib/app';
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';

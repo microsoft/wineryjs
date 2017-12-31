@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 import * as utils from '../lib/utils';
 import * as path from 'path';
 import * as assert from 'assert';

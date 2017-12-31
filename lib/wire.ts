@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 import * as objectModel from './object-model';
 import * as utils from './utils';
 import * as path from 'path';

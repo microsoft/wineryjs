@@ -1,6 +1,8 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 /////////////////////////////////////////////////////////////////////
 // This file defines built-in entrypoints in winery module.
-//
 
 import * as fs from 'fs';
 import { hub, RequestContext, TypeDef, ProviderDef, NamedObjectDef } from './index';

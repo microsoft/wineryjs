@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 import { EntryPoint, Interceptor, RequestContext } from './app';
 import * as objectModel from './object-model';
 import * as wire from './wire';

@@ -1,4 +1,7 @@
-﻿// Export core entities in flattened namespace.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+// Export core entities in flattened namespace.
 export { Host } from "./host";
 export * from './app'
 export * from './object-model'

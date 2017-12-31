@@ -1,6 +1,8 @@
-﻿//////////////////////////////////////////////////////////////////
-// This file defines utility classes used in Napa
-//
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+//////////////////////////////////////////////////////////////////
+// This file defines utility classes used in Winery.js
 
 import fs = require('fs');
 // TODO: replace bundle with node module dependencies once 'url' and 'events' are introduced in Napa.JS.
