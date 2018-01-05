@@ -175,6 +175,9 @@ export class Application {
     /// <summary> Default execution stack if not specified per-entrypoint. </summary>
     private _defaultExecutionStack: Interceptor[];
 
+    /// <summary> Default (root) template of this application, which simply pass through application-level context. </summary>
+    private _defaultRequestTemplate: RequestTemplate;
+
     /// <summary> Metric collection. </summary>
     private _metrics: MetricCollection;
 
@@ -231,6 +234,18 @@ export class Application {
             }
         });
 
+        // Create default template.
+        this._defaultRequestTemplate = new RequestTemplate(
+            this.id,        // Use application id as fake template Uri.
+            this,           // Application.
+            undefined,      // No base template.
+            {
+                application: this.id,
+                overrideTypes: [],
+                overrideProviders: [],
+                overrideObjects: []
+            });
+
         // Create metrics.
         this._metrics = {};
         if (settings.metrics != null) {
@@ -272,6 +287,12 @@ export class Application {
     /// <returns> Interceptor list configured as default stack. </returns>
     public get defaultExecutionStack(): Interceptor[] {
         return this._defaultExecutionStack;
+    }
+
+    /// <summary> Get default request template. </summary>
+    /// <returns> Default request template which simply pass through all application-level context. </returns>
+    public get defaultRequestTemplate(): RequestTemplate {
+        return this._defaultRequestTemplate
     }
 
     /// <summary> Get execution stack for an entrypoint before any request override. </summary>
@@ -383,18 +404,22 @@ export class RequestContext {
     private _executionStack: Interceptor[];
     
     /// <summary> Constructor </summary>
-    public constructor(app: Application, base: RequestTemplate, request: wire.Request) {
+    public constructor(base: RequestTemplate, request: wire.Request) {
+        assert(base != null);
+        assert(request != null);
+
         // Fill default values and do schema validation.
         request = wire.RequestHelper.fromJsValue(request);
         
-        this._application = app;
+        this._application = base.application;
         this._request = request;
 
-        let parentContext: ScopedObjectContext = base != null ? base.objectContext : app.objectContext;
+        //let parentContext: ScopedObjectContext = base != null ? base.objectContext : app.objectContext;
+        let parentContext = base.objectContext;
 
         // We only pass overriden stuff when per-request override is allowed.
         let perRequestObjectContextDef: objectContext.ScopedObjectContextDef = 
-            app.settings.allowPerRequestOverride ?
+            base.application.settings.allowPerRequestOverride ?
                 new objectContext.ScopedObjectContextDef(
                     parentContext.def,
                     request.overrideTypes,
@@ -412,7 +437,7 @@ export class RequestContext {
 
         this._perRequestObjectContext = new objectContext.ScopedObjectContext(
             "request",
-            app.objectContext.baseDir,      // We always use application directory as base dir for resolving paths in request.
+            parentContext.baseDir,      // We always use application directory as base dir for resolving paths in request.
             parentContext,
             perRequestObjectContextDef);
 
@@ -583,7 +608,7 @@ export class RequestContext {
         if (namedObject != null) {
             return namedObject.value;
         }
-        return null;
+        return undefined;
     }
 
     /// <summary> Get named object from input. </summary>

@@ -83,7 +83,7 @@ export interface ObjectContext {
 export class ScopedObjectContext implements ObjectContext {
     private _scope: string;
     private _parent: ScopedObjectContext;
-    private _definition: ScopedObjectContextDef;
+    private _def: ScopedObjectContextDef;
 
     private _objectFactory: ObjectFactory;
     private _objectProvider: ObjectProvider;
@@ -105,7 +105,7 @@ export class ScopedObjectContext implements ObjectContext {
         
         this._scope = scopeName;
         this._baseDir = baseDir;
-        this._definition = definition;
+        this._def = definition;
         this._parent = parent;
         
         this._objectFactory = TypeRegistry.fromDefinition(definition.typeDefs, baseDir);
@@ -125,7 +125,7 @@ export class ScopedObjectContext implements ObjectContext {
 
     /// <summary> Get definition for current object context. </summary>
     public get def(): ScopedObjectContextDef {
-        return this._definition;
+        return this._def;
     }
 
     /// <summary> Get parent context. </summary>
@@ -220,6 +220,7 @@ export class ScopedObjectContext implements ObjectContext {
         }
     
         // Not found at current level, try to find in parent.
+        let depth = 1;
         let parent = this._parent;
         while (parent != null) {
             namedObject = parent._namedObjects.get(name);
@@ -227,7 +228,7 @@ export class ScopedObjectContext implements ObjectContext {
                 // We check if the named object returned from parent scope needs
                 // to be invalidated in current scope. In that case we will re-create 
                 // it and insert into cache in current scope.
-                if (this.needsUpdate(namedObject)) {
+                if (this.needsUpdate(namedObject, depth)) {
                     namedObject = {
                         def: namedObject.def,
                         value: this.create(namedObject.def.value),
@@ -239,6 +240,7 @@ export class ScopedObjectContext implements ObjectContext {
                 return namedObject;
             }
             parent = parent._parent;
+            ++depth;
         }
         return null;
     }
@@ -246,41 +248,40 @@ export class ScopedObjectContext implements ObjectContext {
     /// <summary> Determine if a named object is sensitive to type/provider/named object override in current context,
     /// If yes, the object need to be updated.
     /// </summary>
-    public needsUpdate(namedObject: NamedObject): boolean {
+    public needsUpdate(namedObject: NamedObject, depth: number): boolean {
         if (this._parent == null) {
             // Current scope is top scope, override never happens.
             return false;
         }
         let def = namedObject.def;
         // Object context override from request happened.
-        let overrides = this._definition;
+        let overrides = this._def;
 
-        if (this._definition.typeDefs.length != 0) {
+        if (this._def.typeDefs.length != 0) {
             let typeDeps = def.dependencies.typeDependencies;
-            typeDeps.forEach(typeDep => {
-                // Type override happened.
-                if (overrides.getTypeDef(typeDep) != null) {
+            for (let typeDep of typeDeps) {
+                if (overrides.getTypeDef(typeDep, depth - 1) != null) {
                     return true;
                 }
-            });
+            }
         }
-        if (this._definition.providerDefs.length != 0) {
+        if (this._def.providerDefs.length != 0) {
             let providerDeps = def.dependencies.protocolDependencies;
-            providerDeps.forEach(providerDep => {
+            for (let providerDep of providerDeps) {
                 // Provide override happened.
-                if (overrides.getProviderDef(providerDep) != null) {
+                if (overrides.getProviderDef(providerDep, depth - 1) != null) {
                     return true;
                 }
-            });
+            };
         }
-        if (this._definition.namedObjectDefs.length != 0) {
+        if (this._def.namedObjectDefs.length != 0) {
             let objectDeps = def.dependencies.objectDependencies;
-            objectDeps.forEach(objectDep => {
+            for (let objectDep of objectDeps) {
                 // Dependent named object override happened.
-                if (overrides.getNamedObjectDef(objectDep) != null) {
+                if (overrides.getNamedObjectDef(objectDep, depth - 1) != null) {
                     return true;
                 }
-            });
+            }
         }
         return false;
     }
@@ -384,10 +385,11 @@ export class ScopedObjectContextDef {
     }
 
     /// <summary> Get type definition by type name. </summary>
-    public getTypeDef(typeName: string): TypeDef {
+    public getTypeDef(typeName: string, maxDepth: number = 32): TypeDef {
+        
         let def = this._typeNameToDef.get(typeName);
-        if (def == null && this._parent != null) {
-            def = this._parent.getTypeDef(typeName);
+        if (def == null && maxDepth > 0 && this._parent != null) {
+            def = this._parent.getTypeDef(typeName, maxDepth - 1);
         }
         return def;
     }
@@ -398,10 +400,10 @@ export class ScopedObjectContextDef {
     }
 
     /// <summary> Get provider definition by protocol name. </summary>
-    public getProviderDef(protocolName: string): ProviderDef {
+    public getProviderDef(protocolName: string, maxDepth: number = 32): ProviderDef {
         let def = this._protocolNameToDef.get(protocolName);
-        if (def == null && this._parent != null) {
-            return this._parent.getProviderDef(protocolName);
+        if (def == null && maxDepth >0 && this._parent != null) {
+            def = this._parent.getProviderDef(protocolName, maxDepth - 1);
         }
         return def;
     }
@@ -412,10 +414,10 @@ export class ScopedObjectContextDef {
     }
 
     /// <summary> Get named object definition by name. </summary>
-    public getNamedObjectDef(name: string): NamedObjectDef {
+    public getNamedObjectDef(name: string, maxDepth: number = 32): NamedObjectDef {
         let def = this._objectNameToDef.get(name);
-        if (def == null && this._parent != null) {
-            return this._parent.getNamedObjectDef(name);
+        if (def == null && maxDepth > 0 && this._parent != null) {
+            def = this._parent.getNamedObjectDef(name, maxDepth - 1);
         }
         return def;
     }

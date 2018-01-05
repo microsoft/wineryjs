@@ -5,18 +5,110 @@ import {RequestContext} from '../../lib/app';
 import * as objectModel from '../../lib/object-model';
 
 export namespace types {
-    export function createA(input: {_type: "TypeA", value: number}): number {
-        return input.value;
+    export function createA(input: {_type: "TypeA", value: string}): string {
+        return "A:" + input.value;
     }
 
-    export function createB(input: {_type: "TypeB", value: any}, context: objectModel.ObjectContext): any {
-        return context.create(input.value);
+    export function createB_app(input: {_type: "TypeB", value: string}): string {
+        return "B:app:" + input.value;
+    }
+
+    export function createB_l0(input: {_type: "TypeB", value: string}): string {
+        return "B:l0:" + input.value;
+    }
+
+    export function createB_l1(input: {_type: "TypeC", value: string}): string {
+        return "B:l1:" + input.value;
+    }
+
+    export function createB_request(input: {_type: "TypeC", value: string}): string {
+        return "B:request:" + input.value;
+    }
+
+    export function createC_app(input: {_type: "TypeC", value: string}): string {
+        return "C:app:" + input.value;
+    }
+
+    export function createC_l1(input: {_type: "TypeC", value: string}): string {
+        return "C:l1:" + input.value;
+    }
+
+    export function createC_request(input: {_type: "TypeC", value: string}): string {
+        return "C:request:" + input.value;
+    }
+
+    export function createD_l0(input: {_type: "TypeD", value: string}): string {
+        return "D:l0:" + input.value;
+    }
+
+    export function createD_request(input: {_type: "TypeD", value: string}): string {
+        return "D:request:" + input.value;
+    }
+
+    export function createE(input: {_type: "TypeE", value: string}): string {
+        return "E:" + input.value;
+    }
+
+    export function createX_l0(input: {_type: "TypeE", value: string}): string {
+        return "X:l0:" + input.value;
+    }
+
+    export function createX_l1(input: {_type: "TypeE", value: string}): string {
+        return "X:l1:" + input.value;
     }
 }
 
 export namespace providers {
     export function provideA(uri: objectModel.Uri): string {
-        return uri.path;
+        return "A:" + uri.path;
+    }
+
+    export function provideB_app(uri: objectModel.Uri): string {
+        return "B:app:" + uri.path;
+    }
+
+    export function provideB_l0(uri: objectModel.Uri): string {
+        return "B:l0:" + uri.path;
+    }
+    
+    export function provideB_l1(uri: objectModel.Uri): string {
+        return "B:l1:" + uri.path;
+    }
+
+    export function provideB_request(uri: objectModel.Uri): string {
+        return "B:request:" + uri.path;
+    }
+
+    export function provideC_app(uri: objectModel.Uri): string {
+        return "C:app:" + uri.path;
+    }
+
+    export function provideC_l1(uri: objectModel.Uri): string {
+        return "C:l1:" + uri.path;
+    }
+
+    export function provideC_request(uri: objectModel.Uri): string {
+        return "C:request:" + uri.path;
+    }
+
+    export function provideD_l0(uri: objectModel.Uri): string {
+        return "D:l0:" + uri.path;
+    }
+
+    export function provideD_request(uri: objectModel.Uri): string {
+        return "D:request:" + uri.path;
+    }
+
+    export function provideE(uri: objectModel.Uri): string {
+        return "E:" + uri.path;
+    }
+
+    export function provideX_l0(uri: objectModel.Uri): string {
+        return "X:l0:" + uri.path;
+    }
+
+    export function provideX_l1(uri: objectModel.Uri): string {
+        return "X:l1:" + uri.path;
     }
 }
 
