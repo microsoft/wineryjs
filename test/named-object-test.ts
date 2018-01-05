@@ -2,12 +2,72 @@
 // Licensed under the MIT license.
 
 import * as assert from 'assert';
-import * as objectModel from '../lib/object-model';
+import * as path from 'path';
+
+import { NamedObject, NamedObjectConfig, NamedObjectRegistry } from '../lib/named-object';
 
 describe('winery/named-object', () => {
+    describe('NamedObjectConfig', () => {
+        it('#fromConfigObject: good config', () => {
+            let configObject = [
+                {
+                    name: "object1",
+                    value: {
+                        _type: "TypeA",
+                        value: 1
+                    }
+                },
+                {
+                    name: "object2",
+                    value: 1
+                }
+            ]
+            
+            let defs = NamedObjectConfig.fromConfigObject(configObject, true);
+            assert.deepEqual(defs, [
+                {
+                    name: "object1",
+                    value: {
+                        _type: "TypeA",
+                        value: 1
+                    },
+                    // Set default values.
+                    override: false,
+                    private: false
+                },
+                {
+                    name: "object2",
+                    value: 1,
+                    override: false,
+                    private: false
+                }
+            ])    
+        });
+
+        it('#fromConfigObject: not conform with schema', () => {
+            let configObject = [
+                {
+                    name: "object1",
+                    // Should be value.
+                    valueDef: 1
+                }
+            ]
+            assert.throws( () => {
+                NamedObjectConfig.fromConfigObject(configObject, true);
+            });    
+        });
+
+        it ('#fromConfig', () => {
+            assert.doesNotThrow(() => {
+                NamedObjectConfig.fromConfig(
+                    path.resolve(__dirname, "test-app/objects.json"));
+            });
+        });
+    });
+
     describe('NamedObjectRegistry', () => {
-        let collection = new objectModel.NamedObjectRegistry();
-        let objectA: objectModel.NamedObject = {
+        let collection = new NamedObjectRegistry();
+        let objectA: NamedObject = {
             scope: "global",
             def: {
                 name: "objectA",
@@ -31,7 +91,7 @@ describe('winery/named-object', () => {
         });
 
         it('#forEach', () => {
-            collection.forEach((object: objectModel.NamedObject) => {
+            collection.forEach((object: NamedObject) => {
                 assert.strictEqual(object, objectA);
             });
         })
@@ -41,15 +101,15 @@ describe('winery/named-object', () => {
                 create: (input: any): any => {
                     return input;
                 },
-                get: (name: string): objectModel.NamedObject => {
+                get: (name: string): NamedObject => {
                     return null;
                 },
-                forEach: (callback: (object: objectModel.NamedObject) => void) => {
+                forEach: (callback: (object: NamedObject) => void) => {
                     // Do nothing.
                 },
                 baseDir: __dirname
             }
-            collection = objectModel.NamedObjectRegistry.fromDefinition(
+            collection = NamedObjectRegistry.fromDefinition(
                 "global",
                 [{ name: "objectA", value: 1 }], 
                 objectContext);

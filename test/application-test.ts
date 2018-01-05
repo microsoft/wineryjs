@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import {Application, RequestContext} from '../lib/application';
-import {Leaf} from '../lib/host';
+import { Application, ApplicationSettings, ApplicationConfig } from '../lib/application';
+import { RequestContext } from '../lib/request-context';
+import { Leaf } from '../lib/host';
 
-import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
-import * as objectModel from '../lib/object-model';
 
+import { HostConfig } from '../lib/host';
 import { Request } from '../lib/request';
 
 import * as path from 'path';
@@ -17,16 +17,28 @@ import { RequestTemplateFileLoader } from '../lib/request-template';
 
 
 describe('winery/app', () => {
-     let host = new Leaf(
-            config.HostConfig.fromConfig(
+    let host = new Leaf(
+            HostConfig.fromConfig(
                 require.resolve('../config/host.json')));
 
+    let appSettings: ApplicationSettings = undefined;
     let app: Application = undefined; 
+
+    describe('ApplicationConfig', () => {
+        it('#fromConfig', () => {
+            appSettings = ApplicationConfig.fromConfig(host.settings,
+                path.resolve(__dirname, "test-app/app.json"));
+        });
+
+        it('#getters', () => {
+            assert.equal(appSettings.metrics.length, 1);
+        })
+    });
 
     describe('Application', () => {
         it('#ctor', () => {
             app = new Application(host.objectContext,
-                config.ApplicationConfig.fromConfig(
+                ApplicationConfig.fromConfig(
                 host.settings,
                 path.resolve(__dirname, "test-app/app.json")));
         });
@@ -72,7 +84,7 @@ describe('winery/app', () => {
 
     describe('RequestContext: baseless', () => {
         let app = new Application(host.objectContext,
-            config.ApplicationConfig.fromConfig(
+            ApplicationConfig.fromConfig(
             host.settings,
             path.resolve(__dirname, "test-app/app.json")));
 
@@ -279,7 +291,7 @@ describe('winery/app', () => {
 
     describe("RequestContext: 2 level inheritance", () => {
         let app = new Application(host.objectContext,
-            config.ApplicationConfig.fromConfig(
+            ApplicationConfig.fromConfig(
             host.settings,
             path.resolve(__dirname, "test-app/app.json")));
 

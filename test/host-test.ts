@@ -2,22 +2,36 @@
 // Licensed under the MIT license.
 
 import * as app from '../lib/application';
-import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
 import { Request } from '../lib/request';
 import { Response, ResponseCode } from '../lib/response';
-import { Host, Leaf, Proxy, Hub } from '../lib/host';
+import { HostConfig, Host, Leaf, Proxy, Hub } from '../lib/host';
 
 import * as path from 'path';
 import * as napa from 'napajs';
 import * as assert from 'assert';
 
 describe('winery/host', () => {
+    describe('HostConfig', () => {
+        it('#fromConfig', () => {
+            let hostSettings = HostConfig.fromConfig(
+                require.resolve("../config/host.json"));
+
+            assert.equal(hostSettings.allowPerRequestOverride, true);
+            assert.deepEqual(hostSettings.defaultExecutionStack, [
+                "finalizeResponse",
+                "executeEntryPoint"
+            ]);
+            assert.equal(hostSettings.baseDir, path.dirname(require.resolve('../config/host.json')));
+            assert.equal(hostSettings.throwExceptionOnError, true);
+        });
+    });
+
     describe('Leaf', () => {
         let host: Host = undefined;
         it('#ctor', () => {
             host = new Leaf(
-                config.HostConfig.fromConfig(
+                HostConfig.fromConfig(
                     require.resolve('../config/host.json'))
             );
         });
@@ -223,7 +237,7 @@ describe('winery/host', () => {
 
         it('#ctor', () => {
             host = new Hub(
-                config.HostConfig.fromConfig(
+                HostConfig.fromConfig(
                     require.resolve('../config/host.json')));
         });
 

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import {RequestContext} from '../../lib/application';
-import * as objectModel from '../../lib/object-model';
+import { RequestContext } from '../../lib/request-context';
+import { Uri } from '../../lib/object-provider';
 
 export namespace types {
     export function createA(input: {_type: "TypeA", value: string}): string {
@@ -59,55 +59,55 @@ export namespace types {
 }
 
 export namespace providers {
-    export function provideA(uri: objectModel.Uri): string {
+    export function provideA(uri: Uri): string {
         return "A:" + uri.path;
     }
 
-    export function provideB_app(uri: objectModel.Uri): string {
+    export function provideB_app(uri: Uri): string {
         return "B:app:" + uri.path;
     }
 
-    export function provideB_l0(uri: objectModel.Uri): string {
+    export function provideB_l0(uri: Uri): string {
         return "B:l0:" + uri.path;
     }
     
-    export function provideB_l1(uri: objectModel.Uri): string {
+    export function provideB_l1(uri: Uri): string {
         return "B:l1:" + uri.path;
     }
 
-    export function provideB_request(uri: objectModel.Uri): string {
+    export function provideB_request(uri: Uri): string {
         return "B:request:" + uri.path;
     }
 
-    export function provideC_app(uri: objectModel.Uri): string {
+    export function provideC_app(uri: Uri): string {
         return "C:app:" + uri.path;
     }
 
-    export function provideC_l1(uri: objectModel.Uri): string {
+    export function provideC_l1(uri: Uri): string {
         return "C:l1:" + uri.path;
     }
 
-    export function provideC_request(uri: objectModel.Uri): string {
+    export function provideC_request(uri: Uri): string {
         return "C:request:" + uri.path;
     }
 
-    export function provideD_l0(uri: objectModel.Uri): string {
+    export function provideD_l0(uri: Uri): string {
         return "D:l0:" + uri.path;
     }
 
-    export function provideD_request(uri: objectModel.Uri): string {
+    export function provideD_request(uri: Uri): string {
         return "D:request:" + uri.path;
     }
 
-    export function provideE(uri: objectModel.Uri): string {
+    export function provideE(uri: Uri): string {
         return "E:" + uri.path;
     }
 
-    export function provideX_l0(uri: objectModel.Uri): string {
+    export function provideX_l0(uri: Uri): string {
         return "X:l0:" + uri.path;
     }
 
-    export function provideX_l1(uri: objectModel.Uri): string {
+    export function provideX_l1(uri: Uri): string {
         return "X:l1:" + uri.path;
     }
 }

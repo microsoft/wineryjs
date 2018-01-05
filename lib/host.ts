@@ -5,13 +5,29 @@ import * as napa from 'napajs';
 import * as path from 'path';
 import * as assert from 'assert';
 
+import { RequestContext } from './request-context';
 import { Request } from './request';
 import { Response, ResponseHelper} from './response';
-import { Settings, Application, RequestContext} from './application';
-import { RequestTemplate, RequestTemplateManager, RequestTemplateFileLoader, RequestTemplateLoader} from './request-template';
+import { Settings, Application, ApplicationConfig } from './application';
 
-import * as objectContext from './object-context';
-import * as config from './config';
+import { 
+    RequestTemplate, 
+    RequestTemplateManager, 
+    RequestTemplateFileLoader, 
+    RequestTemplateLoader 
+} from './request-template';
+
+import { 
+    NamedObjectDef,
+    NamedObjectConfig,
+    ScopedObjectContextDef, 
+    ScopedObjectContext,
+    TypeDef,
+    ProviderDef,
+    TypeConfig,
+    ProviderConfig,
+} from './object-model';
+
 import * as utils from './utils';
 
 /// <summary> Host config, which is the root config of winery. </summary>
@@ -51,13 +67,13 @@ export class Leaf implements Host{
     private _settings: HostSettings;
 
     // Global scope object context.
-    private _objectContext: objectContext.ScopedObjectContext;
+    private _objectContext: ScopedObjectContext;
 
     /// <summary> Constructor. </summary>
     /// <param> winery host settings. </summary>
     public constructor(settings: HostSettings = null) {
         this._settings = settings;
-        this._objectContext = new objectContext.ScopedObjectContext(
+        this._objectContext = new ScopedObjectContext(
             "global",
             this._settings.baseDir,
             null,
@@ -89,7 +105,7 @@ export class Leaf implements Host{
         let appConfigPath = require.resolve(appModulePath + '/app.json');
         let app = new Application(
                 this._objectContext,
-                config.ApplicationConfig.fromConfig(
+                ApplicationConfig.fromConfig(
                 this._settings,
                 appConfigPath));
 
@@ -145,7 +161,7 @@ export class Leaf implements Host{
     }
 
     /// <summary> Get host level object context. </summary>
-    public get objectContext(): objectContext.ScopedObjectContext {
+    public get objectContext(): ScopedObjectContext {
         return this._objectContext;
     }
 
@@ -333,3 +349,76 @@ export class Hub implements Host {
     }
 }
 
+const SCHEMA_DIR: string = path.resolve(__dirname, '../schema');
+
+/// <summary> Helper class to read HostSettings from config. </summary>
+export class HostConfig {
+    /// <summary> JSON schema used to validate config. </summary>
+    private static readonly SETTINGS_SCHEMA: utils.JsonSchema 
+        = new utils.JsonSchema(path.resolve(SCHEMA_DIR, "host-config.schema.json"));
+
+    /// <summary> Create HostSettings from a JS object that conform with schema.
+    /// Throw exception if JS object doesn't match schema.
+    /// Schema: "../schema/host-config.schema.json"
+    /// </summary>
+    /// <param name="jsValue"> a JS value to create HostSettings object. </param>    
+    /// <param name="basePath"> Base path used to resolve relative paths. </param>
+    /// <returns> A HostSettings object. </returns>
+    public static fromConfigObject(jsValue: any, basePath: string): HostSettings {
+         utils.ensureSchema(jsValue, this.SETTINGS_SCHEMA);
+         
+         let typeDefinitions: TypeDef[] = [];
+         if (jsValue.objectTypes != null) {
+             for (let fileName of <string[]>(jsValue.objectTypes)) {
+                let filePath = path.resolve(basePath, fileName);
+                typeDefinitions = typeDefinitions.concat(TypeConfig.fromConfig(filePath));
+             }
+         }
+
+         let providerDefinitions: ProviderDef[] = [];
+         if (jsValue.objectProviders != null) {
+            for (let fileName of <string[]>(jsValue.objectProviders)) {
+                let filePath = path.resolve(basePath, fileName);
+                providerDefinitions = providerDefinitions.concat(ProviderConfig.fromConfig(filePath));
+             }
+         }
+
+         let namedObjectDefinitions: NamedObjectDef[] = [];
+         if (jsValue.namedObjects != null ){
+            for (let fileName of <string[]>(jsValue.namedObjects)) {
+                let filePath = path.resolve(basePath, fileName);
+                namedObjectDefinitions = namedObjectDefinitions.concat(NamedObjectConfig.fromConfig(filePath));
+             }
+         }
+         
+         return {
+            baseDir: basePath,
+            allowPerRequestOverride: jsValue.allowPerRequestOverride,
+            throwExceptionOnError: jsValue.throwExceptionOnError,
+            defaultExecutionStack: jsValue.defaultExecutionStack,
+            objectContextDef: new ScopedObjectContextDef(
+                null,
+                typeDefinitions,
+                providerDefinitions,
+                namedObjectDefinitions,
+                true)
+            
+         };
+    }
+
+    /// <summary> Create HostSettings object from host config file (.config or .json)
+    /// Throws exception if configuration file parse failed or doesn't match the schema.
+    /// Schema: '../schema/host-config.schema.json'
+    /// </summary>
+    /// <param name="hostConfigFile"> a JSON file in host config schema. </param>
+    /// <returns> An HostSettings object. </returns>
+    public static fromConfig(hostConfigFile: string): HostSettings {
+        return utils.appendMessageOnException(
+            "Error found in winery setting file: '" +hostConfigFile + "'.",
+            () => {
+                return this.fromConfigObject(
+                    utils.readConfig(hostConfigFile),
+                    path.dirname(hostConfigFile));
+            });
+    }
+}

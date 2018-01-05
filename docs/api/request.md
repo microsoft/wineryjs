@@ -2,7 +2,7 @@
 
 `Request` is a plain JavaScript object to describe requests sent to an `Application`.
 
-It's defined by [JSON schema](../../schema/request.schema.json) or interface [`Request`](../../lib/wire.ts):
+It's defined by [JSON schema](../../schema/request.schema.json) or interface [`Request`](../../lib/request.ts):
 
 ```ts
 /// <summary> Interface for control flags. </summary>
@@ -35,13 +35,13 @@ export interface Request {
     controlFlags?: ControlFlags;
 
     /// <summary> Overridden types </summary>
-    overrideTypes?: objectModel.TypeDefinition[];
+    overrideTypes?: TypeDefinition[];
 
     /// <summary> Overridden named objects </summary>
-    overrideObjects?: objectModel.NamedObjectDefinition[];
+    overrideObjects?: NamedObjectDefinition[];
 
     /// <summary> Overridden providers </summary>
-    overrideProviders?: objectModel.ProviderDefinition[];
+    overrideProviders?: ProviderDefinition[];
 }
 ```
 There are two groups of fields in `Request`: 

@@ -3,10 +3,10 @@
 
 import { log } from 'napajs';
 
-import * as app from './application';
 import * as utils from './utils';
 
-import {ResponseCode, Response} from './response'
+import { ResponseCode, Response } from './response'
+import { RequestContext } from './request-context'
 
 /////////////////////////////////////////////////////////////////
 /// Built-in interceptors.
@@ -15,7 +15,7 @@ import {ResponseCode, Response} from './response'
 /// This interceptor is used for debug purpose when doing per-request override
 /// <summary> 
 export async function passThrough(
-    context: app.RequestContext): Promise<Response> {
+    context: RequestContext): Promise<Response> {
     return await context.continueExecution();
 }
 
@@ -23,7 +23,7 @@ export async function passThrough(
 /// This interceptor is used for debug purpose when doing per-request override
 /// <summary> 
 export async function shortCircuit(
-    context: app.RequestContext): Promise<Response> {
+    context: RequestContext): Promise<Response> {
     return Promise.resolve({
         responseCode: ResponseCode.Success
     });
@@ -31,7 +31,7 @@ export async function shortCircuit(
 
 /// <summary> Interceptor: execute entryPoint </summary>
 export async function executeEntryPoint(
-    context: app.RequestContext): Promise<Response> {
+    context: RequestContext): Promise<Response> {
 
     let response = await context.continueExecution();
     response.output = await utils.makePromiseIfNotAlready(
@@ -42,7 +42,7 @@ export async function executeEntryPoint(
 
 /// <summary> Interceptor: log request only. </summary>
 export async function logRequest(
-    context: app.RequestContext): Promise<Response> {
+    context: RequestContext): Promise<Response> {
 
     log.debug(JSON.stringify(context.request));
     return await context.continueExecution();
@@ -50,7 +50,7 @@ export async function logRequest(
 
 /// <summary> Interceptor: log response only. </summary>
 export async function logResponse(
-    context: app.RequestContext): Promise<Response> {
+    context: RequestContext): Promise<Response> {
     
     let response = await context.continueExecution();
     log.debug(JSON.stringify(response));
@@ -59,7 +59,7 @@ export async function logResponse(
 
 /// <summary> Interceptor: log request and response. </summary>
 export async function logRequestResponse(
-    context: app.RequestContext): Promise<Response> {
+    context: RequestContext): Promise<Response> {
 
     log.debug(JSON.stringify(context.request));
     let response = await context.continueExecution();
@@ -69,7 +69,7 @@ export async function logRequestResponse(
 
 /// <summary> Interceptor: finalize response </summary>
 export async function finalizeResponse(
-    context: app.RequestContext): Promise<Response> {
+    context: RequestContext): Promise<Response> {
 
     let startTime = process.hrtime(); 
     let response = await context.continueExecution();

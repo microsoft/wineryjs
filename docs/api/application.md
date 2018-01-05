@@ -56,7 +56,7 @@ Interceptor is an function that receives a request, executes some logics upon th
 Its programming interface `Interceptor` is defined as: 
 
 ```ts
-export type Interceptor = (context: RequestContext) => Promise<wire.Response>;
+export type Interceptor = (context: RequestContext) => Promise<Response>;
 ```
 
  To allow interceptor overriding at runtime, interceptors are managed as [Named Objects](./object-context#named-object), thus they can be referenced by name from execution stack definition.
@@ -70,9 +70,9 @@ An interceptor can either shortcircuit the execution by returning a Promise of `
 /// This interceptor is used for debug purpose when doing per-request override
 /// <summary> 
 export async function shortCircuit(
-    context: app.RequestContext): Promise<wire.Response> {
+    context: RequestContext): Promise<Response> {
     return Promise.resolve({
-        responseCode: wire.ResponseCode.Success
+        responseCode: ResponseCode.Success
     });
 }
 ```
@@ -83,7 +83,7 @@ Or relay request execution to the next interceptor:
 /// This interceptor is used for debug purpose when doing per-request override
 /// <summary> 
 export async function passThrough(
-    context: app.RequestContext): Promise<wire.Response> {
+    context: RequestContext): Promise<Response> {
     return await context.continueExecution();
 }
 ```

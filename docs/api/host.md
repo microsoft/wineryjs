@@ -36,7 +36,7 @@ export interface Host {
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
-    serve(request: string | wire.Request): Promise<wire.Response>;
+    serve(request: string | Request): Promise<Response>;
 
     /// <summary> Get application instance names served by this host. </param>
     applicationInstanceNames: string[];

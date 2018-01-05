@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import { EntryPoint, Interceptor, RequestContext } from './application';
-import * as objectModel from './object-model';
-import * as utils from './utils';
-import * as path from 'path';
-
+import { EntryPoint, Interceptor } from './application';
+import { ObjectContext } from './object-context';
+import { RequestContext } from './request-context';
 import { Request } from './request';
 import { Response } from './response';
+
+import * as utils from './utils';
+import * as path from 'path';
 
 ////////////////////////////////////////////////////////////////////////
 /// JSON definition for built-in object types.
@@ -58,7 +59,7 @@ export interface InterceptorDefinition extends FunctionDefinition {
 /// <summary> Constructor for Function. </summary>
 export function createFunction(
     definition: FunctionDefinition, 
-    context: objectModel.ObjectContext): Function {
+    context: ObjectContext): Function {
 
     if (definition.function != null) {
         // Dynamicly created function.
@@ -87,7 +88,7 @@ export function createFunction(
 /// <summary> Constructor for EntryPoint. </summary>
 export function createEntryPoint(
     definition: EntryPointDefinition,
-    context: objectModel.ObjectContext): EntryPoint {
+    context: ObjectContext): EntryPoint {
     // TODO: any check?
     return <EntryPoint>createFunction(definition, context);
 }
@@ -95,7 +96,7 @@ export function createEntryPoint(
 /// <summary> Constructor for Interceptor. </summary>
 export function createInterceptor(
     definition: InterceptorDefinition,
-    context: objectModel.ObjectContext): Interceptor {
+    context: ObjectContext): Interceptor {
     // TODO: any check?
     return <Interceptor>createFunction(definition, context);
 }

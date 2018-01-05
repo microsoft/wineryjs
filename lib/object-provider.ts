@@ -208,3 +208,48 @@ export class ProviderRegistry implements ObjectProvider {
         return registry;
     }
 }
+
+const SCHEMA_DIR: string = path.resolve(__dirname, '../schema');  
+
+/// <summary> Helper class to read ProviderDefinition array from config. </summary>
+export class ProviderConfig {
+    /// <summary> JSON schema used to validate conf. </summary>
+    private static readonly OBJECT_PROVIDER_CONFIG_SCHEMA: utils.JsonSchema = 
+        new utils.JsonSchema(path.resolve(SCHEMA_DIR, "object-provider-config.schema.json"));
+
+    /// <summary> Transform from config object to definition. </summary>s
+    private static _transform: utils.Transform =
+        new utils.SetDefaultValue({
+            'override': false
+        });
+    
+    /// <summary> Create ProviderDefinition array from a JS value that conform with schema.
+    /// Throw exception if JS object array doesn't match schema.
+    /// </summary>
+    /// <param name="jsValue"> a JS value to create ProviderDefinition object. </param>
+    /// <param name="validateSchema"> Whether validate schema, 
+    /// this option is given due to request object already checked schema at request level. </param>
+    /// <returns> A list of ProviderDefinition objects. </returns>
+    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): ProviderDef[]{
+        if (validateSchema) {
+            utils.ensureSchema(jsValue, this.OBJECT_PROVIDER_CONFIG_SCHEMA);
+        }
+
+        jsValue.forEach(obj => {
+            this._transform.apply(obj);
+        });
+        return jsValue;
+    }
+
+    /// <summary> Create ProviderDefinition array from a configuration file. (.config or .json)
+    /// Throw exception if JS object array doesn't match schema.
+    /// Schema: "../schema/object-provider-config.schema.json"
+    /// </summary>
+    /// <param name="objectProviderConfig"> a JSON file in object provider definition schema. </param>
+    /// <returns> A list of ProviderDefinition objects. </returns>
+    public static fromConfig(objectProviderConfig: string): ProviderDef[] {
+        return utils.appendMessageOnException(
+            "Error found in object provider definition file '" + objectProviderConfig + "'.",
+            () => { return this.fromConfigObject(utils.readConfig(objectProviderConfig)); });
+    }
+}
