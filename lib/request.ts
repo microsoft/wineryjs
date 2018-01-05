@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import * as objectModel from './object-model';
-import * as utils from './utils';
 import * as path from 'path';
+import * as utils from './utils';
+
+import { TypeDef, ProviderDef, NamedObjectDef }from './object-model';
 
 /// <summary> Interface for control flags. </summary>
 export type ControlFlags = {
@@ -35,13 +36,13 @@ export interface Request {
     controlFlags?: ControlFlags;
 
     /// <summary> Overridden types </summary>
-    overrideTypes?: objectModel.TypeDef[];
+    overrideTypes?: TypeDef[];
 
     /// <summary> Overridden named objects </summary>
-    overrideObjects?: objectModel.NamedObjectDef[];
+    overrideObjects?: NamedObjectDef[];
 
     /// <summary> Overridden providers </summary>
-    overrideProviders?: objectModel.ProviderDef[];
+    overrideProviders?: ProviderDef[];
 }
 
 /// <summary> Request helper. </summary>

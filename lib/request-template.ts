@@ -4,13 +4,16 @@
 import * as assert from 'assert';
 import * as path from 'path';
 
-import * as objectModel from './object-model';
 import * as utils from './utils';
-import * as config from './config';
 
-import { Host } from './host';
 import { Application } from './application';
-import { ScopedObjectContext, Uri } from './index';
+import { 
+    ScopedObjectContextDef, 
+    ScopedObjectContext, 
+    TypeDef, 
+    ProviderDef, 
+    NamedObjectDef 
+} from './object-model';
 
 import * as fs from 'fs';
 
@@ -27,13 +30,13 @@ export interface RequestTemplateDef {
     application?: string;
 
     /// <summary> Definition of overridden types </summary>
-    overrideTypes?: objectModel.TypeDef[];
+    overrideTypes?: TypeDef[];
 
     /// <summary> Definition of overridden providers </summary>
-    overrideProviders?: objectModel.ProviderDef[];
+    overrideProviders?: ProviderDef[];
 
     /// <summary> Definition of overridden named objects </summary>
-    overrideObjects?: objectModel.NamedObjectDef[];
+    overrideObjects?: NamedObjectDef[];
 }
 
 /// <summary> Request template. </summary>
@@ -42,7 +45,7 @@ export class RequestTemplate {
     private _uri: string;
 
     /// <summary> Request-template level object context. </summary>
-    private _objectContext: objectModel.ScopedObjectContext;
+    private _objectContext: ScopedObjectContext;
 
     /// <summary> Application to which this template applies. </summary>
     private _app: Application;
@@ -65,10 +68,10 @@ export class RequestTemplate {
         this._base = base;
 
         // Create request-template level object context.
-        let parentContext: objectModel.ScopedObjectContext = 
+        let parentContext: ScopedObjectContext = 
             base != null ? base.objectContext : app.objectContext;
 
-        let contextDef = new objectModel.ScopedObjectContextDef(
+        let contextDef = new ScopedObjectContextDef(
                 parentContext.def,
                 def.overrideTypes,
                 def.overrideProviders,
@@ -76,7 +79,7 @@ export class RequestTemplate {
                 true
             );
 
-        this._objectContext = new objectModel.ScopedObjectContext(
+        this._objectContext = new ScopedObjectContext(
                 `template:${uri}`,
                 app.objectContext.baseDir,       // We always use application base dir to resolve paths in request template definition.
                 parentContext,
@@ -100,7 +103,7 @@ export class RequestTemplate {
     }
 
     /// <summary> Get template-level object context. </summary>
-    public get objectContext() : objectModel.ScopedObjectContext {
+    public get objectContext() : ScopedObjectContext {
         return this._objectContext;
     }
 }

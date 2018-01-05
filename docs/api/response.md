@@ -2,7 +2,7 @@
 
 `Response` is a plain JavaScript object to describe responses returned from an `Application`.
 
-It's defined by [JSON schema](../../schema/response.schema.json) or interface  [`Response`](../../lib/wire.ts) as following:
+It's defined by [JSON schema](../../schema/response.schema.json) or interface  [`Response`](../../lib/response.ts) as following:
 
 ```ts
 // <summary> Response code </summary>

@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+import * as path from 'path';
+import * as utils from './utils';
+
 import { ObjectContext } from './object-context';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -161,3 +164,50 @@ export class ObjectContextDependency {
     }
 };
 
+
+const SCHEMA_DIR: string = path.resolve(__dirname, '../schema');  
+
+/// <summary> Helper class to read NamedObjectDefinition array from config. </summary>
+export class NamedObjectConfig {
+    /// <summary> JSON schema used to validate conf. </summary>
+    static readonly NAMED_OBJECT_CONFIG_SCHEMA: utils.JsonSchema = 
+        new utils.JsonSchema(path.resolve(SCHEMA_DIR, "named-object-config.schema.json"));
+
+    /// <summary> Transform object from JSON to object. </summary>
+    private static _transform: utils.Transform =
+        new utils.SetDefaultValue({
+            'override': false,
+            'private': false
+        });
+
+    /// <summary> Create NamedObjectDefinition array from a JS object array that conform with schema.
+    /// Throw exception if JS object array doesn't match schema.
+    /// Schema: "../schema/named-object-config.schema.json"
+    /// </summary>
+    /// <param name="jsValue"> a JS value array to create NamedObjectDefinition object. </param>
+    /// <param name="validateSchema"> Whether validate schema, 
+    /// this option is given due to request object already checked schema at request level. </param>
+    /// <returns> A list of NamedObjectDefinition objects. </returns>
+    public static fromConfigObject(jsValue: any[], validateSchema: boolean = true): NamedObjectDef[]{
+        if (validateSchema) {
+            utils.ensureSchema(jsValue, this.NAMED_OBJECT_CONFIG_SCHEMA);
+        }
+
+        jsValue.forEach(obj => {
+            this._transform.apply(obj);
+        });
+        return jsValue;
+    }
+
+    /// <summary> Create NamedObjectDefinition array from a configuration file. (.config or .json)
+    /// Throw exception if configuration file parse failed or doesn't match schema.
+    /// Schema: "../schema/named-object-config.schema.json"
+    /// </summary>
+    /// <param name="namedObjectConfigFile"> a JSON file in named object definition schema. </param>
+    /// <returns> A list of NamedObjectDefinition objects. </returns>
+    public static fromConfig(namedObjectConfigFile: string): NamedObjectDef[] {
+        return utils.appendMessageOnException(
+            "Error found in named object definition file '" + namedObjectConfigFile + "'.",
+            () => { return this.fromConfigObject(utils.readConfig(namedObjectConfigFile)); });
+    }
+}
