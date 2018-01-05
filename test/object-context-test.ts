@@ -2,15 +2,15 @@
 // Licensed under the MIT license.
 
 import * as assert from 'assert';
-import { 
-    ScopedObjectContextDef, 
-    ScopedObjectContext, 
-    TypeDef, 
-    ProviderDef, 
-    NamedObjectDef, 
-    NamedObject, 
-    ObjectContext, 
-    Uri 
+import {
+    ScopedObjectContextDef,
+    ScopedObjectContext,
+    TypeDef,
+    ProviderDef,
+    NamedObjectDef,
+    NamedObject,
+    ObjectContext,
+    Uri
 } from '../lib/object-model';
 
 describe('winery/object-context', () => {

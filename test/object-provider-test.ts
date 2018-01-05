@@ -4,9 +4,14 @@
 import * as assert from 'assert';
 import * as path from 'path';
 
-import { ObjectContext } from '../lib/object-context';
-import { NamedObject } from '../lib/named-object';
-import { Uri, ProviderDef, ProviderRegistry, ProviderConfig } from '../lib/object-provider';
+import {
+    NamedObject,
+    ObjectContext,
+    ProviderDef,
+    ProviderRegistry,
+    ProviderConfig,
+    Uri 
+} from '../lib/object-model';
 
 describe('winery/object-provider', () => {
     describe('Uri', () => {
