@@ -122,18 +122,17 @@ export class Leaf implements Host{
 
             // Lookup base template and application.
             let base: RequestTemplate = undefined;
-            let app: Application = undefined;
             if ((<wire.Request>request).base != null) {
                 base = this._requestTemplateManager.getOrLoad((<wire.Request>request).base);
-                app = base.application;
             } else {
                 let appName = (<wire.Request>request).application;
                 if (appName == null) {
                     throw new Error("Either 'application' or 'base' should be present in request.");
                 }
-                app = this.getApplication(appName);
+                let app = this.getApplication(appName);
+                base = app.defaultRequestTemplate;
             }
-            resolve(new RequestContext(app, base, <wire.Request>request));
+            resolve(new RequestContext(base, <wire.Request>request));
         }).then((context: RequestContext) => {
             return context.execute();
         });

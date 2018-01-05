@@ -183,14 +183,15 @@ describe('winery/object-context', () => {
             assert.strictEqual(objectA.value, 3);
         });
 
-        it('#get: not overridden objectB', () => {
+        it('#get: not overridden objectB but depenent types has been overridden', () => {
             let objectB = perAppContext.get('objectB');
             assert.strictEqual(objectB.scope, 'application');
             assert.strictEqual(objectB.value, 1);
 
+            /// object B
             objectB = perRequestContext.get('objectB');
-            assert.strictEqual(objectB.scope, 'application');
-            assert.strictEqual(objectB.value, 1);
+            assert.strictEqual(objectB.scope, 'request');
+            assert.strictEqual(objectB.value, 2);
         });
 
         it('#get: overriden objectC with new providerA', () => {
@@ -236,7 +237,7 @@ describe('winery/object-context', () => {
             assert.strictEqual(objectCount, 4);
             assert.strictEqual(objectByName.size, objectCount);
             assert(objectByName.has('objectA') && objectByName.get('objectA').scope === 'request');
-            assert(objectByName.has('objectB') && objectByName.get('objectB').scope === 'application');
+            assert(objectByName.has('objectB') && objectByName.get('objectB').scope === 'request');
             assert(objectByName.has('objectC') && objectByName.get('objectC').scope === 'request');
             assert(objectByName.has('objectD') && objectByName.get('objectD').scope === 'request');
         });

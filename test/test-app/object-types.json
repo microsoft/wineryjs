@@ -15,14 +15,23 @@
         "typeName": "TypeB",
         "description": "Test type B",
         "moduleName": "./test-app",
-        "functionName": "types.createB",
+        "functionName": "types.createB_app",
         "exampleObjects": [
             {
                 "_type": "TypeB",
-                "value": {
-                    "_type": "TypeA",
-                    "value": 1
-                }
+                "value": "abc"
+            }
+        ]
+    },
+    {
+        "typeName": "TypeC",
+        "description": "Test type C",
+        "moduleName": "./test-app",
+        "functionName": "types.createC_app",
+        "exampleObjects": [
+            {
+                "_type": "TypeC",
+                "value": "abc"
             }
         ]
     }

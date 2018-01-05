@@ -57,7 +57,7 @@ Following JSON file defines a baseless request template  that applies to applica
 Following JSON file defines a request template  extending a base template, with overriden object types, providers and named objects.
 ```json
 {
-    "base": "rt://base-template",
+    "base": "./base-template.json",
     "overrideTypes": [
         {
             "typeName": "Type1",

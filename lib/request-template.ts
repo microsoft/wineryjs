@@ -144,11 +144,17 @@ export class RequestTemplateFileLoader {
         seenUris[lcUri] = true;
 
         let def = <RequestTemplateDef>utils.readConfig(uri, RequestTemplateFileLoader.REQUEST_TEMPLATE_SCHEMA);
+        let baseDir = path.dirname(uri);
 
         let base: RequestTemplate = undefined;
         let app: Application = undefined;
         if (def.base != null) {
-            base = this.loadInternal(def.base, appGetter, baseTemplateGetter, seenUris);
+            base = this.loadInternal(
+                path.resolve(baseDir, def.base), 
+                appGetter, 
+                baseTemplateGetter, 
+                seenUris);
+
             app = base.application;
         }
         else {

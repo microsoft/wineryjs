@@ -7,5 +7,23 @@
         "exampleUri": [
             "ProtocolA://abcde"
         ]
+    },
+    {
+        "protocol": "ProtocolB",
+        "description": "Protocol B",
+        "moduleName": "./test-app",
+        "functionName": "providers.provideB_app",
+        "exampleUri": [
+            "ProtocolB://abcde"
+        ]
+    },
+    {
+        "protocol": "ProtocolC",
+        "description": "Protocol C",
+        "moduleName": "./test-app",
+        "functionName": "providers.provideC_app",
+        "exampleUri": [
+            "ProtocolC://abcde"
+        ]
     }
 ]

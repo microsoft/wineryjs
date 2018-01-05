@@ -114,14 +114,14 @@ describe('winery/config', () => {
         it('#fromConfigObject: good config', () => {
             let configObject = [
                 {
-                    name: "objectA",
+                    name: "object1",
                     value: {
                         _type: "TypeA",
                         value: 1
                     }
                 },
                 {
-                    name: "objectB",
+                    name: "object2",
                     value: 1
                 }
             ]
@@ -129,7 +129,7 @@ describe('winery/config', () => {
             let defs = config.NamedObjectConfig.fromConfigObject(configObject, true);
             assert.deepEqual(defs, [
                 {
-                    name: "objectA",
+                    name: "object1",
                     value: {
                         _type: "TypeA",
                         value: 1
@@ -139,7 +139,7 @@ describe('winery/config', () => {
                     private: false
                 },
                 {
-                    name: "objectB",
+                    name: "object2",
                     value: 1,
                     override: false,
                     private: false
@@ -150,7 +150,7 @@ describe('winery/config', () => {
         it('#fromConfigObject: not conform with schema', () => {
             let configObject = [
                 {
-                    name: "objectA",
+                    name: "object1",
                     // Should be value.
                     valueDef: 1
                 }

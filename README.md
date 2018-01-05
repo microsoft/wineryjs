@@ -10,12 +10,12 @@ npm install winery
 ## Quick Start
 
 ```typescript
-import * as winery from 'winery';
+import { hub, Request, Response} from 'winery';
 
-const host = winery.hub();
+const host = hub();
 await host.register('example-app', ['example']);
 
-const request: winery.Request = {
+const request: Request = {
     application: 'example',
     entrypoint: 'echo',
     input: 'hello, world',
@@ -27,7 +27,7 @@ const request: winery.Request = {
     }
 };
 
-const response: winery.Response = await host.serve(request);
+const response: Response = await host.serve(request);
 console.log(response);
 ```
 
@@ -51,7 +51,7 @@ In Winery.js' implementation, [**Object Context**](./docs/api/object-context.md)
 These runtime entities are:
 - [**Host**](./docs/api/host.md): a singleton object to host applications. Live long and is configurable at deployment time.
 - [**Application**](./docs/api/application.md): multi-instance object that manages resources for request execution and serve user requests. Live long and is configurable at deployment time.
-- [**Request Template**](): multi-instance object that manages different parameters and resources for A/B testing. Live long and is configurable at runtime.
+- [**Request Template**](.docs/api/request-template.md): multi-instance object that manages different parameters and resources for A/B testing. Live long and is configurable at runtime.
 - [**Request**](./docs/api/request.md): multi-instance object that describes request from user. Live short and is configurable at runtime.
 
 

@@ -1,9 +1,35 @@
 [
     {
-        "name": "objectA",
+        "name": "object0",
         "value": {
             "_type": "TypeA",
-            "value": 1
+            "value": "abc"
         }
+    },
+    {
+        "name": "object1",
+        "value": "ProtocolA:/abc"
+    },
+    {
+        "name": "object2",
+        "value": {
+            "_type": "TypeB",
+            "value": "abc"
+        }
+    },
+    {
+        "name": "object3",
+        "value": "ProtocolB:/abc"
+    },
+    {
+        "name": "object4b",
+        "value": {
+            "_type": "TypeC",
+            "value": "abc"
+        }
+    },
+    {
+        "name": "object5b",
+        "value": "ProtocolC:/abc"
     }
 ]

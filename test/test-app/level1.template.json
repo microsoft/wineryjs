@@ -1,0 +1,33 @@
+{
+    "base": "./level0.template.json",
+    "overrideTypes": [
+        {
+            "typeName": "TypeB",
+            "description": "Override TypeB at level1",
+            "moduleName": "./test-app",
+            "functionName": "types.createB_l1"
+        },
+        {
+            "typeName": "TypeX",
+            "description": "New TypeX at level1",
+            "moduleName": "./test-app",
+            "functionName": "types.createX_l1"
+        }
+    ],
+    "overrideProviders": [
+        {
+            "protocol": "ProtocolB",
+            "description": "Override ProtocolB at level1",
+            "moduleName": "./test-app",
+            "functionName": "providers.provideB_l1"
+        },
+        {
+            "protocol": "ProtocolX",
+            "description": "Override ProtocolX at level1",
+            "moduleName": "./test-app",
+            "functionName": "providers.provideX_l1"
+        }
+    ],
+    "overrideObjects": [
+    ]
+}

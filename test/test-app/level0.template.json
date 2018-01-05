@@ -1,0 +1,55 @@
+{
+    "application": "test-app",
+    "overrideTypes": [
+        {
+            "typeName": "TypeD",
+            "description": "Override TypeD at level0",
+            "moduleName": "./test-app",
+            "functionName": "types.createD_l0"
+        },
+        {
+            "typeName": "TypeX",
+            "description": "New TypeX at level0",
+            "moduleName": "./test-app",
+            "functionName": "types.createX_l0"
+        }
+    ],
+    "overrideProviders": [
+        {
+            "protocol": "ProtocolD",
+            "description": "Override ProtocolD at level0",
+            "moduleName": "./test-app",
+            "functionName": "providers.provideD_l0"
+        },
+        {
+            "protocol": "ProtocolX",
+            "description": "Override ProtocolD at level0",
+            "moduleName": "./test-app",
+            "functionName": "providers.provideX_l0"
+        }
+    ],
+    "overrideObjects": [
+        {
+            "name": "object6",
+            "value": {
+                "_type": "TypeC",
+                "value": "abc"
+            }
+        },
+        {
+            "name": "object7",
+            "value": "ProtocolC:/abc"
+        },
+        {
+            "name": "object8",
+            "value": {
+                "_type": "TypeX",
+                "value": "abc"
+            }
+        },
+        {
+            "name": "object9",
+            "value": "ProtocolX:/abc"
+        }
+    ]
+}
