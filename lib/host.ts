@@ -66,7 +66,7 @@ export class Leaf implements Host{
         this._requestTemplateManager = new RequestTemplateManager(
             new RequestTemplateFileLoader(),
             (name: string): Application => {
-                return this._applications.get(name);
+                return this._applications.get(name.toLowerCase());
             }
         )
     }
@@ -207,11 +207,6 @@ export class Proxy implements Host {
             .then((result: napa.zone.Result) => {
                 return Promise.resolve(wire.ResponseHelper.parse(result.payload));
             });
-        /*
-        return zone.execute('', 'win.serve', [request])
-            .then((result: napa.zone.Result) => {
-                return Promise.resolve(wire.ResponseHelper.parse(result.payload));
-            });*/
     }
 
     /// <summary> Get application instance names served by this host. </param>

@@ -292,7 +292,19 @@ describe('winery/host', () => {
             });
         }).timeout(0);
 
-        it('#serve: remote');
+        it('#serve: request template', (done) => {
+            host.serve({
+                base: path.resolve(__dirname, "test-app/level1.template.json"),
+                entryPoint: "foo",
+                input: "hello world"
+            }).then((response: wire.Response) => {
+                assert.equal(response.responseCode, wire.ResponseCode.Success);
+                assert.equal(response.output, 'hello world');
+                done();
+            }).catch((e) => {
+                done(e);
+            });
+        }).timeout(0);
 
         it('#applicationInstanceNames', () => {
             assert.deepEqual(host.applicationInstanceNames, ["testApp", "testApp2"]);
