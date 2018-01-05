@@ -1,12 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import * as path from 'path';
-
-import { TypeDef, TypeRegistry, ObjectFactory } from './object-type';
-import { Uri, ProviderDef, ObjectProvider, ProviderRegistry } from './object-provider';
-import { NamedObjectDef, NamedObject, NamedObjectRegistry, ObjectContextDependency } from './named-object';
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// This file defines the interfaces and an implementation of Object Context.
 /// Object Context is the interface for object creation and named objects accessing.
@@ -47,6 +41,12 @@ import { NamedObjectDef, NamedObject, NamedObjectRegistry, ObjectContextDependen
 ///
 /// Object context is introduced for helping these cases.
 /// </summary>
+
+import * as path from 'path';
+
+import { TypeDef, TypeRegistry, ObjectFactory } from './object-type';
+import { Uri, ProviderDef, ObjectProvider, ProviderRegistry } from './object-provider';
+import { NamedObjectDef, NamedObject, NamedObjectRegistry, ObjectContextDependency } from './named-object';
 
 /// <summary> Interface for ObjectContext </summary>
 export interface ObjectContext {

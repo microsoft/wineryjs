@@ -1,51 +1,8 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This file contains application definition for winery.
-//
-// Each application sub-directory starts with an 'app.json', which is the root JSON file of this application. 
-// The 'app.json' declares several aspects of an application, described by './schema/application-config.schema.json'. 
-//
-// Commonly defined aspects of an application are:
-// 1) Object model - Facilitating object creation, provisioning, overriding and retrieval within application functions.
-//    a. 'objectTypes': Define constructor of object types supported in current application.
-//    b. 'objectProviders': Define URI based object providers in current applicaton.
-//                          On provide() implementation, you can use two inputs, one is IObjectWithType and the other
-//                          is IObjectWithType array. When you use an array as input, all items must be the same type.
-//    c. 'namedObjects': Define objects that can be retrieved by global name in current application. 
-//                       Like entry points of application, parameters etc.
-//                       On construct() implementation, you have two input options, Uri or Uri array.
-// 
-//    In 'app.json' Each of these elements can include multiple separate JSON files, which enables sharing on 
-//    common definitions across multiple applications. Overriding between multiple JSON files are also supported, 
-//    an 'override' property needs to be set to true if we want to override an definition from entries 
-//    in latter file against former ones. 
-//
-//    Common types and named objects are provided. Common types are "Function", "EntryPoint". "NamedObjectRef". 
-//    And common named objects are shared commands such as "listAllEntryPoints", "listAllNamedObjects", etc.
-//
-//    All the concepts in object model could be overridden at request time, which enables us to alter system behavior
-//    at request level. We can change system parameter by overriding a numeric named object, or experiment some ad-hoc
-//    code by overriding a function named object in system. We can also override object constructor and providers to detour 
-//    data creation from some hard dependencies to simple local implementations for testing purpose.
-//
-// 2) Application level resources,such as: 
-//    a) Metrics
-//    b) Logging
-//    c) More.
-//
-// 3) Application policies, such as 
-//    a) Throttle control policy.
-//    b) More.
-//
-// Beyond the JSON definition that makes predefined application capability declarative, if there is any application specific
-// properties for an application, application developers can always add properties to their applcation object in "<app-name>\app.ts".
-//
-// Application object is exposed as a global object, which resides in each V8 isolate and is alive since the application is initialized.
-// Developers can retrieve a specific application by name via Application.getApplication(name) 
-// or current application from RequestContext.getApplication().
-
-
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/// Application for managing all execution stack and required resources.
 
 // External dependencies.
 import * as path from 'path';
@@ -76,9 +33,6 @@ import {
 import { RequestContext } from './request-context';
 import { Response } from './response';
 import { RequestTemplate } from './request-template';
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/// Application for managing all execution stack and required resources.
 
 /// <summary> Interface for global winery settings. </summary>
 export interface Settings {

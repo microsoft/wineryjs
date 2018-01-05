@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+//////////////////////////////////////////////////////////////////////////
+/// Interfaces and classes for URI based object creation.
+
 import * as path from 'path';
 
 import * as utils from './utils';
 import { ObjectContext } from './object-context';
-
-//////////////////////////////////////////////////////////////////////////
-/// Interfaces and classes for URI based object retrieval.
 
 /// <summary> Class that encapsulate parsing on URI.
 /// A URI in Winery is defined in syntax: <protocol>:/<path>[?<param1>=<value1>[&<param2>=<value2>]*]

@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+//////////////////////////////////////////////////////////////////////////////////////
+//  Interfaces and classes for type based object creation.
+
 import * as path from 'path';
 
 import * as utils from './utils';
 import { ObjectContext } from './object-context';
-
-//////////////////////////////////////////////////////////////////////////////////////
-//  Interfaces and classes for object creation.
 
 /// <summary> Interface for objects with '_type' property, which is used to determine object creator.
 /// '_type' property is case-sensitive.

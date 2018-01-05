@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+/////////////////////////////////////////////////////////////////////
+/// Interfaces and classes for context object of a Winery.js request
+
 import * as assert from 'assert';
 import * as os from 'os';
 import { log } from 'napajs';

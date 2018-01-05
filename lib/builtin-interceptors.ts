@@ -1,15 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import { log } from 'napajs';
+/////////////////////////////////////////////////////////////////////////////////////////
+/// Built-in interceptors supported in Winery.js
 
+import { log } from 'napajs';
 import * as utils from './utils';
 
 import { ResponseCode, Response } from './response'
 import { RequestContext } from './request-context'
-
-/////////////////////////////////////////////////////////////////
-/// Built-in interceptors.
 
 /// <summary> Interceptor: pass through.
 /// This interceptor is used for debug purpose when doing per-request override

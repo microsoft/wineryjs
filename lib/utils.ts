@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 //////////////////////////////////////////////////////////////////
-// This file defines utility classes used in Winery.js
+// Utility classes and methods used internally in Winery.js
 
 import fs = require('fs');
 import path = require('path');

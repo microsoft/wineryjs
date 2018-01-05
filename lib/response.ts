@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+/////////////////////////////////////////////////////////////////////
+/// Interface and classes for Winery.js response object
+
 import * as utils from './utils';
 import * as path from 'path';
 

@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/// Host for hosting applications in Winery.js
+
 import * as napa from 'napajs';
 import * as path from 'path';
 import * as assert from 'assert';
