@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/// Metric support in Winery.js
+
 import * as path from 'path';
 import {metric} from 'napajs';
 import * as utils from './utils';

@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 /////////////////////////////////////////////////////////////////////
-// This file defines built-in entrypoints in winery module.
+// Built-in entry points supported in Winery.js
 
 import * as fs from 'fs';
 import { hub, RequestContext, TypeDef, ProviderDef, NamedObjectDef } from './index';

@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+/////////////////////////////////////////////////////////////////////
+/// Interfaces and classes for request template support in Winery.js
+
 import * as assert from 'assert';
 import * as path from 'path';
 

@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/// Built-in object types in Winery.js
+
 import { EntryPoint, Interceptor } from './application';
 import { ObjectContext } from './object-context';
 import { RequestContext } from './request-context';
@@ -9,9 +12,6 @@ import { Response } from './response';
 
 import * as utils from './utils';
 import * as path from 'path';
-
-////////////////////////////////////////////////////////////////////////
-/// JSON definition for built-in object types.
 
 /// <summary> Definition for function object. </summary>
 export interface FunctionDefinition {
