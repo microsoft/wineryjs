@@ -56,9 +56,11 @@ import {log, metric} from 'napajs';
 
 // internal dependencies.
 import * as objectContext from './object-context';
-import * as wire from './wire';
 import * as utils from './utils';
 import * as config from './config'
+
+import { ControlFlags, Request, RequestHelper } from './request';
+import { ResponseCode, Response, ResponseHelper, DebugInfo, DebugEvent } from './response';
 import { NamedObject } from './named-object';
 
 import { RequestTemplate } from './request-template';
@@ -123,7 +125,7 @@ export type EntryPoint = (requestContext?: RequestContext, input?: any) => any;
 /// 2) call 'let response = await context.continueExecution()' or short circuit.
 /// 3) Do post-request work (can be optional). 
 /// </summary>
-export type Interceptor = (context: RequestContext) => Promise<wire.Response>;
+export type Interceptor = (context: RequestContext) => Promise<Response>;
 
 /// <summary> Interface for metric collection. </summary>
 export type MetricCollection = { [name: string]: metric.Metric };
@@ -193,7 +195,7 @@ export class Application {
         
         this._settings = settings;
         this._perAppObjectContext = new objectContext.ScopedObjectContext(
-            "application",
+            "./application",
             settings.baseDir,
             hostContext,
             settings.objectContextDef);
@@ -383,7 +385,7 @@ export class RequestContext {
     private _application: Application = null;
 
     /// <summary> Request</summary>
-    private _request: wire.Request = null;
+    private _request: Request = null;
 
     /// <summary> Entry point  </summary>
     private _entryPoint: EntryPoint = null;
@@ -404,12 +406,12 @@ export class RequestContext {
     private _executionStack: Interceptor[];
     
     /// <summary> Constructor </summary>
-    public constructor(base: RequestTemplate, request: wire.Request) {
+    public constructor(base: RequestTemplate, request: Request) {
         assert(base != null);
         assert(request != null);
 
         // Fill default values and do schema validation.
-        request = wire.RequestHelper.fromJsValue(request);
+        request = RequestHelper.fromJsValue(request);
         
         this._application = base.application;
         this._request = request;
@@ -525,16 +527,16 @@ export class RequestContext {
     /// Operational interfaces
 
     /// <summary> Execute current request with a promise of response. </summary>
-    public async execute(): Promise<wire.Response> {
+    public async execute(): Promise<Response> {
         return this.continueExecution();
     }
 
     /// <summary> Continue execution from current interceptor. </summary>
-    public async continueExecution(): Promise<wire.Response> {
+    public async continueExecution(): Promise<Response> {
         if (this._executionDepth < this._executionStack.length) {
             return this._executionStack[this._executionDepth++](this);
         }
-        return Promise.resolve({ responseCode: wire.ResponseCode.Success });
+        return Promise.resolve({ responseCode: ResponseCode.Success });
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -546,7 +548,7 @@ export class RequestContext {
     }
 
     /// <summary> Get the request used to create this context. </summary>
-    public get request(): wire.Request {
+    public get request(): Request {
         return this._request;
     }
 
@@ -566,7 +568,7 @@ export class RequestContext {
     }
 
     /// <summary> Get control flags. </summary>
-    public get controlFlags(): wire.ControlFlags {
+    public get controlFlags(): ControlFlags {
         return this._request.controlFlags;
     }
 
@@ -674,7 +676,7 @@ export class Debugger {
     }
 
     /// <summary> Finalize debug info writer and return a debug info. </summary>
-    public getOutput(): wire.DebugInfo {
+    public getOutput(): DebugInfo {
         return  {
             exception: {
                 message: this._lastError.message,
@@ -688,7 +690,7 @@ export class Debugger {
 
     private _lastError: Error = null;
     private _details: {[key: string]: any} = {};
-    private _events: wire.DebugEvent[] = [];
+    private _events: DebugEvent[] = [];
 }
 
 /// <summary> Request logger that encapsulate section name and trace ID. </summary>

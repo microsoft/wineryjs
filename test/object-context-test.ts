@@ -142,12 +142,12 @@ describe('winery/object-context', () => {
         let perRequestContext: objectModel.ScopedObjectContext = null;
         
         it('#ctor', () => {
-            perAppContext = new objectModel.ScopedObjectContext("application", __dirname, null, perAppContextDef);
+            perAppContext = new objectModel.ScopedObjectContext("./application", __dirname, null, perAppContextDef);
             perRequestContext = new objectModel.ScopedObjectContext("request", __dirname, perAppContext, perRequestContextDef);
         });
 
         it('#getters', () => {
-            assert.strictEqual(perAppContext.scope, "application");
+            assert.strictEqual(perAppContext.scope, "./application");
             assert.strictEqual(perAppContext.baseDir, __dirname);
             assert.strictEqual(perAppContext.def, perAppContextDef);
             assert.strictEqual(perAppContext.parent, null);
@@ -175,7 +175,7 @@ describe('winery/object-context', () => {
 
         it('#get: overriden objectA', () => {
             let objectA = perAppContext.get('objectA');
-            assert.strictEqual(objectA.scope, 'application');
+            assert.strictEqual(objectA.scope, './application');
             assert.strictEqual(objectA.value, 1);
 
             objectA = perRequestContext.get('objectA');
@@ -185,7 +185,7 @@ describe('winery/object-context', () => {
 
         it('#get: not overridden objectB but depenent types has been overridden', () => {
             let objectB = perAppContext.get('objectB');
-            assert.strictEqual(objectB.scope, 'application');
+            assert.strictEqual(objectB.scope, './application');
             assert.strictEqual(objectB.value, 1);
 
             /// object B
@@ -196,7 +196,7 @@ describe('winery/object-context', () => {
 
         it('#get: overriden objectC with new providerA', () => {
             let objectC = perAppContext.get('objectC');
-            assert.strictEqual(objectC.scope, 'application');
+            assert.strictEqual(objectC.scope, './application');
             assert.strictEqual(objectC.value, '/abc');
 
             objectC = perRequestContext.get('objectC');

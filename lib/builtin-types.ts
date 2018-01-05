@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import { EntryPoint, Interceptor, RequestContext } from './app';
+import { EntryPoint, Interceptor, RequestContext } from './application';
 import * as objectModel from './object-model';
-import * as wire from './wire';
 import * as utils from './utils';
 import * as path from 'path';
+
+import { Request } from './request';
+import { Response } from './response';
 
 ////////////////////////////////////////////////////////////////////////
 /// JSON definition for built-in object types.
@@ -35,10 +37,10 @@ export interface EntryPointDefinition extends FunctionDefinition {
     displayRank?: number,
 
     /// <summary> Optional. Example requests. This is for human consumption. </summary>.
-    exampleRequests?: wire.Request[],
+    exampleRequests?: Request[],
 
     /// <summary> Optional. Example responses. </summary>
-    exampleResponses?: wire.Response[]
+    exampleResponses?: Response[]
 };
 
 /// <summary> Interceptor definition. </summary>

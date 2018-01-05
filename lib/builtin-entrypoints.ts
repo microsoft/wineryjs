@@ -52,7 +52,7 @@ export function listEntryPoints(
 /// <summary> List all named objects under current application. </summary>
 export function listNamedObjects(
     request: RequestContext,
-    input: { allowPrivate: boolean, scopes: string[] } = { allowPrivate: false, scopes: ['request', 'application']}): string[] {
+    input: { allowPrivate: boolean, scopes: string[] } = { allowPrivate: false, scopes: ['request', './application']}): string[] {
     
     let objectNames: string[] = [];
     request.application.objectContext.forEach(namedObject => {

@@ -5,11 +5,12 @@ import * as napa from 'napajs';
 import * as path from 'path';
 import * as assert from 'assert';
 
-import { Settings, Application, RequestContext} from './app';
+import { Request } from './request';
+import { Response, ResponseHelper} from './response';
+import { Settings, Application, RequestContext} from './application';
 import { RequestTemplate, RequestTemplateManager, RequestTemplateFileLoader, RequestTemplateLoader} from './request-template';
 
 import * as objectContext from './object-context';
-import * as wire from './wire';
 import * as config from './config';
 import * as utils from './utils';
 
@@ -29,7 +30,7 @@ export interface Host {
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
-    serve(request: string | wire.Request): Promise<wire.Response>;
+    serve(request: string | Request): Promise<Response>;
 
     /// <summary> Get application instance names served by this host. </param>
     applicationInstanceNames: string[];
@@ -112,7 +113,7 @@ export class Leaf implements Host{
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
-    public serve(request: string | wire.Request): Promise<wire.Response> {
+    public serve(request: string | Request): Promise<Response> {
         return new Promise<RequestContext>(resolve => {
             if (typeof request === 'string') {
                 request = utils.appendMessageOnException(
@@ -122,17 +123,17 @@ export class Leaf implements Host{
 
             // Lookup base template and application.
             let base: RequestTemplate = undefined;
-            if ((<wire.Request>request).base != null) {
-                base = this._requestTemplateManager.getOrLoad((<wire.Request>request).base);
+            if ((<Request>request).base != null) {
+                base = this._requestTemplateManager.getOrLoad((<Request>request).base);
             } else {
-                let appName = (<wire.Request>request).application;
+                let appName = (<Request>request).application;
                 if (appName == null) {
                     throw new Error("Either 'application' or 'base' should be present in request.");
                 }
                 let app = this.getApplication(appName);
                 base = app.defaultRequestTemplate;
             }
-            resolve(new RequestContext(base, <wire.Request>request));
+            resolve(new RequestContext(base, <Request>request));
         }).then((context: RequestContext) => {
             return context.execute();
         });
@@ -199,13 +200,13 @@ export class Proxy implements Host {
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
-    public async serve(request: string | wire.Request): Promise<wire.Response> {
+    public async serve(request: string | Request): Promise<Response> {
         let zone = this._zone;
-        return zone.execute((request: string | wire.Request): wire.Response => {
+        return zone.execute((request: string | Request): Response => {
                 return require(__dirname + '/index').hub().serve(request);
             }, [request])
             .then((result: napa.zone.Result) => {
-                return Promise.resolve(wire.ResponseHelper.parse(result.payload));
+                return Promise.resolve(ResponseHelper.parse(result.payload));
             });
     }
 
@@ -291,7 +292,7 @@ export class Hub implements Host {
     }
 
     /// <summary> Serve winery request. </summary>
-    public async serve(request: string | wire.Request): Promise<wire.Response> {
+    public async serve(request: string | Request): Promise<Response> {
         return new Promise<Host>(resolve => {
             if (typeof request === 'string') {
                 request = utils.appendMessageOnException(
@@ -300,9 +301,9 @@ export class Hub implements Host {
             }
 
             // TODO: @daiyip, avoid extra parsing/serialization for host proxy.
-            let appName = (<wire.Request>request).application;
+            let appName = (<Request>request).application;
             if (appName == null) {
-                let baseUri = (<wire.Request>request).base;
+                let baseUri = (<Request>request).base;
                 if (baseUri == null) {
                     throw new Error("Either 'application' or 'base' should be present in request.");
                 }
