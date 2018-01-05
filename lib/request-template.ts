@@ -9,7 +9,7 @@ import * as utils from './utils';
 import * as config from './config';
 
 import { Host } from './host';
-import { Application } from './app';
+import { Application } from './application';
 import { ScopedObjectContext, Uri } from './index';
 
 import * as fs from 'fs';
@@ -170,15 +170,17 @@ export class RequestTemplateFileLoader {
     }
 
     public getApplicationName(uri: string): string {
-        let config = utils.readConfig(uri);
-        if (config["base"] != null) {
+        let def = <RequestTemplateDef>utils.readConfig(uri, 
+            RequestTemplateFileLoader.REQUEST_TEMPLATE_SCHEMA);
+
+        if (def["base"] != null) {
             
             return this.getApplicationName(
-                path.resolve(path.dirname(uri), config["base"]));
+                path.resolve(path.dirname(uri), def.base));
         }
         else {
-            assert(config["application"] != null);
-            return config["application"];
+            assert(def.application != null);
+            return def.application;
         }
     }
 }

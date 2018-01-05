@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import {Application, RequestContext} from '../lib/app';
+import {Application, RequestContext} from '../lib/application';
 import {Leaf} from '../lib/host';
 
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
-import * as wire from '../lib/wire';
 import * as objectModel from '../lib/object-model';
+
+import { Request } from '../lib/request';
 
 import * as path from 'path';
 import * as napa from 'napajs';
@@ -75,7 +76,7 @@ describe('winery/app', () => {
             host.settings,
             path.resolve(__dirname, "test-app/app.json")));
 
-        let request: wire.Request = {
+        let request: Request = {
             application: "testApp",
             entryPoint: "foo",
             input: "hello world",
@@ -282,7 +283,7 @@ describe('winery/app', () => {
             host.settings,
             path.resolve(__dirname, "test-app/app.json")));
 
-        let request: wire.Request = {
+        let request: Request = {
             application: "testApp",
             entryPoint: "foo",
             input: "hello world",

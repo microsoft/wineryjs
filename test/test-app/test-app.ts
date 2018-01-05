@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import {RequestContext} from '../../lib/app';
+import {RequestContext} from '../../lib/application';
 import * as objectModel from '../../lib/object-model';
 
 export namespace types {

@@ -3,9 +3,10 @@
 
 // Export core entities in flattened namespace.
 export { Host } from "./host";
-export * from './app'
+export * from './application'
 export * from './object-model'
-export * from './wire'
+export * from './request'
+export * from './response'
 
 // Export misc entities in sub namespaces.
 import * as builtins from './builtins';

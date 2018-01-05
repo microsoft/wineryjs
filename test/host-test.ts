@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-import * as app from '../lib/app';
+import * as app from '../lib/application';
 import * as config from "../lib/config";
 import * as builtins from '../lib/builtins';
-import * as wire from '../lib/wire';
+import { Request } from '../lib/request';
+import { Response, ResponseCode } from '../lib/response';
 import { Host, Leaf, Proxy, Hub } from '../lib/host';
 
 import * as path from 'path';
@@ -51,8 +52,8 @@ describe('winery/host', () => {
                 application: "testApp",
                 entryPoint: "foo",
                 input: "hello world"
-            }).then((response: wire.Response) => {
-                assert.equal(response.responseCode, wire.ResponseCode.Success);
+            }).then((response: Response) => {
+                assert.equal(response.responseCode, ResponseCode.Success);
                 assert.equal(response.output, 'hello world');
                 done();
             });
@@ -63,8 +64,8 @@ describe('winery/host', () => {
                 application: "testApp",
                 entryPoint: "bar",
                 input: "hello world"
-            }).then((response: wire.Response) => {
-                assert.equal(response.responseCode, wire.ResponseCode.Success);
+            }).then((response: Response) => {
+                assert.equal(response.responseCode, ResponseCode.Success);
                 assert.equal(response.output, "hello world");
                 done();
             });
@@ -150,8 +151,8 @@ describe('winery/host', () => {
                 application: "testApp",
                 entryPoint: "foo",
                 input: "hello world"
-            }).then((response: wire.Response) => {
-                assert.equal(response.responseCode, wire.ResponseCode.Success);
+            }).then((response: Response) => {
+                assert.equal(response.responseCode, ResponseCode.Success);
                 assert.equal(response.output, 'hello world');
                 done();
             }).catch((e) => {
@@ -165,8 +166,8 @@ describe('winery/host', () => {
                 application: "testApp",
                 entryPoint: "bar",
                 input: "hello world"
-            }).then((response: wire.Response) => {
-                assert.equal(response.responseCode, wire.ResponseCode.Success);
+            }).then((response: Response) => {
+                assert.equal(response.responseCode, ResponseCode.Success);
                 assert.equal(response.output, "hello world");
                 done();
             }).catch((e) => {
@@ -269,8 +270,8 @@ describe('winery/host', () => {
                 application: "testApp",
                 entryPoint: "foo",
                 input: "hello world"
-            }).then((response: wire.Response) => {
-                assert.equal(response.responseCode, wire.ResponseCode.Success);
+            }).then((response: Response) => {
+                assert.equal(response.responseCode, ResponseCode.Success);
                 assert.equal(response.output, 'hello world');
                 done();
             }).catch((e) => {
@@ -283,8 +284,8 @@ describe('winery/host', () => {
                 application: "testApp2",
                 entryPoint: "foo",
                 input: "hello world"
-            }).then((response: wire.Response) => {
-                assert.equal(response.responseCode, wire.ResponseCode.Success);
+            }).then((response: Response) => {
+                assert.equal(response.responseCode, ResponseCode.Success);
                 assert.equal(response.output, 'hello world');
                 done();
             }).catch((e) => {
@@ -297,8 +298,8 @@ describe('winery/host', () => {
                 base: path.resolve(__dirname, "test-app/level1.template.json"),
                 entryPoint: "foo",
                 input: "hello world"
-            }).then((response: wire.Response) => {
-                assert.equal(response.responseCode, wire.ResponseCode.Success);
+            }).then((response: Response) => {
+                assert.equal(response.responseCode, ResponseCode.Success);
                 assert.equal(response.output, 'hello world');
                 done();
             }).catch((e) => {

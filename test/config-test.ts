@@ -3,7 +3,7 @@
 
 import * as assert from 'assert';
 import * as config from '../lib/config';
-import * as app from '../lib/app';
+import * as app from '../lib/application';
 import * as host from '../lib/host';
 import * as path from 'path';
 import { metric } from 'napajs';

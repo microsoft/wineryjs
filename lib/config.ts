@@ -4,7 +4,7 @@
 import * as path from 'path';
 import * as utils from './utils';
 import * as objectModel from './object-model';
-import * as app from './app';
+import * as app from './application';
 import { metric } from 'napajs'
 import * as host from './host'
 
