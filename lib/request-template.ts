@@ -170,10 +170,11 @@ export class RequestTemplateFileLoader {
     }
 
     public getApplicationName(uri: string): string {
-        let filePath = uri;
-        let config = utils.readConfig(filePath);
+        let config = utils.readConfig(uri);
         if (config["base"] != null) {
-            return this.getApplicationName(config["base"]);
+            
+            return this.getApplicationName(
+                path.resolve(path.dirname(uri), config["base"]));
         }
         else {
             assert(config["application"] != null);
@@ -233,6 +234,7 @@ export class RequestTemplateManager {
             } else {
                 this._cache.set(uri, new RequestTemplateReference(t, 1));
             }
+            t = t.base;
         }
         return thisTemplate;
     }
