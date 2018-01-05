@@ -132,7 +132,7 @@ export function parseXmlString(xmlString: string, jsonSchema?: JsonSchema): any 
 /// if file '.config' is not presented, '.json' will be checked.
 /// When file path ends with '.json', only '.json' will be checked.
 ///
-/// This method is introduced to make Napa code transparent to the format of configuration file,
+/// This method is introduced to make Winery code transparent to the format of configuration file,
 /// We can use Autopilot flattened XML file (with enables bed-specific configuration) or plain JSON file.
 /// </summary>
 /// <param name='filePath'> File path with ".config" or ".json" extension </param>
@@ -609,7 +609,7 @@ class XmlObjectReader {
             }
             var props = Object.getOwnPropertyNames(input);
             if (input.hasOwnProperty('$') && props.length > 1) {
-                throw new Error("Napa doesn't support XML element with both attributes and sub-elements, except for attribute 'itemElement' for list. Element with issues:\n"
+                throw new Error("Winery doesn't support XML element with both attributes and sub-elements, except for attribute 'itemElement' for list. Element with issues:\n"
                     + this._builder.buildObject(node));
             }
             return true;

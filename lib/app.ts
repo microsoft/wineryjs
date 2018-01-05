@@ -61,6 +61,9 @@ import * as utils from './utils';
 import * as config from './config'
 import { NamedObject } from './named-object';
 
+import { RequestTemplate } from './request-template';
+import { ScopedObjectContextDef, ScopedObjectContext } from './index';
+
 /////////////////////////////////////////////////////////////////////////////////////////
 /// Application for managing all execution stack and required resources.
 
@@ -161,7 +164,7 @@ export interface ApplicationSettings extends Settings {
     metrics: MetricDefinition[];
 }
 
-/// <summary> Class for Napa application. </summary>
+/// <summary> Class for Winery application. </summary>
 export class Application {
     /// <summary> Application settings. </summary>
     private _settings: ApplicationSettings;
@@ -380,18 +383,20 @@ export class RequestContext {
     private _executionStack: Interceptor[];
     
     /// <summary> Constructor </summary>
-    public constructor(app: Application, request: wire.Request) {
+    public constructor(app: Application, base: RequestTemplate, request: wire.Request) {
         // Fill default values and do schema validation.
         request = wire.RequestHelper.fromJsValue(request);
         
         this._application = app;
         this._request = request;
 
+        let parentContext: ScopedObjectContext = base != null ? base.objectContext : app.objectContext;
+
         // We only pass overriden stuff when per-request override is allowed.
         let perRequestObjectContextDef: objectContext.ScopedObjectContextDef = 
             app.settings.allowPerRequestOverride ?
                 new objectContext.ScopedObjectContextDef(
-                    app.settings.objectContextDef,
+                    parentContext.def,
                     request.overrideTypes,
                     request.overrideProviders,
                     request.overrideObjects,
@@ -399,7 +404,7 @@ export class RequestContext {
                 )
                 :
                 new objectContext.ScopedObjectContextDef(
-                    app.settings.objectContextDef,
+                    parentContext.def,
                     [],
                     [], 
                     [], 
@@ -407,10 +412,10 @@ export class RequestContext {
 
         this._perRequestObjectContext = new objectContext.ScopedObjectContext(
             "request",
-            app.settings.baseDir,
-            app.objectContext,
+            app.objectContext.baseDir,      // We always use application directory as base dir for resolving paths in request.
+            parentContext,
             perRequestObjectContextDef);
-        
+
         // Prepare execution stack and entry point.
         this._entryPoint = this.getEntryPoint(request.entryPoint);
         if (this._entryPoint == null) {

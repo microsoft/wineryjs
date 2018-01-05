@@ -9,7 +9,7 @@ import { ObjectContext } from './object-context';
 //
 // There are two types of named objects.
 // 1) Named objects provided from JSON file per application, whose lifecycle is process- level.
-// 2) Named objects provided from a single Napa request, whose lifecycle is during the request.
+// 2) Named objects provided from a single Winery request, whose lifecycle is during the request.
 
 /// <summary> Class for named object that holds a definition and value.
 /// Definition is needed to construct this named object under a different ObjectContext, e.g, from request.

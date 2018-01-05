@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "http://www.wineryjs.org/object-type-config",
   "type": "array",
-  "title": "Type config schema in Napa.",
-  "description": "Type config is a sub config file under app config in Napa.",
+  "title": "Type config schema in Winery.",
+  "description": "Type config is a sub config file under app config in Winery.",
   "name": "/",
   "items": {
     "id": "http://www.wineryjs.org/object-type-config/item",

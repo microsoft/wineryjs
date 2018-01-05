@@ -3,7 +3,7 @@
   "id": "http://www.wineryjs.org/object-provider-config",
   "type": "array",
   "title": "Object provider config Schema.",
-  "description": "Object provider config as a sub file of app config in Napa.",
+  "description": "Object provider config as a sub file of app config in Winery.",
   "name": "/",
   "items": {
     "id": "http://www.wineryjs.org/object-provider-config/item",

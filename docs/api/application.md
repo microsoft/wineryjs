@@ -175,7 +175,7 @@ Then you can send a sample request by calling `Host.serve` with your request obj
 ```json
 {
     "application": "example",
-    "entrypoint": "sum",
+    "entryPoint": "sum",
     "input": [1, 2, 3]
 }
 ```
@@ -283,7 +283,7 @@ E.g, following JSON element defines a `Metric` named *"requestRate"* of `Rate` t
         "description": "Request rate",
         "dimensionNames": [
             "application", 
-            "entrypoint"]
+            "entryPoint"]
      }
 ]
 ```

@@ -1,0 +1,164 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "http://www.wineryjs.org/request-template",
+    "type": "object",
+    "title": "Schema for Winery application request.",
+    "description": "Schema for Winery application request.",
+    "name": "/",
+    "properties": {
+      "base": {
+        "id": "http://www.wineryjs.org/request-template/base",
+        "type": "string",
+        "title": "Base template uri schema.",
+        "description": "Base template Uri. Case insensitive.",
+        "name": "base"
+      },
+      "application": {
+        "id": "http://www.wineryjs.org/request-template/application",
+        "type": "string",
+        "title": "Application name schema.",
+        "description": "Application name. Case insensitive.",
+        "name": "application"
+      },
+      "overrideTypes": {
+        "id": "http://www.wineryjs.org/request-template/overrideTypes",
+        "type": "array",
+        "title": "Override types.",
+        "description": "Override types for current request. That will redirect creation of object of this type to customized function and invalidate registered named object with the type when calling getNamedObject.",
+        "name": "overrideTypes",
+        "items": {
+          "id": "http://www.wineryjs.org/request-template/overrideTypes/item",
+          "type": "object",
+          "title": "Override type definition",
+          "description": "Override type definition",
+          "name": "0",
+          "properties": {
+            "typeName": {
+              "id": "http://www.wineryjs.org/request-template/overrideTypes/item/typeName",
+              "type": "string",
+              "title": "Type name.",
+              "description": "Type name to override.",
+              "name": "typeName"
+            },
+            "description": {
+              "id": "http://www.wineryjs.org/request-template/overrideTypes/item/description",
+              "type": "string",
+              "title": "Description.",
+              "description": "Description for the type. Optional.",
+              "name": "description"
+            },
+            "moduleName": {
+              "id": "http://www.wineryjs.org/request-template/overrideTypes/item/moduleName",
+              "type": "string",
+              "title": "Module name.",
+              "description": "Module name for the overridden type.",
+              "name": "moduleName"
+            },
+            "functionName": {
+              "id": "http://www.wineryjs.org/request-template/overrideTypes/item/functionName",
+              "type": "string",
+              "title": "Function name used as constructor.",
+              "description": "Function name within the module for the overridden type.",
+              "name": "functionName"
+            }
+          },
+          "required": [ "typeName", "moduleName", "functionName" ],
+          "additionalProperties": false
+        }
+      },
+      "overrideProviders": {
+        "id": "http://www.wineryjs.org/request-template/overrideProviders",
+        "type": "array",
+        "title": "Override object providers.",
+        "description": "Override object providers for specific URIs. This will redirect URI based object creation to customized function and invalidate registered named object referencing objects of this protocol when calling getNamedObject.",
+        "name": "overrideProviders",
+        "items": {
+          "id": "http://www.wineryjs.org/request-template/overrideProviders/item",
+          "type": "object",
+          "title": "Override provider definition.",
+          "description": "Definition of an overridden object provider.",
+          "name": "item",
+          "properties": {
+            "protocol": {
+              "id": "http://www.wineryjs.org/request-template/overrideProviders/item/protocol",
+              "type": "string",
+              "title": "Protocol.",
+              "description": "Protocol of the provider.",
+              "name": "protocol"
+            },
+            "description": {
+              "id": "http://www.wineryjs.org/request-template/overrideProviders/item/description",
+              "type": "string",
+              "title": "Description.",
+              "description": "Description of the provider. Optional.",
+              "name": "description"
+            },
+            "moduleName": {
+              "id": "http://www.wineryjs.org/request-template/overrideProviders/item/moduleName",
+              "type": "string",
+              "title": "Module name",
+              "description": "Module name of the provider.",
+              "name": "moduleName"
+            },
+            "functionName": {
+              "id": "http://www.wineryjs.org/request-template/overrideProviders/item/functionName",
+              "type": "string",
+              "title": "Function name.",
+              "description": "Function name of the provider to load objects.",
+              "name": "functionName"
+            }
+          },
+          "required": [ "protocol", "moduleName", "functionName" ],
+          "additionalProperties": false
+        }
+      },
+      "overrideObjects": {
+        "id": "http://www.wineryjs.org/request-template/overrideObjects",
+        "type": "array",
+        "title": "Override named objects.",
+        "description": "Override a list of named objects. This will create named object with a new name or invalidate registered named object with the type when calling getNamedObject.",
+        "name": "overrideObjects",
+        "items": {
+          "id": "http://www.wineryjs.org/request-template/overrideObjects/item",
+          "type": "object",
+          "title": "Override named object definition.",
+          "description": "Override named object definition.",
+          "name": "item",
+          "properties": {
+            "name": {
+              "id": "http://www.wineryjs.org/request-template/overrideObjects/item/name",
+              "type": "string",
+              "title": "Name.",
+              "description": "Name of the override object.",
+              "name": "name"
+            },
+            "description": {
+              "id": "http://www.wineryjs.org/request-template/overrideObjects/item/description",
+              "type": "string",
+              "title": "Description.",
+              "description": "Description of the named object. Optional.",
+              "name": "description"
+            },
+            "value": {
+              "id": "http://www.wineryjs.org/request-template/overrideObjects/item/value",
+              "title": "Value.",
+              "description": "Value of override named objects.",
+              "name": "value"
+            }
+          },
+          "required": [ "name", "value" ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "additionalProperties": false,
+    "oneOf": [
+      {
+        "required": ["application"]
+      },
+      {
+        "required": ["base"]
+      }
+    ]
+  }
+  
