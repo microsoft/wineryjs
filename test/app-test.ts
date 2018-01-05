@@ -77,7 +77,7 @@ describe('winery/app', () => {
         }
 
         it('#ctor', () => {
-            context = new RequestContext(app, request);
+            context = new RequestContext(app, undefined, request);
         });
 
         it('#getters', () => {

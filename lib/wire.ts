@@ -19,8 +19,11 @@ export type ControlFlags = {
 
 /// <summary> Interface for winery request. </summary>
 export interface Request {
-    /// <summary> Registered application instance name </summary>
-    application: string;
+    /// <summary> Registered application instance name. Required unless "base" is present. </summary>
+    application?: string;
+
+    /// <summary> Uri for request template to apply. Optional. </summary>
+    base?: string
 
     /// <summary> Entry point name </summary>
     entryPoint: string;
@@ -135,7 +138,7 @@ export class RequestHelper {
     /// <summary> Create request from a JS value that conform with request schema. </summary>
     public static fromJsValue(jsValue: any): Request {
         if (!this.validate(jsValue))
-            throw new Error("Request doesn't match request schema.");
+            throw new Error(`Request doesn't match request schema: ${JSON.stringify(this.REQUEST_SCHEMA.getErrors())}`);
         
         let request = <Request>(jsValue);
         this._transform.apply(request);

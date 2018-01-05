@@ -2,10 +2,17 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "http://www.wineryjs.org/request",
   "type": "object",
-  "title": "Schema for Napa application request.",
-  "description": "Schema for Napa application request.",
+  "title": "Schema for Winery application request.",
+  "description": "Schema for Winery application request.",
   "name": "/",
   "properties": {
+    "base": {
+      "id": "http://www.wineryjs.org/request/base",
+      "type": "string",
+      "title": "Base template uri schema.",
+      "description": "Base template Uri. Case insensitive.",
+      "name": "base"
+    },
     "application": {
       "id": "http://www.wineryjs.org/request/application",
       "type": "string",
@@ -191,8 +198,13 @@
     }
   },
   "additionalProperties": false,
-  "required": [
-    "application",
-    "entryPoint"
+  "required": ["entryPoint"],
+  "oneOf": [
+    {
+      "required": ["application"]
+    },
+    {
+      "required": ["base"]
+    }
   ]
 }

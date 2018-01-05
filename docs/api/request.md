@@ -16,8 +16,11 @@ export type ControlFlags = {
 
 /// <summary> Interface for winery request. </summary>
 export interface Request {
-    /// <summary> Registered application instance name </summary>
-    application: string;
+    /// <summary> Registered application instance name. Required unless "base" is present. </summary>
+    application?: string;
+
+    /// <summary> Uri for request template to apply. Optional. </summary>
+    base?: string
 
     /// <summary> Entry point name </summary>
     entryPoint: string;

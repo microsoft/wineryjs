@@ -1,53 +1,53 @@
 ﻿{
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://www.wineryjs.org/counter-config",
+  "id": "http://www.wineryjs.org/metric-config",
   "type": "array",
-  "title": "Counter config schema.",
-  "description": "Counter config file is a sub file of application config in Napa.",
+  "title": "Metric config schema.",
+  "description": "Metric config file is a sub file of application config in Winery.",
   "name": "/",
   "items": {
-    "id": "http://www.wineryjs.org/counter-config/item",
+    "id": "http://www.wineryjs.org/metric-config/item",
     "type": "object",
-    "title": "Counter definition schema.",
+    "title": "Metric definition schema.",
     "description": "An explanation about the puropose of this instance described by this schema.",
     "name": "item",
     "properties": {
       "name": {
-        "id": "http://www.wineryjs.org/counter-config/item/name",
+        "id": "http://www.wineryjs.org/metric-config/item/name",
         "type": "string",
         "title": "Name schema.",
-        "description": "Counter variable name accessed via app.counters.<counterName>. Please use identifier for this property.",
+        "description": "Metric variable name accessed via app.counters.<counterName>. Please use identifier for this property.",
         "name": "name"
       },
       "displayName": {
-        "id": "http://www.wineryjs.org/counter-config/item/displayName",
+        "id": "http://www.wineryjs.org/metric-config/item/displayName",
         "type": "string",
         "title": "Display name schema.",
-        "description": "Display name for the counter, which will be displayed in monitoring tools.",
+        "description": "Display name for the metric, which will be displayed in monitoring tools.",
         "name": "displayName"
       },
       "description": {
-        "id": "http://www.wineryjs.org/counter-config/item/description",
+        "id": "http://www.wineryjs.org/metric-config/item/description",
         "type": "string",
         "title": "Description schema.",
-        "description": "Description of this counter.",
+        "description": "Description of this metric.",
         "name": "description"
       },
       "type": {
-        "id": "http://www.wineryjs.org/counter-config/item/type",
+        "id": "http://www.wineryjs.org/metric-config/item/type",
         "enum": [ "Number", "Rate", "Percentile" ],
-        "title": "Counter type schema.",
+        "title": "Metric type schema.",
         "description": "An explanation about the puropose of this instance described by this schema.",
         "name": "type"
       },
       "dimensionNames": {
-        "id": "http://www.wineryjs.org/napa-config/global/counters/dimensionNames",
+        "id": "http://www.wineryjs.org/metric-config/global/counters/dimensionNames",
         "type": "array",
         "title": "Dimension Names",
-        "description": "List of dimension names being recorded with every counter sample.",
+        "description": "List of dimension names being recorded with every metric sample.",
         "name": "dimensionNames",
         "items": {
-          "id": "http://www.wineryjs.org/napa-config/global/counters/dimensionNames/item",
+          "id": "http://www.wineryjs.org/metric-config/global/counters/dimensionNames/item",
           "type": "string",
           "title": "Dimension name.",
           "description": "Dimension name metric.",

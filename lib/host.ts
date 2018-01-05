@@ -6,6 +6,8 @@ import * as path from 'path';
 import * as assert from 'assert';
 
 import { Settings, Application, RequestContext} from './app';
+import { RequestTemplate, RequestTemplateManager, RequestTemplateFileLoader, RequestTemplateLoader} from './request-template';
+
 import * as objectContext from './object-context';
 import * as wire from './wire';
 import * as config from './config';
@@ -38,6 +40,9 @@ export class Leaf implements Host{
     // Lower-case name to application map.
     private _applications: Map<string, Application> = new Map<string, Application>();
 
+    // Request template manager.
+    private _requestTemplateManager: RequestTemplateManager;
+
     // Enabled application names. 
     private _applicationInstanceNames: string[] = [];
 
@@ -57,6 +62,13 @@ export class Leaf implements Host{
             null,
             settings.objectContextDef
         );
+
+        this._requestTemplateManager = new RequestTemplateManager(
+            new RequestTemplateFileLoader(),
+            (name: string): Application => {
+                return this._applications.get(name);
+            }
+        )
     }
 
     /// <summary> Register an application instance in current host. </summary>
@@ -107,15 +119,21 @@ export class Leaf implements Host{
                     ". Fail to parse request string.",
                     () => { return JSON.parse(<string>request);});
             }
-            
-            let appName = (<wire.Request>request).application;
-            if (appName == null) {
-                throw new Error("Property 'application' is missing from request.");
-            }
 
-            resolve(new RequestContext(
-                this.getApplication(appName), 
-                <wire.Request>request));
+            // Lookup base template and application.
+            let base: RequestTemplate = undefined;
+            let app: Application = undefined;
+            if ((<wire.Request>request).base != null) {
+                base = this._requestTemplateManager.getOrLoad((<wire.Request>request).base);
+                app = base.application;
+            } else {
+                let appName = (<wire.Request>request).application;
+                if (appName == null) {
+                    throw new Error("Either 'application' or 'base' should be present in request.");
+                }
+                app = this.getApplication(appName);
+            }
+            resolve(new RequestContext(app, base, <wire.Request>request));
         }).then((context: RequestContext) => {
             return context.execute();
         });
@@ -220,6 +238,12 @@ export class Hub implements Host {
     /// <summary> Application instance name to host map. </summary>
     private _hostMap: Map<string, Host> = new Map<string, Host>();
 
+    /// <summary> Template loader to figure out application name of a template. </summary>
+    private _templateLoader: RequestTemplateLoader = new RequestTemplateFileLoader();
+
+    /// <summary> Template uri to application name map. </summary>
+    private _templateToAppNameMap : Map<string, string> = new Map<string, string>();
+
     /// <summary> Constructor. </summary>
     /// <param> winery host settings. </summary>
     public constructor(settings: HostSettings = null) {
@@ -281,10 +305,20 @@ export class Hub implements Host {
                     () => { return JSON.parse(<string>request);});
             }
 
-            // TODO: @dapeng, avoid extra parsing/serialization for host proxy.
+            // TODO: @daiyip, avoid extra parsing/serialization for host proxy.
             let appName = (<wire.Request>request).application;
             if (appName == null) {
-                throw new Error("Property 'application' is missing from request.");
+                let baseUri = (<wire.Request>request).base;
+                if (baseUri == null) {
+                    throw new Error("Either 'application' or 'base' should be present in request.");
+                }
+                let lcUri = baseUri.toLowerCase();
+                if (this._templateToAppNameMap.has(lcUri)) {
+                    appName = this._templateToAppNameMap.get(lcUri);
+                } else {
+                    appName = this._templateLoader.getApplicationName(baseUri);
+                    this._templateToAppNameMap.set(lcUri, appName);
+                }
             }
 
             let lowerCaseName = appName.toLowerCase();

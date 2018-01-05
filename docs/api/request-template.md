@@ -2,6 +2,7 @@
 
 **Request Template** is an object that pre-configure resources for serving requests. Multiple request templates can be loaded in memory on the same host, thus they can be used for serving the same requests with different server-side treatment. One common usage is for A/B testing. Objects declared in request template are loaded when request template is loaded, thus there is no performance impact during request serving time.
 
+A request template must have a parent context, it's either an [Application](./application.md) specified by property *"application"* or a base template specified by property *"base"*.
 ## Template-level Resources
 Users can define [Object Context](./object-context.md) at template level, which overrides object context at application level and host level.
 
@@ -21,8 +22,38 @@ Template inheritance enables a structured development process to manage changes 
 
 ![Templates organized in layers](../images/request-template.png)
 
-## Example
+## Examples
 
+### A simple baseless template 
+Following JSON file defines a baseless request template  that applies to application *"example"* with overriden object types, providers and named objects.
+```json
+{
+    "application": "example",
+    "overrideTypes": [
+        {
+            "typeName": "Type1",
+            "moduleName": "module1",
+            "functionName": "function1"
+        }
+    ],
+    "overrideProviders": [
+        {
+            "protocol": "protocol1",
+            "moduleName": "module1",
+            "functionName": "function2"
+        }
+    ],
+    "overrideObjects": [
+        {
+            "name": "object1",
+            "value": {
+                "someProp": "someValue"
+            }
+        }
+    ]
+}
+```
+### A template with a base
 Following JSON file defines a request template  extending a base template, with overriden object types, providers and named objects.
 ```json
 {

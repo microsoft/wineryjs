@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "http://www.wineryjs.org/response",
   "type": "object",
-  "title": "Napa response schema.",
-  "description": "Napa Response schema.",
+  "title": "Winery response schema.",
+  "description": "Winery Response schema.",
   "name": "/",
   "properties": {
     "responseCode": {

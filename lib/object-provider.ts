@@ -10,7 +10,7 @@ import { ObjectContext } from './object-context';
 /// Interfaces and classes for URI based object retrieval.
 
 /// <summary> Class that encapsulate parsing on URI.
-/// A URI in Napa is defined in syntax: <protocol>:/<path>[?<param1>=<value1>[&<param2>=<value2>]*]
+/// A URI in Winery is defined in syntax: <protocol>:/<path>[?<param1>=<value1>[&<param2>=<value2>]*]
 /// e.g. doc:/1E2B3C?env=os-prod-co3&type=js
 /// TODO: replace this with 'url' module from Node.JS.
 /// </summary>
@@ -120,7 +120,7 @@ export interface ObjectProvider {
     supports(protocol: string): boolean;
 }
 
-/// <summary> Object provider definition to register a URI based object provider in Napa. </summary>
+/// <summary> Object provider definition to register a URI based object provider in Winery.</summary>
 export interface ProviderDef {
     /// <summary> </summary>
     protocol: string;

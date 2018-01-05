@@ -94,9 +94,9 @@ export class ScopedObjectContext implements ObjectContext {
 
     /// <summary> Constructor. Throws exception if there is unrecongized type, protocol or cyclic named object dependency. </summary>
     /// <param name="scopeName"> Scope name that current object context applies to. Can be 'global', 'application', 'request'. </param>
+    /// <param name="baseDir"> Base directory used to resolve relative file names. </param>
     /// <param name="parent"> Parent object context if exists. Application scope has parent scope as  null. </param>
     /// <param name="definition"> Definition for current object context. </param>
-    /// <param name="baseDir"> Base directory used to resolve relative file names. </param>
     public constructor(
         scopeName: string, 
         baseDir: string,

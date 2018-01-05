@@ -10,7 +10,7 @@
       "id": "http://www.wineryjs.org/application-config/id",
       "type": "string",
       "title": "Application ID.",
-      "description": "Required. Application id which is unique in Napa.",
+      "description": "Required. Application id which is unique in Winery.",
       "name": "id"
     },
     "description": {

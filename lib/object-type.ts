@@ -17,7 +17,7 @@ export interface ObjectWithType {
     _type: string 
 };
 
-/// <summary> Object type definition to register a type in Napa. </summary>
+/// <summary> Object type definition to register a type in Winery. </summary>
 export interface TypeDef {
     /// <summary> Type name to apply this constructor. </summary>
     typeName: string;

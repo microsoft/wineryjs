@@ -3,7 +3,7 @@
   "id": "http://www.wineryjs.org/named-object-config",
   "type": "array",
   "title": "Named object config schema.",
-  "description": "Named object config as a sub-file of app config in Napa.",
+  "description": "Named object config as a sub-file of app config in Winery.",
   "name": "/",
   "items": {
     "id": "http://www.wineryjs.org/named-object-config/item",
