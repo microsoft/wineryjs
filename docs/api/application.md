@@ -13,7 +13,7 @@ Programmingly, an application is a container that holds
 ## Request Execution
 Based on **Interceptor** and **Entry Point**, an application execution stack is implemented for routing requests and execute them.
 
-When serving a request, execution is planned as a stack of interceptors. Each interceptor can shortcircuit the request or relay to the next interceptor. Stacking interceptors allow us to apply policies like authentication, logging, request pre-processing and response post-processing in a flexible and reusable way. 
+When serving a request, execution is planned as a stack of interceptors. [**Request Context**](#request-context) as the information container of a request is passed through the stack. Each interceptor can shortcircuit the request or relay to the next interceptor. Stacking interceptors allow us to apply policies like authentication, logging, request pre-processing and response post-processing in a flexible and reusable way. 
 
 ![Application Execution Stack](../images/execution-stack.png)
 
@@ -48,6 +48,52 @@ Execution stack can also be specified per entry point by property *"executionSta
     }
 }
 ```
+### Request Context
+Request Context is vital in Winery, which not only contains all information required to process a request, but also exposes important functionalities as following:
+- Request execution control
+- Object creation and retrieval with request-level override capability.
+- Request-level debugging and performance data collection
+
+For application developers, request context may be the most frequently accessed programming interface. Its class `RequestContext` is defined in [`request-context.ts`](../../lib/request-context.ts).
+
+These are the properties to access information needed for request processing:
+|  Property name     | Description                              |
+|--------------------|------------------------------------------|
+| `application`      | Get current **Application**              |
+| `entryPoint`       | Get entry point object to execute        |
+| `entryPointName`   | Get entry point name                     |
+| `traceId`          | Get trace ID of current request          |
+| `input`            | Get user input from request              |
+| `controlFlags`     | Get control flags (debug, perf, etc.)    |
+
+
+These are the methods for controlling request execution:
+|  Method name       | Description                 |
+|--------------------|-----------------------------|
+| `execute`          | Start request execution     |
+| `continueExecution`| Step into next interceptor  |
+
+These are the methods for object creation and retrieval:
+|  Method name       | Description                                                                                          |
+|--------------------|------------------------------------------------------------------------------------------------------|
+| `create`           | Create an object by factory or provider (see [Object Creation](./object-context.md#object-creation)) |
+| `get`              | Get a named object by name                                                                           |
+| `getNamedObject`   | Get a named object with additional meta-data                                                         |
+| `getFunction`      | Helper to get a function-type named object                                                           |
+| `getEntryPoint`    | Helper to get an entry-point-type named object                                                       |
+| `getInterceptor`   | Helper to get an interceptor-type named object                                                       |
+
+These are the properties for debugging and monitoring:
+|  Method name       | Description                                                                                                                  |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------|
+| `logger`           | Get a request-level logger                                                                                                   |
+| `debugger`         | Get a request-level debugger, which will fill [`debugInfo`](./response.md#debug-information) in `Response`                   |
+| `perf`             | Get a request-level performance collector, which will fill [`perfInfo`](./response.md#performance-information) in `Response` |
+| `metric`           | Helper to access application-level metrics                                                                                   |
+
+
+
+
 
 ### Interceptors
 
@@ -200,6 +246,7 @@ Winery.js introduced a few [built-in entry points](../../config/builtin-entrypoi
 | getNamedObject  | Get a named object definition by name                   |
 | getType         | Get an object type definition by type name              |
 | getProvider     | Get an object provider definition by protocol name      |
+
 ## Application-level Resources
 Besides modeling request execution, resources such as parameters, data model, etc. are also important for serving requests. Not only data resoures, behaviors such as object creation are also regarded as resources.
 

@@ -122,6 +122,9 @@ export function readConfig(filePath: string, jsonSchema?: JsonSchema): any {
         throw new Error("readConfig only support '.json' as extension. filePath='"
             + filePath + "'.");
     }
+    if (!filePath.startsWith('.')) {
+        filePath = require.resolve(filePath);
+    }
     // We allow comments in JSON configuration files.
     return parseJsonFile(filePath, jsonSchema, true);
 }

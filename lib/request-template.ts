@@ -155,8 +155,14 @@ export class RequestTemplateFileLoader {
         let base: RequestTemplate = undefined;
         let app: Application = undefined;
         if (def.base != null) {
+            let basePath = def.base;
+            if (def.base.startsWith('.')) {
+                basePath = path.resolve(baseDir, def.base);
+            } else {
+                basePath = require.resolve(def.base);
+            }
             base = this.loadInternal(
-                path.resolve(baseDir, def.base), 
+                basePath, 
                 appGetter, 
                 baseTemplateGetter, 
                 seenUris);
