@@ -57,6 +57,7 @@ Request Context is vital in Winery, which not only contains all information requ
 For application developers, request context may be the most frequently accessed programming interface. Its class `RequestContext` is defined in [`request-context.ts`](../../lib/request-context.ts).
 
 These are the properties to access information needed for request processing:
+
 |  Property name     | Description                              |
 |--------------------|------------------------------------------|
 | `application`      | Get current **Application**              |
@@ -68,12 +69,14 @@ These are the properties to access information needed for request processing:
 
 
 These are the methods for controlling request execution:
+
 |  Method name       | Description                 |
 |--------------------|-----------------------------|
 | `execute`          | Start request execution     |
 | `continueExecution`| Step into next interceptor  |
 
 These are the methods for object creation and retrieval:
+
 |  Method name       | Description                                                                                          |
 |--------------------|------------------------------------------------------------------------------------------------------|
 | `create`           | Create an object by factory or provider (see [Object Creation](./object-context.md#object-creation)) |
@@ -84,6 +87,7 @@ These are the methods for object creation and retrieval:
 | `getInterceptor`   | Helper to get an interceptor-type named object                                                       |
 
 These are the properties for debugging and monitoring:
+
 |  Method name       | Description                                                                                                                  |
 |--------------------|------------------------------------------------------------------------------------------------------------------------------|
 | `logger`           | Get a request-level logger                                                                                                   |
@@ -156,13 +160,13 @@ Winery.js introduced a few  built-in interceptors to support common execution fl
 
 | Interceptor name     | Description                                         |
 |----------------------|-----------------------------------------------------|
-| executeEntryPoint  | Locate and call entry point and return response  |
-| finalizeResponse   | Fill *"debugInfo"* and *"perfInfo*" in response|
-| passThrough        | Pass through to the next interceptor                    |
-| shortCircuit       | Shortcircuit with a dummy succeeded response        |
-| logRequest         | Log request                                       |
-| logResponse        | Log response                                      |
-| logRequestResponse | Log both request and response                   |
+| *executeEntryPoint*  | Locate and call entry point and return response     |
+| *finalizeResponse*   | Fill *"debugInfo"* and *"perfInfo*" in response     |
+| *passThrough*        | Pass through to the next interceptor                |
+| *shortCircuit*       | Shortcircuit with a dummy succeeded response        |
+| *logRequest*         | Log request                                         |
+| *logResponse*        | Log response                                        |
+| *logRequestResponse* | Log both request and response                       |
 
 ### Entry Points
 
@@ -238,14 +242,14 @@ Winery.js introduced a few [built-in entry points](../../config/builtin-entrypoi
 
 | Entry point name  | Description                                             |
 |-------------------|---------------------------------------------------------|
-| listApplication | List all applications served by current host            |
-| listEntryPoints | List all entry points for an application                |
-| listNamedObjects| List all public `NamedObject`                           |
-| listTypes       | List all registered types for an application            |
-| listProviders   | List all registered object providers for an application |
-| getNamedObject  | Get a named object definition by name                   |
-| getType         | Get an object type definition by type name              |
-| getProvider     | Get an object provider definition by protocol name      |
+| *listApplication* | List all applications served by current host            |
+| *listEntryPoints* | List all entry points for an application                |
+| *listNamedObjects*| List all public `NamedObject`                           |
+| *listTypes*       | List all registered types for an application            |
+| *listProviders*   | List all registered object providers for an application |
+| *getNamedObject*  | Get a named object definition by name                   |
+| *getType*         | Get an object type definition by type name              |
+| *getProvider*     | Get an object provider definition by protocol name      |
 
 ## Application-level Resources
 Besides modeling request execution, resources such as parameters, data model, etc. are also important for serving requests. Not only data resoures, behaviors such as object creation are also regarded as resources.
