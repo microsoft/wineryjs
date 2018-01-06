@@ -35,13 +35,13 @@ export interface Request {
     controlFlags?: ControlFlags;
 
     /// <summary> Overridden types </summary>
-    overrideTypes?: TypeDefinition[];
+    overrideTypes?: TypeDef[];
 
     /// <summary> Overridden named objects </summary>
-    overrideObjects?: NamedObjectDefinition[];
+    overrideObjects?: NamedObjectDef[];
 
     /// <summary> Overridden providers </summary>
-    overrideProviders?: ProviderDefinition[];
+    overrideProviders?: ProviderDef[];
 }
 ```
 There are two groups of fields in `Request`: 
@@ -50,12 +50,13 @@ There are two groups of fields in `Request`:
 
 ![Request Object Layout](../images/request-layout.png)
 ## Basic Fields
-| Property name |  Required | Description                                                                                          |
-|---------------|-----------|------------------------------------------------------------------------------------------------------|
-| application   | Y         | Application instance name (or alias) to request for service                                          |
-| entrypoint    | Y         | Name of the entrypoint object to request for service                                                 |
-| input         | N         | User object as input that will be passed to entrypoint function, whose schema is entrypoint specific |
-| controlFlags  | N         | Flags for enabling debugging and instrumentation |
+| Property name |  Required                    | Description                                                                                             |
+|---------------|------------------------------|---------------------------------------------------------------------------------------------------------|
+| application   | Y unless `base` is specified | Application instance name (or alias) to request for service, it's required unless `base` is specified.  |
+| base          | N                            | Path of base template that applies to this request. Mutual-exclusive with `application`                 |
+| entrypoint    | Y                            | Name of the entrypoint object to request for service                                                    |
+| input         | N                            | User object as input that will be passed to entrypoint function, whose schema is entrypoint specific    |
+| controlFlags  | N                            | Flags for enabling debugging and instrumentation                                                        |
  
 ## Override Fields
 Further, object creation and object retrieval behaviors can be overriden from request with properties with prefix *"override"*. 
@@ -69,7 +70,7 @@ Further, object creation and object retrieval behaviors can be overriden from re
 
 ## Examples
 
-Example 1: a simple request with only application / entryPoint.
+Example 1: a simple request with only application / entryPoint:
 ```ts
 {
     application: "example",
@@ -77,7 +78,15 @@ Example 1: a simple request with only application / entryPoint.
 }
 ```
 
-Example 2: a request for summing a list of numbers.
+Example 2: a request using template, which inherits objects context from the template:
+```ts
+{
+    base: "example/plan1.json",
+    entryPoint: "doSomething"
+}
+```
+
+Example 3: a request for summing a list of numbers:
 ```ts
 {
     application: "math",
@@ -86,7 +95,7 @@ Example 2: a request for summing a list of numbers.
 }
 ```
 
-Example 3: a request that override an entry point.
+Example 4: a request that override an entry point:
 ```ts
 {
     application: "example",
@@ -104,7 +113,7 @@ Example 3: a request that override an entry point.
 }
 ```
 
-Example 4: a request that override an object creator.
+Example 5: a request that override an object type:
 ```ts
 {
     application: "example",
@@ -121,7 +130,7 @@ Example 4: a request that override an object creator.
 ```
 
 
-Example 5: a request that override an object provider.
+Example 6: a request that override an object provider:
 ```ts
 {
     application: "example",
@@ -137,7 +146,44 @@ Example 5: a request that override an object provider.
 }
 ```
 
-Example 6: returning debug information and performance information.
+
+Example 7: a request using a template overrides a few types, provider and objects for only this request:
+```ts
+{
+    base: "example/plan2.json",
+    entryPoint: "print",
+    input: {
+        "document": {
+            "_type": "Document",
+            "value": {
+                "source": "ftp://wineryjs.org/a.txt"
+            }
+        }
+    },
+    overrideTypes: [
+        {
+            "typeName": "Document",
+            "moduleName": "some-doc",
+            "functionName": "create"
+        }
+    ],
+    overrideProviders: [
+        {
+            "protocol": "ftp",
+            "moduleName": "ftp-client",
+            "functionName": "get"
+        }
+    ],
+    overrideObjects: [
+        {
+            "name": "printer",
+            "value": "printer://printer-at-a-different-address"
+        }
+    ]
+}
+```
+
+Example 8: a request asking for debug information and performance information.
 ```ts
 {
     application: "example",
@@ -148,3 +194,4 @@ Example 6: returning debug information and performance information.
     }
 }
 ```
+

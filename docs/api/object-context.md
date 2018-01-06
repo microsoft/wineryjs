@@ -76,7 +76,7 @@ export function createPoint(input: any): Point2D {
 }
 ```
 #### <a name="object-type-registration"></a>Registration
-To associate *Point* from property `"_type"` with constructor `createPoint`, a type registration is required in JSON (see [schema](../../schema/object-type-config.schema.json) or interface [TypeDefinition](../../lib/object-type.ts)). 
+To associate *Point* from property `"_type"` with constructor `createPoint`, a type registration is required in JSON (see [schema](../../schema/object-type-config.schema.json) or interface [TypeDef](../../lib/object-type.ts)). 
 
 It can be configured at `Host` and `Application` level by JSON files referenced in property *objectTypes* in [Host Config]() and [Application Config]().  or get overriden at `RequestTemplate` and `Request` level by elements under property *overrideTypes*.
 
@@ -130,7 +130,7 @@ export createPoint2DFromURI(uri: Uri) {
 }
 ```
 #### <a name="object-provider-registration"></a> Registration
-Following JSON object (see [schema](../../schema/object-provider-config.schema.json) or interface [ProviderDefinition](../../lib/object-provider.ts)) registers `createPoint2DFromURI` as the provider function for protocol *"pt"*: 
+Following JSON object (see [schema](../../schema/object-provider-config.schema.json) or interface [ProviderDef](../../lib/object-provider.ts)) registers `createPoint2DFromURI` as the provider function for protocol *"pt"*: 
 ```json
 {
     "protocol": "pt",
@@ -158,11 +158,11 @@ function doSomething(context: ObjectContext): void {
 How to retrive an existing object is another dimension of the problem. Winery.js supports this functionality via **Named Object**, which is an object associated with a global unique name.
 
 ### Named Objects
-Named objects are defined by interface `NamedObject`, which is created from `NamedObjectDefinition`. `NamedObjectDefinition` can be specified from a plain JavaScript object or from JSON. 
+Named objects are defined by interface `NamedObject`, which is created from `NamedObjectDef`. `NamedObjectDef` can be specified from a plain JavaScript object or from JSON. 
 
 Both of them are defined in [`./lib/named-object.ts`](../../lib/named-object.ts):
 ```ts
-export interface NamedObjectDefinition {
+export interface NamedObjectDef {
     /// <summary> Name or key to retrieve this object. </summary>
     name: string;
 
@@ -188,7 +188,7 @@ export interface NamedObjectDefinition {
 
 export interface NamedObject {
     /// <summary> Definition of current named object. </summary>
-    definition: NamedObjectDefinition;
+    def: NamedObjectDef;
 
     /// <summary> Value of current named object </summary>
     value: any;
@@ -198,7 +198,7 @@ export interface NamedObject {
 }
 ```
 ### <a name="named-object-registration"></a> Registration
-A JSON object below conforms to the [schema](../../schema/named-object-config.schema.json) of `NamedObjectDefinition`, which registers a `Point2D` object with name *"CenterOfUniverse"*:
+A JSON object below conforms to the [schema](../../schema/named-object-config.schema.json) of `NamedObjectDef`, which registers a `Point2D` object with name *"CenterOfUniverse"*:
 ```json
 {
     "name": "CenterOfUniverse",
