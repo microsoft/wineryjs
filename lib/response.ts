@@ -50,9 +50,7 @@ export type DebugInfo = {
 }
 
 /// <summary> Write performance numbers when perf flag is on. </summary>
-export type PerfInfo = {
-    processingLatencyInMS: number;
-}
+export type PerfInfo = { [perfKey: string]: number };
 
 /// <summary> Interface for response </summary>
 export interface Response {

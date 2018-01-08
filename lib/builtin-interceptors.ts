@@ -70,7 +70,6 @@ export async function logRequestResponse(
 export async function finalizeResponse(
     context: RequestContext): Promise<Response> {
 
-    let startTime = process.hrtime(); 
     let response = await context.continueExecution();
 
     // Attach debug info if needed.
@@ -78,12 +77,10 @@ export async function finalizeResponse(
         response.debugInfo = context.debugger.getOutput();
     }
 
-    // Attach perf info if needed.
+    // Attach performance data if needed.
     if (context.controlFlags.perf) {
-        let duration = process.hrtime(startTime);
-        response.perfInfo = {
-            processingLatencyInMS : (duration[0] * 1e3 + duration[1] / 1e6)
-        };
+        response.perfInfo = context.perf.data;
     }
+
     return response;
 }

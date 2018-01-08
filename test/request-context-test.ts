@@ -8,7 +8,7 @@ import { Application, ApplicationConfig } from '../lib/application';
 import { HostConfig, Leaf } from '../lib/host';
 
 import { Request } from '../lib/request';
-import { RequestContext } from '../lib/request-context';
+import { RequestContext, RequestDebugger, RequestLogger, PerfDataCollector } from '../lib/request-context';
 import { RequestTemplateFileLoader } from '../lib/request-template';
 
 describe('winery/request-context', () => {
@@ -107,7 +107,7 @@ describe('winery/request-context', () => {
             assert.equal(context.entryPointName, "foo");
             assert.equal(context.input, "hello world");
             assert.equal(context.traceId, "Unknown");
-            assert.strictEqual(context.application, app);
+            assert.strictEqual(context.app, app);
             assert.strictEqual(context.entryPoint, context.getEntryPoint('foo'));
             assert.strictEqual(context.request, request);
         });
@@ -478,30 +478,83 @@ describe('winery/request-context', () => {
     });
 
     describe('RequestDebugger', () => {
+        let debug = new RequestDebugger();
         it('#event', () => {
+            debug.event('INFO', "hello");
+            debug.event('ERROR', "something wrong");
+            let events = debug.getOutput().events;
+            assert.equal(events.length, 2);
+            
+            assert.equal(events[0].message, "hello");
+            assert.equal(events[0].logLevel, "INFO");
+            
+            assert.equal(events[1].message, "something wrong");
+            assert.equal(events[1].logLevel, "ERROR");
         });
 
         it('#detail', () => {
+            debug.detail("key1", { a: 1, b: "hi"});
+            assert.deepEqual(debug.getOutput().details["key1"], { a: 1, b: "hi"});
         });
 
         it('#setLastError', () => {
-        });
-
-        it('#getOutput', () => {
+            debug.setLastError(new Error("something bad happened"));
+            assert.equal(debug.getOutput().exception.message, "something bad happened");
         });
     });
 
+    /// <summary> Simply test there is no crash in request logger. </summary>
     describe('RequestLogger', () => {
+        let logger = new RequestLogger("app.entry", "unknown");
         it('#debug', () => {
+            logger.debug("debug string");
         });
 
         it('#info', () => {
+            logger.info("info string");
         });
 
         it('#err', () => {
+            logger.err("error string");
         });
 
         it('#warn', () => {
+            logger.warn("warning string");
+        });
+    });
+
+    describe('PerfDataCollector', () => {
+        let perf = new PerfDataCollector({});
+        it('#set', () => {
+            perf.set("metric1", 0);
+            assert.equal(perf.data["metric1"], 0);
+
+            perf.set("metric2", 1, ["d1", "d2"]);
+            assert.equal(perf.data["metric2[d1, d2]"], 1);
+        });
+
+        it('#increment', () => {
+            perf.increment("metric3");
+            assert.equal(perf.data["metric3"], 1);
+
+            perf.increment("metric3");
+            assert.equal(perf.data["metric3"], 2);
+        });
+
+        it('#decrement', () => {
+            perf.decrement("metric4");
+            assert.equal(perf.data["metric4"], -1);
+
+            perf.decrement("metric4");
+            assert.equal(perf.data["metric4"], -2);
+        });
+
+        it('#elapse', () => {
+            let ret = perf.elapse("metric5", () => {
+                return 1;
+            });
+            assert.equal(ret, 1);
+            assert(perf.data["metric5"] !== undefined);
         });
     });
 });

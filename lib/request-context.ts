@@ -41,6 +41,9 @@ export class RequestContext {
     /// <summary> Debugger. </summary>
     private _debugger: RequestDebugger = null; 
 
+    /// <summary> Per request perf data collector. </summary>
+    private _perf: PerfDataCollector = null;
+
     /// <summary> Execution state: current depth in execution stack. </summary>
     private _executionDepth: number = 0;
 
@@ -85,22 +88,22 @@ export class RequestContext {
             parentContext,
             perRequestObjectContextDef);
 
+        // Prepare logger, debuger and perf collector.
+        this._logger = new RequestLogger(
+            request.application + "." + request.entryPoint,
+            request.traceId);
+
+        this._debugger = new RequestDebugger();
+        this._perf = new PerfDataCollector(this.metric);
+
         // Prepare execution stack and entry point.
         this._entryPoint = this.getEntryPoint(request.entryPoint);
         if (this._entryPoint == null) {
             throw new Error("Entrypoint does not exist: '" + request.entryPoint + "'");
         }
 
-        this._executionStack = this.prepareExecutionStack(request.entryPoint);
-
-        // Prepare logger and debuger.
-        this._logger = new RequestLogger(
-            request.application + "." + request.entryPoint,
-            request.traceId);
-
-        this._debugger = new RequestDebugger();
-
         // Set execution depth to 0 to be at top of execution stack.
+        this._executionStack = this.prepareExecutionStack(request.entryPoint);
         this._executionDepth = 0;
     }
 
@@ -118,12 +121,12 @@ export class RequestContext {
         let entryPointObject = this.getNamedObject(entryPointName);
         let interceptorNames: string[] = entryPointObject.def.value.executionStack;
         if (interceptorNames == null) {
-            interceptorNames = this.application.settings.defaultExecutionStack;
+            interceptorNames = this.app.settings.defaultExecutionStack;
         }
 
         // When entrypoint is not overriden, check if interceptor definition has be overriden.
         if (entryPointObject.scope !== 'request') {
-            let oldStack = this.application.getExecutionStack(entryPointName);
+            let oldStack = this.app.getExecutionStack(entryPointName);
             let newStack: Interceptor[] = [];
         
             // Definition and pre-cached execution stack should align.
@@ -185,7 +188,7 @@ export class RequestContext {
     /// Informational interfaces
 
     /// <summary> Get application of current request. </summary>
-    public get application(): Application {
+    public get app(): Application {
         return this._application;
     }
 
@@ -215,7 +218,7 @@ export class RequestContext {
     }
 
     /// <summary> getter for metric collection. </summary>
-    public get metric(): MetricCollection {
+    private get metric(): MetricCollection {
         return this._application.metrics;
     }
 
@@ -232,6 +235,11 @@ export class RequestContext {
     /// <summary> Get debug info writter. </summary>
     public get debugger(): RequestDebugger {
         return this._debugger;
+    }
+
+    /// <summary> Get perf data collector. </summary>
+    public get perf(): PerfDataCollector {
+        return this._perf;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -320,7 +328,7 @@ export class RequestDebugger {
     /// <summary> Finalize debug info writer and return a debug info. </summary>
     public getOutput(): DebugInfo {
         return  {
-            exception: {
+            exception: this._lastError == null? undefined: {
                 message: this._lastError.message,
                 stack: this._lastError.stack,
             },
@@ -364,4 +372,86 @@ export class RequestLogger {
 
     private _traceId: string;
     private _sectionName: string;
+}
+
+/// <summary> Performance data collector, which exposes methods
+/// to update metrics and fill `perfInfo` when controlFlags.perf is set.
+/// </summary>
+export class PerfDataCollector {
+    /// <summary> Reference to metric collection. </summary>
+    private _metrics: MetricCollection;
+    private _perfData: {[name: string]: number } = {};
+    
+    constructor(metrics: MetricCollection) {
+        assert(metrics != null);
+        this._metrics = metrics;
+    }
+
+    /// <summary> Collected performance data. </summary>
+    public get data(): { [name: string]: number } {
+        return this._perfData;
+    }
+
+    /// <summary> Set the value of a metric.  </summary>
+    public set(metricName: string, value: number, dimensions?: string[]): void {
+        let metric = this._metrics[metricName];
+        if (metric != null) {
+            metric.set(value, dimensions);
+        }
+        this._perfData[PerfDataCollector.getKeyName(metricName, dimensions)] = value;
+    }
+
+    /// <summary> Increment the value of a metric.  </summary>
+    public increment(metricName: string, dimensions?: string[]): void {
+        let metric = this._metrics[metricName];
+        if (metric != null) {
+            metric.increment(dimensions);
+        }
+
+        let key = PerfDataCollector.getKeyName(metricName, dimensions);
+        if (this._perfData[key] == null) {
+            this._perfData[key] = 1;
+        } else {
+            this._perfData[key]++;
+        }
+    }
+
+    /// <summary> Decrement the value of a metric.  </summary>
+    public decrement(metricName: string, dimensions?: string[]): void {
+        let metric = this._metrics[metricName];
+        if (metric != null) {
+            metric.decrement(dimensions);
+        }
+
+        let key = PerfDataCollector.getKeyName(metricName, dimensions);
+        if (this._perfData[key] == null) {
+            this._perfData[key] = -1;
+        } else {
+            this._perfData[key]--;
+        }
+    }
+
+    /// <summary> Execute function and record its elapse in microsecond. </summary>
+    /// <returns> Return value from function. </returns>
+    /// <throws> When func throws, elapse will not be recorded. </throws>
+    public elapse(metricName: string, func: () => any, dimensions?: string[]): any {
+        let start = process.hrtime();
+        let ret = func();
+        let duration = process.hrtime(start);
+        let durationInUs = duration[0] * 1e6 + duration[1] / 1e3;
+
+        let metric = this._metrics[metricName];
+        if (metric != null) {
+            metric.set(durationInUs, dimensions);
+        }
+        this._perfData[PerfDataCollector.getKeyName(metricName, dimensions)] = durationInUs;
+        return ret;
+    }
+
+    private static getKeyName(metricName: string, dimensions?: string[]): string {
+        if (dimensions == null) {
+            return metricName;
+        }
+        return metricName + "[" + dimensions.join(", ") + "]";
+    }
 }

@@ -60,7 +60,7 @@ These are the properties to access information needed for request processing:
 
 |  Property name     | Description                              |
 |--------------------|------------------------------------------|
-| `application`      | Get current **Application**              |
+| `app`              | Get current **Application**              |
 | `entryPoint`       | Get entry point object to execute        |
 | `entryPointName`   | Get entry point name                     |
 | `traceId`          | Get trace ID of current request          |
@@ -93,11 +93,6 @@ These are the properties for debugging and monitoring:
 | `logger`           | Get a request-level logger                                                                                                   |
 | `debugger`         | Get a request-level debugger, which will fill [`debugInfo`](./response.md#debug-information) in `Response`                   |
 | `perf`             | Get a request-level performance collector, which will fill [`perfInfo`](./response.md#performance-information) in `Response` |
-| `metric`           | Helper to access application-level metrics                                                                                   |
-
-
-
-
 
 ### Interceptors
 
@@ -109,7 +104,7 @@ Its programming interface `Interceptor` is defined as:
 export type Interceptor = (context: RequestContext) => Promise<Response>;
 ```
 
- To allow interceptor overriding at runtime, interceptors are managed as [Named Objects](./object-context#named-object), thus they can be referenced by name from execution stack definition.
+ To allow interceptor overriding at runtime, interceptors are managed as [Named Objects](./object-context#named-objects), thus they can be referenced by name from execution stack definition.
 
 
 #### Implementing an Interceptor
@@ -341,9 +336,26 @@ E.g, following JSON element defines a `Metric` named *"requestRate"* of `Rate` t
  This metric has 2 dimensions: application name and entry point name, which means different application name or entry point name will be accounted separately.
 ### Accessing Metrics
 
- Metric can be retrieved at runtime by `requestContext.metric['<metric-name>']` or `application.metric['<metric-name>']`.
+ Metric can be accessed at runtime by `requestContext.perf.<operation>('<metric-name>', ...)` or `requestContext.app.metric['<metric-name>']`.
 
 Following code increment the metric *"requestRate"* on instance *"example.sum"*.
  ```ts
-context.metric['requestRate'].increment(["example", "sum"]);
+context.app.metric['requestRate'].increment(["example", "sum"]);
  ```
+
+It's always suggested to use  `context.perf` to manipulate metric, unless some metrics are not updated during request time. `context.perf` not only updates the metrics, but also fill property [`perfInfo`](./response.md#performance-information) in `Response` when `controlFlag.perf` is set.
+
+Following code will do the same thing as the code above, as well as outputing the metric to response when `controlFlags.perf` is set.
+
+```ts
+context.perf.increment('requestRate', ["example", "sum"]);
+```
+
+Corresponding part of response:
+```json
+{
+    "perfInfo": {
+        "requestRate[example, sum]": 1
+    }
+}
+```

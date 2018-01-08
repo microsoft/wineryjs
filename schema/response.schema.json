@@ -134,15 +134,6 @@
       "title": "PerfInfo schema.",
       "description": "Performance numbers when perf flag is on at request.",
       "name": "perfInfo",
-      "properties": {
-        "processingLatencyInMicro": {
-          "id": "http://www.wineryjs.org/response/perfInfo/processingLatencyInMicro",
-          "type": "number",
-          "title": "Server processing time in microseconds.",
-          "description": "Server processing time in microseconds.",
-          "name": "processingLatencyInMicro"
-        }
-      },
       "additionalProperties": true
     }
   },

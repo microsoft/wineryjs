@@ -22,7 +22,7 @@ export function listEntryPoints(
         ): string[] | NamedObjectDef[] {
 
     let entryPointDefs: NamedObjectDef[] = [];
-    request.application.objectContext.forEach(namedObject => {
+    request.app.objectContext.forEach(namedObject => {
         let def = namedObject.def;
         if (def.value._type === 'EntryPoint'
             && (input.allowPrivate || !namedObject.def.private)
@@ -55,7 +55,7 @@ export function listNamedObjects(
     input: { allowPrivate: boolean, scopes: string[] } = { allowPrivate: false, scopes: ['request', './application']}): string[] {
     
     let objectNames: string[] = [];
-    request.application.objectContext.forEach(namedObject => {
+    request.app.objectContext.forEach(namedObject => {
         if ((input.allowPrivate || !namedObject.def.private)
         && (namedObject.scope in input.scopes)) {
             objectNames.push(namedObject.def.name);
@@ -81,7 +81,7 @@ export function getNamedObject(request: RequestContext, input: { name: string })
 /// <summary> List all types supported in current application. </summary>
 /// TODO: @dapeng, return types from global and request scope.
 export function listTypes(request: RequestContext): string[] {
-    let appDef = request.application.settings;
+    let appDef = request.app.settings;
     let typeNames: string[] = [];
     for (let typeDef of appDef.objectContextDef.typeDefs) {
         typeNames.push(typeDef.typeName);
@@ -96,7 +96,7 @@ export function getType(request: RequestContext, input: { typeName: string }): T
         throw new Error("'typeName' property must be specified under 'input' object of request.");
     }
 
-    let appDef = request.application.settings;
+    let appDef = request.app.settings;
     let types = appDef.objectContextDef.typeDefs;
     for (let i = 0; i < types.length; i++){
         if (types[i].typeName.toLowerCase() == input.typeName.toLowerCase()) {
@@ -110,7 +110,7 @@ export function getType(request: RequestContext, input: { typeName: string }): T
 /// <summary> List URI providers supported in current application. </summary>
 /// TODO: @dapeng, return providers from global and request scope.
 export function listProviders(request: RequestContext): string[] {
-    let appDef = request.application.settings;
+    let appDef = request.app.settings;
     let protocolNames: string[] = [];
     for (let providerDef of appDef.objectContextDef.providerDefs) {
         protocolNames.push(providerDef.protocol);
@@ -125,7 +125,7 @@ export function getProvider(request: RequestContext, input: { protocolName: stri
         throw new Error("'protocolName' property must be specified under 'input' object of request.");
     }
 
-    let appDef = request.application.settings;
+    let appDef = request.app.settings;
     let providers = appDef.objectContextDef.providerDefs;
     for (let provider of providers) {
         if (provider.protocol.toLowerCase() === input.protocolName.toLowerCase()) {
