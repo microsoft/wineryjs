@@ -12,9 +12,15 @@ The diagram below depicts how different host types work together to serve reques
 
 ![](../images/hosting.png)
 
-In practice, developers can always create the hub type host regardless whether applications are registered with multiple Napa zones or just under Node event loop, it will automatically generate leaf and proxy during application registering.
+In practice, developers can only create the hub type host regardless whether applications are registered with multiple Napa zones or just under Node event loop, it will automatically generate leaf and proxy during application registering.
 
-Host also holds a host-level [Object Context](./object-context.md) object which can be overriden from upper layers. The same as application configuration, they are specified by properties *"objectTypes"*, *"objectProviders"* and *"namedObjects"* from host configuration. 
+Following code creates a host:
+```ts
+import * as winery from 'winery';
+const host = winery.hub();
+```
+
+Internally, Host holds a host-level [Object Context](./object-context.md) which can be overriden from upper layers. [Built-in types](../../config/builtin-types.json), [built-in interceptors](../../config/builtin-interceptors.json) and [built-in entry points](../../config/builtin-entrypoints.json) are defined here. It's not intended for users to modify host configuration at present time.
 
 Host as the facade of Winery.js runtime, provides two methods:
 - Register applications to run on this host
@@ -42,8 +48,9 @@ export interface Host {
     applicationInstanceNames: string[];
 }
 ```
-## Creating a Host
-A host can be created by calling `winery.hub()`. An optional configuration file can be specified as following:
+
+
+<!--An optional configuration file can be specified as following:
 ```ts
 const host = winery.hub('./my-host.json');
 ```
@@ -68,6 +75,7 @@ While not specified, a default configuration will be used:
     ]
 }
 ```
+
 ### Host Configuration
 | Property name           |  Description                                                 |  Default value |
 |-------------------------|--------------------------------------------------------------|----------------|
@@ -77,6 +85,7 @@ While not specified, a default configuration will be used:
 | objectTypes             | Object types definition for host-level object context        | ...            |
 | objectProviders         | Object provider definition for host-level object context     | ...            |
 | namedObjects            | Named object definition for host-level object context        | ...            |
+-->
 
 ## Application Registration
 A host can host multiple applications at the same time, each application can be registered with multiple instance names (aliases) via method `Host.register`. Decoupling application instance name from applicaton module name gives us the flexibility to switch modules without impacting user inputs, since instance name will be used as the key to dispatch requests to the right application, which is specified by property *"application"* from [Request](./request.md#basic-fields).

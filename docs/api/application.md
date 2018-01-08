@@ -88,7 +88,7 @@ These are the methods for object creation and retrieval:
 
 These are the properties for debugging and monitoring:
 
-|  Method name       | Description                                                                                                                  |
+|  Property name     | Description                                                                                                                  |
 |--------------------|------------------------------------------------------------------------------------------------------------------------------|
 | `logger`           | Get a request-level logger                                                                                                   |
 | `debugger`         | Get a request-level debugger, which will fill [`debugInfo`](./response.md#debug-information) in `Response`                   |
