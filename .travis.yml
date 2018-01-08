@@ -5,10 +5,8 @@ node_js:
   - '9'
 
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update
-  - sudo apt-get upgrade
-  - sudo apt-get dist-upgrade
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -q
 
 install:
   - npm install
