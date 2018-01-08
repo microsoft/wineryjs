@@ -1,6 +1,6 @@
 group: travis_lts
 language: node_js
-compiler: default
+compiler: g++-6
 node_js: 
   - '8'
   - '9'
