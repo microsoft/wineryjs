@@ -49,44 +49,6 @@ export interface Host {
 }
 ```
 
-
-<!--An optional configuration file can be specified as following:
-```ts
-const host = winery.hub('./my-host.json');
-```
-While not specified, a default configuration will be used:
-
-```json
-{
-    "allowPerRequestOverride": true,
-    "throwExceptionOnError": true,
-    "defaultExecutionStack": [
-        "finalizeResponse",
-        "executeEntryPoint"
-    ],
-    "objectTypes": [
-        "./builtin-types.json"
-    ],
-    "objectProviders": [
-    ],
-    "namedObjects": [
-        "./builtin-interceptors.json",
-        "./builtin-entrypoints.json" 
-    ]
-}
-```
-
-### Host Configuration
-| Property name           |  Description                                                 |  Default value |
-|-------------------------|--------------------------------------------------------------|----------------|
-| allowPerRequestOverride | Whether request-level object context override is enabled     | true           |
-| throwExceptionOnError   | Throw on exception or return error response code             | true           |
-| defaultExecutionStack   | Host level default for defaultExecutionStack                 | ...            |
-| objectTypes             | Object types definition for host-level object context        | ...            |
-| objectProviders         | Object provider definition for host-level object context     | ...            |
-| namedObjects            | Named object definition for host-level object context        | ...            |
--->
-
 ## Application Registration
 A host can host multiple applications at the same time, each application can be registered with multiple instance names (aliases) via method `Host.register`. Decoupling application instance name from applicaton module name gives us the flexibility to switch modules without impacting user inputs, since instance name will be used as the key to dispatch requests to the right application, which is specified by property *"application"* from [Request](./request.md#basic-fields).
 
