@@ -1,3 +1,4 @@
+group: travis_lts
 language: node_js
 compiler: default
 node_js: 
