@@ -131,7 +131,7 @@ Example 4: a succeeded response with debug on and perf on.
         }
     },
     perfInfo: {
-        processingLatencyInMS: 1
+        "processTime[exampleApp, doSomething]": 1
     }
 }
 ```
