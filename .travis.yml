@@ -1,9 +1,11 @@
-group: travis_lts
 language: node_js
-compiler: g++-6
+compiler: default
 node_js: 
   - '8'
   - '9'
+
+before_install:
+  - sudo apt-get install libstdc++6
 
 install:
   - npm install
