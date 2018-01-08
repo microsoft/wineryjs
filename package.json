@@ -1,6 +1,6 @@
 {
     "name": "winery",
-    "version": "0.1.0",
+    "version": "0.0.2",
     "author": "napajs",
     "description": "A framework for experimentation in production",
     "keywords": [
@@ -14,7 +14,7 @@
     "types": "./types/index.d.ts",
     "readme": "./README.md",
     "dependencies": {
-        "napajs": "^0.1.7",
+        "napajs": "^0.2.0",
         "strip-json-comments": "^2.0.0"
     },
     "devDependencies": {
@@ -22,5 +22,9 @@
         "typescript": "^2.4.2",
         "@types/node": "^8.0.22",
         "@types/mocha": "^2.2.41"
+    },
+    "scripts": {
+        "prepare": "tsc -p test",
+        "test": "mocha test --recursive"
     }
 }

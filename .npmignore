@@ -1,0 +1,17 @@
+# Exclude typescript source files
+lib/**/*.ts
+test/**/*.ts
+
+# Exclude typescript configuration
+lib/tsconfig.json
+test/tsconfig.json
+
+# Exclude tools configuration
+.vscode
+.npmrc
+.npmignore
+.taskkey
+.travis.yml
+
+# Exclude generated output
+npm-debug.log
