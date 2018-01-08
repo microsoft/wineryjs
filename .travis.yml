@@ -2,7 +2,6 @@ language: node_js
 compiler: default
 node_js: 
   - '8'
-  - '9'
 
 before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
@@ -14,4 +13,4 @@ install:
   - npm install
 
 script:
-  - npm test --noincremental-marking
+  - npm test
