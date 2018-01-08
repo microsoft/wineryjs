@@ -64,7 +64,6 @@ These runtime entities are:
   - [Object Providers](./docs/api/object-context.md#object-providers)
   - [Named Objects](./docs/api/object-context.md#named-objects)
 - [Host](./docs/api/host.md)
-  - [Creating a Host](./docs/api/host.md#creating-a-host)
   - [Application Registration](./docs/api/host.md#application-registration)
   - [Request Serving](./docs/api/host.md#request-serving)
 - [Application](./docs/api/application.md)
