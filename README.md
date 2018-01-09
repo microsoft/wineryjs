@@ -10,8 +10,7 @@ npm install winery
 ## Quick Start
 
 ```js
-const winery = require('winery');
-const hub = winery.hub();
+const hub = require('winery').hub();
 hub.register('winery/examples/playground', ['playground']);
 
 const request = {
