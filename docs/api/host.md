@@ -17,7 +17,7 @@ In practice, developers can only create the hub type host regardless whether app
 Following code creates a host:
 ```ts
 import * as winery from 'winery';
-const host = winery.hub();
+let host = winery.hub();
 ```
 
 Internally, Host holds a host-level [Object Context](./object-context.md) which can be overriden from upper layers. [Built-in types](../../config/builtin-types.json), [built-in interceptors](../../config/builtin-interceptors.json) and [built-in entry points](../../config/builtin-entrypoints.json) are defined here. It's not intended for users to modify host configuration at present time.
@@ -38,7 +38,7 @@ export interface Host {
     register(
         appModulePath: string, 
         appInstanceNames: string[], 
-        zone: napa.zone.Zone): Promise<void>;
+        zone: napa.zone.Zone): void;
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
@@ -75,15 +75,15 @@ let host = winery.hub();
 
 try {
     // Serve an io-intensive-app in Node.JS eventloop.
-    await host.register('io-intensive-app', ['example1']);
+    host.register('io-intensive-app', ['example1']);
 
     // Serve example-app2 using name 'example2' and example-app3 using name 'example3a' in zone1. 
-    await host.register('example-app2', ['example2'], zone1);
-    await host.register('example-app3', ['example3a'], zone1);
+    host.register('example-app2', ['example2'], zone1);
+    host.register('example-app3', ['example3a'], zone1);
 
     // Serve example-app3 using name 'example3b' and example-app4 using name 'example4' in zone2. 
-    await host.register('example-app3', ['example3b'], zone2);
-    await host.register('example-app4', ['example4'], zone2);
+    host.register('example-app3', ['example3b'], zone2);
+    host.register('example-app4', ['example4'], zone2);
 }
 catch (e) {
     console.log("winery register failed:" + e);
@@ -97,14 +97,15 @@ With application registered, users can call `Host.serve` to process request and 
 import {Request, Response} from 'winery'
 
 // Create a request.
-var request: Request = {
+let request: Request = {
     application: 'example1',
     entrypoint: 'echo',
     input: 'hello, world'
 };
 
 // Get a response.
-var response: Response = await host.serve(request);
-console.log(response);
-
+host.serve(request)
+.then((response: Response) => {
+    console.log(response);
+});
 ```

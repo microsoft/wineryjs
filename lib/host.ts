@@ -45,7 +45,7 @@ export interface Host {
     /// <param name="appModulePath"> full module path of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as names of application instances.</param>
     /// <param name="zone"> zone to run the app. If undefined, use current isolate. </param>
-    register(appModulePath: string, appInstanceNames: string[], zone?: napa.zone.Zone): Promise<void>;
+    register(appModulePath: string, appInstanceNames: string[], zone?: napa.zone.Zone): void;
 
     /// <summary> Serve a request. </summary>
     /// <param name="request"> A JSON string or a request object. </param>
@@ -98,10 +98,10 @@ export class Leaf implements Host{
     public register(
         appModulePath: string, 
         appInstanceNames: string[], 
-        zone?: napa.zone.Zone): Promise<void> {
+        zone?: napa.zone.Zone): void {
 
         if (zone != null) {
-            return Promise.reject("LeafHost doesn't support register on a remote Zone.");
+            throw new Error("LeafHost doesn't support register on a remote Zone.");
         }
 
         // Load application.
@@ -116,7 +116,7 @@ export class Leaf implements Host{
         for (let instanceName of appInstanceNames) {
             let lowerCaseName = instanceName.toLowerCase();
             if (this._applications.has(lowerCaseName)) {
-                return Promise.reject(`Already registered with application name: '${instanceName}'.`);
+                throw new Error(`Already registered with application name: '${instanceName}'.`);
             }
         }
 
@@ -126,8 +126,6 @@ export class Leaf implements Host{
             this._applications.set(lowerCaseName, app);
             this._applicationInstanceNames.push(instanceName);
         }
-
-        return Promise.resolve();
     }
 
     /// <summary> Serve a request. </summary>
@@ -204,16 +202,19 @@ export class Proxy implements Host {
     /// <param name="zone"> zone to run the app. If absent, use current isolate. </param>
     public register(appModulePath: string, 
         appInstanceNames: string[], 
-        zone?: napa.zone.Zone): Promise<void> {
+        zone?: napa.zone.Zone): void {
         if (zone != null && zone != this._zone) {
-            return Promise.reject("HostProxy cannot register application for a different zone.");
+            throw Error("HostProxy cannot register application for a different zone.");
         }
 
-        return this._zone.broadcast((baseDir: string, appModulePath: string, instanceNames: string[]) => {
+        this._zone.broadcast((baseDir: string, appModulePath: string, instanceNames: string[]) => {
                 require(baseDir + '/index').hub().register(appModulePath, instanceNames);
             }, [__dirname, appModulePath, appInstanceNames])
             .then(() => {
                 this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
+            })
+            .catch((e) => {
+                throw e;
             });
     }
 
@@ -268,7 +269,7 @@ export class Hub implements Host {
     /// <param name="appModuleName"> module name of a winery application.</param>
     /// <param name="appInstanceNames"> a list of strings used as application instance names</param>
     /// <param name="zone"> zone to run the app. If absent, use current isolate. </param>
-    public register(appModuleName: string, appInstanceNames: string[], zone?: napa.zone.Zone) : Promise<void> {
+    public register(appModuleName: string, appInstanceNames: string[], zone?: napa.zone.Zone) : void {
         // If module is in relative path, figure out the full path from caller directory name.
         if (appModuleName.startsWith('.')) {
             let callSites = napa.v8.currentStack(2);
@@ -280,14 +281,13 @@ export class Hub implements Host {
 
         // Get or create host associated to zone.
         let host: Host = this.findOrCreateHost(zone);
-        
-        return host.register(appModulePath, appInstanceNames, undefined).then(() => {
-            this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
-            for (let instanceName of appInstanceNames) {
-                let lowerCaseName = instanceName.toLowerCase();
-                this._hostMap.set(lowerCaseName, host);
-            }
-        });
+
+        host.register(appModulePath, appInstanceNames, undefined);
+        this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
+        for (let instanceName of appInstanceNames) {
+            let lowerCaseName = instanceName.toLowerCase();
+            this._hostMap.set(lowerCaseName, host);
+        }
     }
 
     /// <summary> Find or create host for a zone. </summary>

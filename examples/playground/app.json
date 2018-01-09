@@ -1,0 +1,13 @@
+{
+    "id": "winery-playground",
+
+    "description": "Winery.js example application - playground",
+
+    "allowPerRequestOverride": true,
+    "objectTypes": [],
+    "objectProviders": [],
+    "namedObjects": [
+        "./entrypoints.json",
+        "./objects.json"
+    ]
+}

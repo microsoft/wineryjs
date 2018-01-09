@@ -9,26 +9,35 @@ npm install winery
 
 ## Quick Start
 
-```typescript
-import { hub, Request, Response} from 'winery';
+```js
+const winery = require('winery');
+const hub = winery.hub();
+hub.register('winery/examples/playground', ['playground']);
 
-const host = hub();
-await host.register('example-app', ['example']);
-
-const request: Request = {
-    application: 'example',
-    entrypoint: 'echo',
-    input: 'hello, world',
-    overrideObjects: {
-        'echo': {
-            '_type': 'EntryPoint',
-            'function': 'function (input) { return input; }'
+const request = {
+    "application": "playground",
+    "entryPoint": "sort",
+    "input": [12, 16, 1, 10, 2, 5, 0],
+    "overrideObjects": [
+        {
+        "name": "comparator",
+        "value": {
+            "_type": "Function",
+            "function": "function (a, b) { return a.toString() >= b.toString(); } "
         }
-    }
+        }
+    ]
 };
+    
+hub.serve(request)
+.then((response) => {
+    console.log(response);
+});
 
-const response: Response = await host.serve(request);
-console.log(response);
+```
+console  output:
+```js
+{ responseCode:0, output: [0, 1, 10, 12, 16, 2, 5] }
 ```
 
 ## Features

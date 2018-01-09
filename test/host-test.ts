@@ -37,27 +37,25 @@ describe('winery/host', () => {
         });
 
         it('#register: success', () => {
-            return host.register(
+            host.register(
                 path.resolve(__dirname, './test-app'), 
                 ["testApp"]);
         });
 
-        it('#register: fail - duplicated instance name', (done) => {
-            host.register(
-                path.resolve(__dirname, './test-app'),
-                ["testApp"])
-            .catch((e) => {
-                done();
+        it('#register: fail - duplicated instance name', () => {
+            assert.throws(() => {
+                host.register(
+                    path.resolve(__dirname, './test-app'),
+                    ["testApp"]);
             });
         });
             
-        it('#register: fail - register for another container.', (done) => {
-            host.register(
-                path.resolve(__dirname, './test-app'), 
-                ["testApp"], 
-                napa.zone.create('zone1'))
-            .catch((e) => {
-                done();
+        it('#register: fail - register for another container.', () => {
+            assert.throws(() => {
+                host.register(
+                    path.resolve(__dirname, './test-app'), 
+                    ["testApp"], 
+                    napa.zone.create('zone1'))
             });
         });
 
@@ -144,20 +142,15 @@ describe('winery/host', () => {
         it.skip('#register: fail - duplicated instance name', (done) => {
             host.register(
                 path.resolve(__dirname, './test-app'),
-                ["testApp"])
-            .catch((e) => {
-                done();
-            });
+                ["testApp"]);
         });
             
-        it('#register: fail - register for another container.', (done) => {
+        // Bug: Broadcast shall support synchronized version.
+        it.skip('#register: fail - register for another container.', (done) => {
             host.register(
                 path.resolve(__dirname, './test-app'), 
                 ["testApp"], 
-                napa.zone.create('zone3'))
-            .catch((e) => {
-                done();
-            });
+                napa.zone.create('zone3'));
         });
 
         it('#serve: sync entrypoint', (done) => {
@@ -255,28 +248,22 @@ describe('winery/host', () => {
         }).timeout(0);
 
         it('#register: local - fail - duplicated instance name', (done) => {
-            host.register(
+            assert.throws(() => {
+                host.register(
                 path.resolve(__dirname, './test-app'), 
                 ["testApp"])
-            .catch((error) => {
-                done(error.startsWith("Already registered") ? undefined: error);
-            })
+            });
         }).timeout(0);
 
         // Bug: https://github.com/Microsoft/napajs/issues/158 
         // Broadcast will succeed even register will fail.
         it.skip('#register: remote - fail - duplicated instance name', (done) => {
-            host.register(
-                path.resolve(__dirname, './test-app'), 
-                ["testApp2"],
-                zone)
-            .then(() => {
-                done("Should fail");
-            })
-            .catch((error) => {
-                console.log(error);
-                done();
-            })
+            assert.throws(() => {
+                host.register(
+                    path.resolve(__dirname, './test-app'), 
+                    ["testApp2"],
+                    zone);
+            });
         });
 
         it('#serve: local - sync entrypoint', (done) => {

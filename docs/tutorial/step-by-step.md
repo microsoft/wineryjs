@@ -12,12 +12,12 @@ import w = require('winery');
 /// See 'named-objects.json' below on how we register this entrypoint.
 /// The 1st parameter is the input from request.
 /// The 2nd parameter is a winery.RequestContext object.
-export function echo(text: string, context: w.RequestContext) {
+export function echo(context: w.RequestContext, text: string) {
     return text;
 }
 
 /// Function for entrypoint 'compute', which is to compute sum on an array of numbers. 
-export function compute(numberArray: number[], context: w.RequestContext) {
+export function compute(context: w.RequestContext, numberArray: number[]) {
     var func = (list: number[]) => {
         return list.reduce((sum: number, value: number) => {
                 return sum + value;

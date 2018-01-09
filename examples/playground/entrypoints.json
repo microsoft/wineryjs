@@ -1,0 +1,10 @@
+[
+    {
+        "name": "sort",
+        "value": {
+            "_type": "EntryPoint",
+            "moduleName": "./app",
+            "functionName": "entrypoints.sort"
+        }
+    }
+]

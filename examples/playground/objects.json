@@ -1,0 +1,10 @@
+[
+    {
+        "name": "comparator",
+        "value": {
+            "_type": "Function",
+            "moduleName": "./app",
+            "functionName": "defaultComparator"
+        }
+    }
+]
