@@ -53,14 +53,14 @@ console  output:
 
 ## Overview
 
-Winery.js was built based on the idea of dependency injection at multiple levels, thus its core is to encapsulate object creation and object retrieval behaviors with an overriding mechanism. White paper [Continuous modification: a process to build constantly evoling services](https://github.com/daiyip/continuous-modification) discussed this idea in details. 
+Winery.js was built based on the idea of dependency injection at multiple levels, thus its core is to encapsulate object creation and object retrieval behaviors with an overriding mechanism. White paper [Continuous modification: a process to build constantly evolving services](https://github.com/daiyip/continuous-modification) discussed this idea in details. 
 
 In Winery.js' implementation, [**Object Context**](./docs/api/object-context.md) serves the purpose to capture these behaviors, whose instances are owned by multiple runtime entities with different lifetime and configurability. These object context objects work collaboratively to form an overriding chain among these entities.
 
 These runtime entities are:
 - [**Host**](./docs/api/host.md): a conceptually singleton object to host applications. Live long and is configurable at deployment time.
 - [**Application**](./docs/api/application.md): multi-instance object that manages resources for request execution and serve user requests. Live long and is configurable at deployment time.
-- [**Request Template**](.docs/api/request-template.md): multi-instance object that manages different parameters and resources for A/B testing. Live long and is configurable at runtime.
+- [**Request Template**](./docs/api/request-template.md): multi-instance object that manages different parameters and resources for A/B testing. Live long and is configurable at runtime.
 - [**Request**](./docs/api/request.md): multi-instance object that describes request from user. Live short and is configurable at runtime.
 
 
