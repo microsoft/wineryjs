@@ -1,10 +1,9 @@
 # Exclude typescript source files
-lib/**/*.ts
-test/**/*.ts
+**/*.ts
+!types/*.ts
 
 # Exclude typescript configuration
-lib/tsconfig.json
-test/tsconfig.json
+tsconfig.json
 
 # Exclude tools configuration
 .vscode

@@ -1,6 +1,6 @@
 {
     "name": "winery",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "author": "napajs",
     "description": "A framework for experimentation in production",
     "keywords": [
@@ -24,7 +24,7 @@
         "@types/mocha": "^2.2.41"
     },
     "scripts": {
-        "prepare": "tsc -p test",
+        "prepare": "tsc -p lib && tsc -p test && tsc -p examples/playground",
         "test": "mocha test --recursive"
     }
 }

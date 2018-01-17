@@ -10,6 +10,9 @@ lib/**/*.js
 # ignore all js files under test
 test/**/*.js
 
+# ignore all test files under examples
+examples/**/*.js
+
 package-lock.json
 
 !tsconfig.json

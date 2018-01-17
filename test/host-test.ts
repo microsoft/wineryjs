@@ -247,13 +247,14 @@ describe('winery/host', () => {
                 zone);
         }).timeout(0);
 
-        it('#register: local - fail - duplicated instance name', (done) => {
+        // Bug: https://github.com/Microsoft/wineryjs/issues/4
+        it.skip('#register: local - fail - duplicated instance name', (done) => {
             assert.throws(() => {
                 host.register(
                 path.resolve(__dirname, './test-app'), 
                 ["testApp"])
             });
-        }).timeout(0);
+        });
 
         // Bug: https://github.com/Microsoft/napajs/issues/158 
         // Broadcast will succeed even register will fail.
