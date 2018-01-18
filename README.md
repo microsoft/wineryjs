@@ -55,46 +55,46 @@ console  output:
 
 Winery.js was built based on the idea of dependency injection at multiple levels, thus its core is to encapsulate object creation and object retrieval behaviors with an overriding mechanism. White paper [Continuous modification: a process to build constantly evolving services](https://github.com/daiyip/continuous-modification) discussed this idea in details. 
 
-In Winery.js' implementation, [**Object Context**](./docs/api/object-context.md) serves the purpose to capture these behaviors, whose instances are owned by multiple runtime entities with different lifetime and configurability. These object context objects work collaboratively to form an overriding chain among these entities.
+In Winery.js' implementation, [**Object Context**](https://github.com/Microsoft/wineryjs/tree/master/docs/api/object-context.md) serves the purpose to capture these behaviors, whose instances are owned by multiple runtime entities with different lifetime and configurability. These object context objects work collaboratively to form an overriding chain among these entities.
 
 These runtime entities are:
-- [**Host**](./docs/api/host.md): a conceptually singleton object to host applications. Live long and is configurable at deployment time.
-- [**Application**](./docs/api/application.md): multi-instance object that manages resources for request execution and serve user requests. Live long and is configurable at deployment time.
-- [**Request Template**](./docs/api/request-template.md): multi-instance object that manages different parameters and resources for A/B testing. Live long and is configurable at runtime.
-- [**Request**](./docs/api/request.md): multi-instance object that describes request from user. Live short and is configurable at runtime.
+- [**Host**](https://github.com/Microsoft/wineryjs/tree/master/docs/api/host.md): a conceptually singleton object to host applications. Live long and is configurable at deployment time.
+- [**Application**](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md): multi-instance object that manages resources for request execution and serve user requests. Live long and is configurable at deployment time.
+- [**Request Template**](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request-template.md): multi-instance object that manages different parameters and resources for A/B testing. Live long and is configurable at runtime.
+- [**Request**](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request.md): multi-instance object that describes request from user. Live short and is configurable at runtime.
 
 
-![Winery.js Architecture](./docs/images/architecture.png)
+![Winery.js Architecture](https://github.com/Microsoft/wineryjs/tree/master/docs/images/architecture.png)
 
 ## Specification
-- [Object Context](./docs/api/object-context.md)
-  - [Overriding Rule](./docs/api/object-context.md#overriding-rule)
-  - [Object Types](./docs/api/object-context.md#object-types)
-  - [Object Providers](./docs/api/object-context.md#object-providers)
-  - [Named Objects](./docs/api/object-context.md#named-objects)
-- [Host](./docs/api/host.md)
-  - [Application Registration](./docs/api/host.md#application-registration)
-  - [Request Serving](./docs/api/host.md#request-serving)
-- [Application](./docs/api/application.md)
-  - [Request Execution](./docs/api/application.md#request-execution)
-    - [Request Context](./docs/api/application.md#request-context)
-    - [Interceptors](./docs/api/application.md#interceptors)
-    - [Entry Points](./docs/api/application.md#entry-points)
-  - [Application-level Resources](./docs/api/application.md#application-level-resources)
-  - [Monitoring](./docs/api/application.md#monitoring)
-- [Request Template](./docs/api/request-template.md)
-  - [Template-level Resources](./docs/api/request-template.md#template-level-resources)
-  - [Template Inheritance](./docs/api/request-template.md#template-inheritance)
-  - [Examples](./docs/api/request-template.md#examples)
-- [Request](./docs/api/request.md)
-  - [Basic Fields](./docs/api/request.md#basic-fields)
-  - [Override Fields](./docs/api/request.md#override-fields)
-  - [Examples](./docs/api/request.md#examples)
-- [Response](./docs/api/response.md)
-  - [Basic Fields](./docs/api/response.md#basic-fields)
-  - [Debug Information](./docs/api/response.md#debug-information)
-  - [Performance Information](./docs/api/response.md#performance-information)
-  - [Examples](./docs/api/response.md#examples)
+- [Object Context](https://github.com/Microsoft/wineryjs/tree/master/docs/api/object-context.md)
+  - [Overriding Rule](https://github.com/Microsoft/wineryjs/tree/master/docs/api/object-context.md#overriding-rule)
+  - [Object Types](https://github.com/Microsoft/wineryjs/tree/master/docs/api/object-context.md#object-types)
+  - [Object Providers](https://github.com/Microsoft/wineryjs/tree/master/docs/api/object-context.md#object-providers)
+  - [Named Objects](https://github.com/Microsoft/wineryjs/tree/master/docs/api/object-context.md#named-objects)
+- [Host](https://github.com/Microsoft/wineryjs/tree/master/docs/api/host.md)
+  - [Application Registration](https://github.com/Microsoft/wineryjs/tree/master/docs/api/host.md#application-registration)
+  - [Request Serving](https://github.com/Microsoft/wineryjs/tree/master/docs/api/host.md#request-serving)
+- [Application](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md)
+  - [Request Execution](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md#request-execution)
+    - [Request Context](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md#request-context)
+    - [Interceptors](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md#interceptors)
+    - [Entry Points](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md#entry-points)
+  - [Application-level Resources](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md#application-level-resources)
+  - [Monitoring](https://github.com/Microsoft/wineryjs/tree/master/docs/api/application.md#monitoring)
+- [Request Template](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request-template.md)
+  - [Template-level Resources](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request-template.md#template-level-resources)
+  - [Template Inheritance](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request-template.md#template-inheritance)
+  - [Examples](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request-template.md#examples)
+- [Request](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request.md)
+  - [Basic Fields](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request.md#basic-fields)
+  - [Override Fields](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request.md#override-fields)
+  - [Examples](https://github.com/Microsoft/wineryjs/tree/master/docs/api/request.md#examples)
+- [Response](https://github.com/Microsoft/wineryjs/tree/master/docs/api/response.md)
+  - [Basic Fields](https://github.com/Microsoft/wineryjs/tree/master/docs/api/response.md#basic-fields)
+  - [Debug Information](https://github.com/Microsoft/wineryjs/tree/master/docs/api/response.md#debug-information)
+  - [Performance Information](https://github.com/Microsoft/wineryjs/tree/master/docs/api/response.md#performance-information)
+  - [Examples](https://github.com/Microsoft/wineryjs/tree/master/docs/api/response.md#examples)
 
 # Contribute
 You can contribute to Winery.js in following ways:
