@@ -207,15 +207,11 @@ export class Proxy implements Host {
             throw Error("HostProxy cannot register application for a different zone.");
         }
 
-        this._zone.broadcast((baseDir: string, appModulePath: string, instanceNames: string[]) => {
+        this._zone.broadcastSync((baseDir: string, appModulePath: string, instanceNames: string[]) => {
                 require(baseDir + '/index').hub().register(appModulePath, instanceNames);
-            }, [__dirname, appModulePath, appInstanceNames])
-            .then(() => {
-                this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
-            })
-            .catch((e) => {
-                throw e;
-            });
+            }, [__dirname, appModulePath, appInstanceNames]);
+
+        this._applicationInstanceNames = this._applicationInstanceNames.concat(appInstanceNames);
     }
 
     /// <summary> Serve a request. </summary>
