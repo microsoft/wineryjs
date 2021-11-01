@@ -10,6 +10,10 @@
         "dependency injection",
         "continuous modification"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft/wineryjs.git"
+    },
     "main": "./lib/index.js",
     "types": "./types/index.d.ts",
     "readme": "./README.md",
